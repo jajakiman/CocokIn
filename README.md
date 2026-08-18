@@ -1,5 +1,4 @@
-\<div align="center"\>  
-    
+
   \# \[CocokIn\]   
   \#\#\# \[Dari skill jadi pengalaman, dari kebutuhan jadi solusi.\]  
     
@@ -11,7 +10,6 @@
     
   \*\*By \[Acim Bilek\]\*\*  
     
-\</div\>
 
 \---
 
@@ -380,9 +378,6 @@ Proyek ini dilisensikan di bawah \[MIT License\](LICENSE) \- lihat file LICENSE 
 
 \---
 
-\<div align="center"\>
-
   \*\*Made with ❤️ by \[Nama Tim\] for ITECHNO CUP 2026\*\*
 
     
-\</div\>  
