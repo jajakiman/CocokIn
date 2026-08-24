@@ -2,7 +2,7 @@
 
   # CocokIn
 
-  ### Dari skill jadi pengalaman, dari kebutuhan jadi solusi.
+  ### Ubah Potensi Jadi Bukti, Selesaikan Solusi Pasti.
 
   [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://[URL_DEMO])
   [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/jajakiman/CocokIn.git)
