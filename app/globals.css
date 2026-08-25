@@ -211,6 +211,286 @@ h3 { font-size: 1rem; }
   .page-heading { align-items: end; grid-template-columns: 1fr auto; margin-bottom: 2rem; }
 }
 
+/* ── Talent Assessment Components ────────────────────────── */
+
+.career-picker { max-width: 56rem; }
+.career-picker h2 { margin-bottom: 0.5rem; }
+.career-picker__description { color: var(--muted-foreground); margin-bottom: 2rem; max-width: 60ch; }
+.career-picker__grid { display: grid; gap: 1rem; }
+.career-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  min-height: 8rem;
+  padding: 1.25rem;
+  text-align: left;
+  transition: border-color 180ms, box-shadow 180ms;
+  width: 100%;
+}
+.career-card:hover { border-color: var(--brand-blue); box-shadow: var(--shadow-card); }
+.career-card[data-selected="true"] { background: var(--surface-selected); border-color: var(--brand-blue); box-shadow: var(--shadow-card); }
+.career-card h3 { margin-bottom: 0.5rem; }
+.career-card__skills { color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 0; }
+
+.assessment-quiz { max-width: 48rem; }
+.quiz-progress { margin-bottom: 2rem; }
+.quiz-progress__bar {
+  background: var(--brand-cyan);
+  border-radius: 999px;
+  height: 0.5rem;
+  transition: width 240ms;
+}
+.quiz-progress__label {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+.quiz-question { margin-top: 2rem; }
+.quiz-question__type {
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+}
+.quiz-question h2 { margin-bottom: 2rem; }
+.quiz-options { display: grid; gap: 0.75rem; }
+.quiz-option {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  min-height: 3.5rem;
+  padding: 1rem 1.25rem;
+  text-align: left;
+  transition: border-color 180ms, background 180ms;
+}
+.quiz-option:hover { background: var(--surface-subtle); border-color: var(--brand-blue); }
+
+.readiness-result { max-width: 56rem; }
+.result-header { margin-bottom: 2rem; }
+.result-header h1 { margin-bottom: 0.5rem; }
+.result-header__career {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.result-score { margin-bottom: 2rem; }
+.score-composite {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+  padding: 2rem;
+  text-align: center;
+}
+.score-composite__label {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.score-composite__value {
+  color: var(--primary);
+  font-size: 3.5rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.5rem;
+}
+.score-composite__breakdown {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin-bottom: 0;
+}
+.result-section { margin-bottom: 2rem; }
+.result-section h2 { margin-bottom: 1rem; }
+.skill-breakdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.skill-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+}
+.skill-row + .skill-row { border-top: 1px solid var(--border); }
+.skill-row__name { font-weight: 600; }
+.skill-row__score {
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+/* ── Skill Gap Chart ────────────────────────────────────── */
+
+.skill-gap-chart { max-width: 64rem; }
+.skill-gap-header { margin-bottom: 2rem; }
+.skill-gap-header h2 { margin-bottom: 0.5rem; }
+.skill-gap-header__career {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.skill-gap-empty {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+}
+.major-gaps {
+  background: var(--destructive-subtle);
+  border: 2px solid var(--destructive);
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+}
+.major-gaps h3 { color: var(--destructive); margin-bottom: 0.5rem; }
+.major-gaps__description {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+.major-gaps__list { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.skill-gap-bars {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.gap-bar-row { padding: 1rem; }
+.gap-bar-row + .gap-bar-row { border-top: 1px solid var(--border); }
+.gap-bar-row[data-major="true"] { background: var(--destructive-subtle); }
+.gap-bar-row__label {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.gap-bar-row__name { font-weight: 600; }
+.gap-bar-row__scores {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+.gap-bar-row__visual {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  position: relative;
+}
+.gap-bar-row__benchmark {
+  background: var(--border-strong);
+  height: 1.5rem;
+  width: 2px;
+}
+.gap-bar-row__bar {
+  border-radius: 0.25rem;
+  height: 1.5rem;
+  transition: width 240ms;
+}
+.gap-bar-row__bar[data-positive="true"] { background: var(--success); }
+.gap-bar-row__bar[data-positive="false"] { background: var(--destructive); }
+.gap-bar-row__gap {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.skill-gap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.legend-item { align-items: center; display: flex; gap: 0.5rem; }
+.legend-item__dot {
+  border-radius: 999px;
+  height: 0.75rem;
+  width: 0.75rem;
+}
+.legend-item__dot[data-tone="success"] { background: var(--success); }
+.legend-item__dot[data-tone="destructive"] { background: var(--destructive); }
+.legend-item span { color: var(--muted-foreground); font-size: 0.875rem; }
+
+/* ── Skill Passport ─────────────────────────────────────── */
+
+.skill-passport { max-width: 56rem; }
+.passport-header { margin-bottom: 1rem; }
+.passport-header h1 { margin-bottom: 0.5rem; }
+.passport-header__career {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.passport-description {
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+  max-width: 60ch;
+}
+.passport-entries {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+.passport-entry { padding: 1rem; }
+.passport-entry + .passport-entry { border-top: 1px solid var(--border); }
+.passport-entry__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.passport-entry__header h3 { margin-bottom: 0; }
+.passport-entry__details {
+  color: var(--muted-foreground);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  gap: 1rem;
+}
+.passport-entry__score { font-variant-numeric: tabular-nums; }
+.passport-legend {
+  background: var(--surface-subtle);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+.passport-legend h3 { font-size: 1rem; margin-bottom: 1rem; }
+.evidence-levels { display: grid; gap: 1rem; margin: 0; }
+.evidence-levels > div { display: grid; gap: 0.5rem; grid-template-columns: auto 1fr; }
+.evidence-levels dt { margin: 0; }
+.evidence-levels dd {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .career-picker__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
 }
