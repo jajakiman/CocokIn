@@ -8,6 +8,7 @@ import type {
 import type { CareerDomainId } from "@/src/modules/talent/types";
 import { calculateCocokScore } from "@/src/modules/matching";
 import { getAllCareerIds, getCareerDomain } from "@/src/modules/talent/career-taxonomy";
+import { useTalent } from "@/src/context/talent-context";
 import { ProjectCard } from "./project-card";
 
 // ponytail: fixture data; replace with server-fetched projects when DB exists
@@ -17,24 +18,6 @@ type ProjectFixture = {
   title: string;
   businessName: string;
   project: ProjectMatchRequirement;
-};
-
-const MOCK_TALENT: TalentMatchProfile = {
-  skills: [
-    { skillId: "html", name: "HTML", level: "ASSESSED" },
-    { skillId: "css", name: "CSS", level: "ASSESSED" },
-    { skillId: "javascript", name: "JavaScript", level: "SELF_DECLARED" },
-    { skillId: "react", name: "React", level: "PROJECT_VERIFIED" },
-    { skillId: "tailwind", name: "Tailwind CSS", level: "ASSESSED" },
-    { skillId: "nextjs", name: "Next.js", level: "SELF_DECLARED" },
-    { skillId: "figma", name: "Figma", level: "SELF_DECLARED" },
-  ],
-  targetCareerId: "frontend-dev",
-  majorSkillGapIds: ["nextjs", "javascript"],
-  availability: "PART_TIME",
-  completedProjectsCount: 2,
-  workModePreference: "REMOTE",
-  city: "Bandung",
 };
 
 const MOCK_PROJECTS: ProjectFixture[] = [
@@ -142,8 +125,23 @@ const MOCK_PROJECTS: ProjectFixture[] = [
 ];
 
 export function ProjectCatalog() {
+  const { profile, passport } = useTalent();
   const [filterCareer, setFilterCareer] = useState<CareerDomainId | "all">("all");
   const careerIds = getAllCareerIds();
+
+  // Susun live talent match profile dari context
+  const liveTalentProfile: TalentMatchProfile = {
+    skills: passport.entries.map((e) => ({
+      skillId: e.skillId,
+      name: e.name,
+      level: e.evidenceLevel,
+    })),
+    targetCareerId: profile.targetCareerId,
+    availability: profile.availability,
+    completedProjectsCount: 2, // fixture count
+    workModePreference: profile.workModePreference,
+    city: profile.city,
+  };
 
   const projects = filterCareer === "all"
     ? MOCK_PROJECTS
@@ -152,7 +150,7 @@ export function ProjectCatalog() {
   const scoredProjects = projects
     .map((p) => ({
       ...p,
-      scoreResult: calculateCocokScore(MOCK_TALENT, p.project),
+      scoreResult: calculateCocokScore(liveTalentProfile, p.project),
     }))
     .sort((a, b) => b.scoreResult.total - a.scoreResult.total);
 

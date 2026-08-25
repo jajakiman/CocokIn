@@ -9,12 +9,14 @@ import type {
 } from "@/src/modules/talent/types";
 import { getQuestionsForCareer } from "@/src/modules/talent/assessment-bank";
 import { calculateCareerReadiness } from "@/src/modules/talent/career-readiness";
+import { useTalent } from "@/src/context/talent-context";
 import { CareerPicker } from "./career-picker";
 import { ReadinessResult } from "./readiness-result";
 
 type Step = "career" | "quiz" | "result";
 
 export function AssessmentWizard() {
+  const { applyAssessmentResult } = useTalent();
   const [step, setStep] = useState<Step>("career");
   const [careerId, setCareerId] = useState<CareerDomainId | null>(null);
   const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
@@ -44,6 +46,7 @@ export function AssessmentWizard() {
       if (careerId) {
         const calculatedResult = calculateCareerReadiness(careerId, newAnswers);
         setResult(calculatedResult);
+        applyAssessmentResult(calculatedResult);
         setStep("result");
       }
     }

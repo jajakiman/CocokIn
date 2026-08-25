@@ -591,6 +591,648 @@ h3 { font-size: 1rem; }
 .breakdown-list li { align-items: center; display: flex; gap: 0.5rem; font-size: 0.875rem; }
 .breakdown-list li span:last-child { color: var(--foreground); }
 
+/* ── Shared Design Primitives ───────────────────────────── */
+
+.page-heading__action {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.step-progress {
+  margin-bottom: 2rem;
+}
+.step-progress__list {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.75rem;
+  overflow-x: auto;
+}
+.step-progress__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.step-progress__marker {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+}
+.step-progress__item[data-status="completed"] .step-progress__marker {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+.step-progress__item[data-status="current"] {
+  color: var(--primary);
+}
+.step-progress__item[data-status="current"] .step-progress__marker {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.error-summary {
+  background: var(--destructive-subtle);
+  border: 2px solid var(--destructive);
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+.error-summary:focus {
+  outline: 3px solid var(--destructive);
+  outline-offset: 2px;
+}
+.error-summary__title {
+  color: var(--destructive);
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+.error-summary__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--destructive);
+}
+.error-summary__link {
+  color: var(--destructive);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.empty-state {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.empty-state__title {
+  margin-bottom: 0.5rem;
+}
+.empty-state__description {
+  color: var(--muted-foreground);
+  max-width: 48ch;
+  margin-bottom: 1.5rem;
+}
+
+.responsive-data-view {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+.responsive-data-view__table-container {
+  display: none;
+  overflow-x: auto;
+}
+.responsive-data-view__table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.responsive-data-view__table th {
+  background: var(--surface-subtle);
+  padding: 0.875rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+.responsive-data-view__table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.responsive-data-view__cards {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+.responsive-data-view__card {
+  background: var(--surface-subtle);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.responsive-data-view__card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.responsive-data-view__card-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+/* ── Form Controls & Onboarding ─────────────────────────── */
+
+.onboarding-page-shell {
+  min-height: 100dvh;
+  padding: clamp(2rem, 5vw, 4rem) 1rem;
+  background: var(--background);
+}
+.onboarding-page-container {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+.onboarding-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+@media (min-width: 640px) {
+  .onboarding-container { padding: 2.5rem; }
+}
+
+.form-step h2 {
+  margin-bottom: 0.35rem;
+}
+.form-step__desc {
+  color: var(--muted-foreground);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+.form-group > label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.45rem;
+  color: var(--foreground);
+}
+.form-grid-2 {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 640px) {
+  .form-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  padding: 0.7rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--foreground);
+  transition: border-color 180ms, outline 180ms;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 1px;
+}
+
+.radio-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.radio-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 180ms, border-color 180ms;
+}
+.radio-pill[data-checked="true"] {
+  background: var(--surface-selected);
+  border-color: var(--brand-blue);
+  color: var(--primary);
+}
+
+.consent-panel {
+  background: var(--surface-subtle);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.consent-panel__header h3 {
+  margin-bottom: 0.25rem;
+}
+.consent-panel__description {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+.consent-list {
+  display: grid;
+  gap: 1rem;
+}
+.consent-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.consent-item input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--primary);
+}
+.consent-item strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+}
+.consent-item p {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+.consent-item__error {
+  display: block;
+  color: var(--destructive);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.profile-form-container {
+  max-width: 56rem;
+}
+.profile-sections {
+  display: grid;
+  gap: 1.5rem;
+}
+.form-section {
+  padding: 0;
+}
+.form-body {
+  padding: 1.5rem;
+}
+.status-toast {
+  padding: 0.85rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.status-toast--success {
+  background: var(--success-subtle);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+/* ── Verified Portfolio UI ──────────────────────────────── */
+
+.portfolio-container {
+  max-width: 64rem;
+}
+.portfolio-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+.portfolio-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+.portfolio-card__tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.portfolio-card__header h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.portfolio-card__body {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.portfolio-detail-block strong {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.25rem;
+}
+.portfolio-detail-block p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+.portfolio-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.portfolio-card__footer {
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .portfolio-card__footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+.consent-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.attribution-status {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+.publish-notice {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+.visibility-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.form-select--sm {
+  width: auto;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+/* ── Public Passport Document (Shareable) ───────────────── */
+
+.public-passport-page {
+  min-height: 100dvh;
+  background: #0f2431;
+  padding: clamp(1.5rem, 4vw, 4rem) 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.public-passport-wrapper {
+  width: 100%;
+  max-width: 52rem;
+}
+.public-passport-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: white;
+}
+.brand-mark--public span {
+  background: var(--brand-cyan);
+  color: #0f2431;
+  font-weight: 900;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+}
+.brand-mark--public strong {
+  display: inline;
+  color: white;
+  font-size: 1.1rem;
+}
+.official-badge {
+  background: rgb(13 184 211 / 0.15);
+  border: 1px solid var(--brand-cyan);
+  color: var(--brand-cyan);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.public-passport-card {
+  background: var(--surface);
+  border-radius: 1rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+.passport-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-bottom: 2px solid var(--surface-subtle);
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+@media (min-width: 640px) {
+  .passport-identity {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+.passport-target-career {
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+.passport-academic {
+  color: var(--muted-foreground);
+  font-size: 0.95rem;
+  margin: 0;
+}
+.passport-stamp {
+  background: var(--surface-selected);
+  border: 2px dashed var(--brand-blue);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  min-width: 11rem;
+}
+.passport-stamp__number {
+  display: block;
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--brand-deep);
+  line-height: 1;
+}
+.passport-stamp__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  margin-top: 0.35rem;
+  display: block;
+}
+
+.passport-skills-section h2 {
+  font-size: 1.35rem;
+  margin-bottom: 0.25rem;
+}
+.section-note {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+.public-skills-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .public-skills-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.public-skill-card {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+}
+.public-skill-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+.public-skill-card__header h3 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+.public-skill-card__meta {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  display: flex;
+  gap: 0.75rem;
+}
+
+.public-passport-footer {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 640px) {
+  .public-passport-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+/* ── Talent Workspace UI ────────────────────────────────── */
+
+.workspace-container {
+  max-width: 64rem;
+}
+.workspace-section {
+  margin-top: 1.5rem;
+}
+.milestone-timeline {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+.milestone-card {
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+.milestone-card[data-status="APPROVED"] {
+  border-color: var(--success);
+  background: var(--success-subtle);
+}
+.milestone-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+.milestone-order {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+.milestone-card__header h3 {
+  font-size: 1.1rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0;
+}
+.milestone-desc {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+.milestone-link {
+  font-size: 0.85rem;
+}
+.submission-notice {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-data-view__table-container { display: block; }
+  .responsive-data-view__cards { display: none; }
+}
+
 @media (min-width: 640px) {
   .career-picker__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .breakdown-factors { grid-template-columns: repeat(2, minmax(0, 1fr)); }

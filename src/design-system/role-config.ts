@@ -30,6 +30,7 @@ export const roleConfigs: Record<AppRole, RoleShellConfig> = {
       { label: "Cari Proyek", href: "/talent/projects" },
       { label: "Proyek Saya", href: "/talent/workspace" },
       { label: "Skill Passport", href: "/talent/passport" },
+      { label: "Portofolio", href: "/talent/portfolio" },
       { label: "Profil", href: "/talent/profile" },
     ],
   },
