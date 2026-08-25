@@ -12,6 +12,7 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cocokin.id"),
   title: "CocokIn Foundation",
   description: "Responsive foundation preview for CocokIn Talent, UMKM, and Admin experiences.",
 };

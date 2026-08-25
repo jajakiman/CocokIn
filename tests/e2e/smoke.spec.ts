@@ -19,6 +19,6 @@ test.describe("Responsive Design System Shell", () => {
     await page.goto("/dev/design-system");
     await expect(page.getByRole("heading", { name: "Arctic Depths Design System" })).toBeVisible();
     await expect(page.getByText("Brand cyan")).toBeVisible();
-    await expect(page.getByText("Terverifikasi")).toBeVisible();
+    await expect(page.getByText("Terverifikasi", { exact: true })).toBeVisible();
   });
 });
