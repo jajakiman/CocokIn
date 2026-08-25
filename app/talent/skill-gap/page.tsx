@@ -1,6 +1,5 @@
 import { AppShell } from "@/src/design-system/app-shell";
 import { SkillGapChart } from "@/src/components/talent/skill-gap-chart";
-import { CAREER_TAXONOMY } from "@/src/modules/talent/career-taxonomy";
 
 export default function SkillGapPage() {
   // Fixture data — akan diganti dengan real data dari assessment context/server state

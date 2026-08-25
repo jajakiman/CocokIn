@@ -487,8 +487,113 @@ h3 { font-size: 1rem; }
   margin: 0;
 }
 
+/* ── Marketplace Catalog Components ────────────────────── */
+
+.project-catalog { max-width: 64rem; }
+.catalog-heading { margin-bottom: 2rem; }
+.catalog-heading h1 { margin-bottom: 0.5rem; }
+.catalog-heading p:not(.eyebrow) { color: var(--muted-foreground); max-width: 60ch; }
+.catalog-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.filter-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--foreground);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-height: 2.25rem;
+  padding: 0.35rem 1rem;
+  transition: background 180ms, border-color 180ms;
+}
+.filter-chip:hover { border-color: var(--brand-blue); }
+.filter-chip[data-active="true"] { background: var(--brand-deep); border-color: var(--brand-deep); color: white; }
+.catalog-count { color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 1.5rem; }
+.catalog-grid { display: grid; gap: 1.25rem; }
+.catalog-empty {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+.catalog-empty p { color: var(--muted-foreground); margin: 0; }
+
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  transition: border-color 180ms;
+}
+.project-card:hover { border-color: var(--brand-blue); }
+.project-card__header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.project-card__header h3 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+.project-card__business { color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 0; }
+.project-card__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.project-card__skills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.skill-tag {
+  background: var(--surface-subtle);
+  border-radius: 0.35rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+}
+
+.cocok-score-button {
+  align-items: center;
+  background: var(--surface-subtle);
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-width: 5.5rem;
+  padding: 0.5rem 0.75rem;
+  transition: transform 180ms, box-shadow 180ms;
+}
+.cocok-score-button:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
+.cocok-score-button[data-tone="success"] { background: var(--success-subtle); border-color: var(--success); color: var(--success); }
+.cocok-score-button[data-tone="warning"] { background: var(--warning-subtle); border-color: var(--warning); color: var(--warning); }
+.cocok-score-button[data-tone="destructive"] { background: var(--destructive-subtle); border-color: var(--destructive); color: var(--destructive); }
+.cocok-score-button__value { font-size: 1.75rem; font-variant-numeric: tabular-nums; font-weight: 900; line-height: 1; }
+.cocok-score-button__label { font-size: 0.65rem; font-weight: 700; margin-top: 0.2rem; text-transform: uppercase; }
+
+/* ── Match Breakdown ────────────────────────────────────── */
+
+.match-breakdown {
+  background: var(--surface-subtle);
+  border-radius: 0.75rem;
+  margin-top: 1.25rem;
+  padding: 1.25rem;
+}
+.breakdown-factors { display: grid; gap: 0.75rem; margin-bottom: 1.25rem; }
+.breakdown-factor { display: grid; gap: 0.25rem; }
+.breakdown-factor__header { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; }
+.breakdown-factor__weight { color: var(--muted-foreground); }
+.breakdown-factor__bar-bg { background: var(--surface); border-radius: 999px; height: 0.45rem; overflow: hidden; }
+.breakdown-factor__bar { height: 100%; border-radius: 999px; transition: width 240ms; }
+.breakdown-factor__bar[data-tone="success"] { background: var(--success); }
+.breakdown-factor__bar[data-tone="warning"] { background: var(--warning); }
+.breakdown-factor__bar[data-tone="destructive"] { background: var(--destructive); }
+.breakdown-factor__score { color: var(--muted-foreground); font-size: 0.75rem; font-variant-numeric: tabular-nums; text-align: right; }
+
+.breakdown-section { margin-top: 1rem; }
+.breakdown-section h4 { font-size: 0.875rem; margin-bottom: 0.5rem; }
+.breakdown-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.breakdown-list li { align-items: center; display: flex; gap: 0.5rem; font-size: 0.875rem; }
+.breakdown-list li span:last-child { color: var(--foreground); }
+
 @media (min-width: 640px) {
   .career-picker__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .breakdown-factors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
