@@ -6,6 +6,7 @@ import { canPublishPortfolio } from "@/src/modules/portfolio/portfolio-guard";
 import { StatusBadge } from "@/src/design-system/status-badge";
 import { PageHeader } from "@/src/design-system/page-header";
 import { EmptyState } from "@/src/design-system/empty-state";
+import { CheckCircle, Globe, Lock, ArrowSquareOut, ShieldCheck } from "@phosphor-icons/react";
 
 type PortfolioViewProps = {
   initialEntries: PortfolioEntry[];
@@ -44,7 +45,7 @@ export function PortfolioView({ initialEntries }: PortfolioViewProps) {
       <PageHeader
         eyebrow="Rekam Jejak Nyata"
         title="Portofolio Terverifikasi UMKM"
-        description="Hasil kerja nyata dari proyek mikro yang telah tuntas dan disahkan langsung oleh pelaku usaha UMKM."
+        description="Karya digital dari proyek mikro yang telah tuntas dan disahkan langsung oleh pemilik usaha UMKM."
       />
 
       {entries.length === 0 ? (
@@ -62,9 +63,20 @@ export function PortfolioView({ initialEntries }: PortfolioViewProps) {
                 <div className="portfolio-card__header">
                   <div>
                     <div className="portfolio-card__tags">
-                      <StatusBadge tone="success">✓ Verified by {entry.businessName}</StatusBadge>
+                      <StatusBadge tone="success">
+                        <ShieldCheck size={14} weight="fill" />
+                        Verified by {entry.businessName}
+                      </StatusBadge>
                       <StatusBadge tone={entry.visibility === "PUBLIC" ? "info" : "neutral"}>
-                        {entry.visibility === "PUBLIC" ? "Publik" : "Privat (Draf)"}
+                        {entry.visibility === "PUBLIC" ? (
+                          <>
+                            <Globe size={14} weight="bold" /> Publik
+                          </>
+                        ) : (
+                          <>
+                            <Lock size={14} weight="bold" /> Privat (Draf)
+                          </>
+                        )}
                       </StatusBadge>
                     </div>
                     <h3>{entry.title}</h3>
@@ -96,7 +108,7 @@ export function PortfolioView({ initialEntries }: PortfolioViewProps) {
                       rel="noopener noreferrer"
                       className="text-link"
                     >
-                      Kunjungi Preview URL ↗
+                      Kunjungi Preview Staging URL <ArrowSquareOut size={16} weight="bold" />
                     </a>
                   </div>
                 </div>
@@ -114,13 +126,21 @@ export function PortfolioView({ initialEntries }: PortfolioViewProps) {
                     </label>
                     <span className="attribution-status">
                       Atribusi UMKM:{" "}
-                      <strong>{entry.businessAttributionApproved ? "Disetujui" : "Menunggu"}</strong>
+                      <strong>
+                        {entry.businessAttributionApproved ? (
+                          <span style={{ color: "var(--success)" }}>
+                            <CheckCircle size={14} weight="fill" style={{ display: "inline" }} /> Disetujui
+                          </span>
+                        ) : (
+                          "Menunggu"
+                        )}
+                      </strong>
                     </span>
                   </div>
 
                   {isPublishable ? (
                     <div className="visibility-selector">
-                      <label htmlFor={`vis-${entry.id}`}>Visibilitas Publik:</label>
+                      <label htmlFor={`vis-${entry.id}`}>Visibilitas:</label>
                       <select
                         id={`vis-${entry.id}`}
                         className="form-select form-select--sm"

@@ -12,6 +12,7 @@ import { calculateCareerReadiness } from "@/src/modules/talent/career-readiness"
 import { useTalent } from "@/src/context/talent-context";
 import { CareerPicker } from "./career-picker";
 import { ReadinessResult } from "./readiness-result";
+import { Sparkle, ArrowLeft } from "@phosphor-icons/react";
 
 type Step = "career" | "quiz" | "result";
 
@@ -72,16 +73,30 @@ export function AssessmentWizard() {
     return (
       <div className="assessment-quiz">
         <div className="quiz-progress">
-          <div className="quiz-progress__bar" style={{ width: `${progress}%` }} />
+          <div className="quiz-progress__bar-bg">
+            <div className="quiz-progress__bar" style={{ width: `${progress}%` }} />
+          </div>
           <p className="quiz-progress__label">
-            Pertanyaan {currentQuestionIndex + 1} dari {questions.length}
+            Pertanyaan {currentQuestionIndex + 1} dari {questions.length} ({Math.round(progress)}%)
           </p>
         </div>
 
         <div className="quiz-question">
-          <p className="quiz-question__type">
-            {currentQuestion.type === "TECHNICAL" ? "Teknis" : "Soft Skill"}
-          </p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <p className="quiz-question__type">
+              <Sparkle size={14} weight="fill" style={{ display: "inline", marginRight: "4px" }} />
+              {currentQuestion.type === "TECHNICAL" ? "Kompetensi Teknis" : "Soft Skill Profesional"}
+            </p>
+            <button
+              type="button"
+              className="text-action"
+              onClick={handleRestart}
+              style={{ fontSize: "0.8rem" }}
+            >
+              <ArrowLeft size={14} /> Ganti Karier
+            </button>
+          </div>
+
           <h2>{currentQuestion.text}</h2>
 
           <div className="quiz-options">
