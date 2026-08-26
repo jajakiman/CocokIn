@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import { StatusBadge } from "@/src/design-system/status-badge";
@@ -8,6 +10,10 @@ import { EmptyState } from "@/src/design-system/empty-state";
 import { MoneyBreakdown } from "@/src/design-system/money-breakdown";
 import { AuditTimeline } from "@/src/design-system/audit-timeline";
 import { CocokScoreCard } from "@/src/design-system/cocok-score-card";
+import { DemoBanner } from "@/src/design-system/demo-banner";
+import { PermissionState } from "@/src/design-system/permission-state";
+import { AccountMenu } from "@/src/components/auth/account-menu";
+import { SEEDED_TALENT_IDENTITY } from "@/src/fixtures/seeded-demo";
 
 const swatches = [
   ["Brand cyan", "#0DB8D3"],
@@ -128,6 +134,31 @@ export default function DesignSystemPage() {
         <EmptyState
           title="Belum ada riwayat aktivitas"
           description="Aktivitas dan log penugasan proyek akan otomatis tercatat di sini."
+        />
+      </section>
+
+      <section className="catalog-section">
+        <h2>Demo Mode Banner</h2>
+        <DemoBanner role="Talent" />
+      </section>
+
+      <section className="catalog-section">
+        <h2>Account Menu (Authenticated Presentation)</h2>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <AccountMenu
+            user={SEEDED_TALENT_IDENTITY}
+            onLogout={async () => {
+              alert("Logout action invoked via AuthUiAdapter");
+            }}
+          />
+        </div>
+      </section>
+
+      <section className="catalog-section">
+        <h2>Permission State</h2>
+        <PermissionState
+          title="Akses Dibatasi"
+          message="Akun Anda belum memiliki hak akses ke modul treasury."
         />
       </section>
     </main>

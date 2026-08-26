@@ -9,6 +9,10 @@ import type {
 } from "@/src/modules/talent/types";
 import { CAREER_TAXONOMY } from "@/src/modules/talent/career-taxonomy";
 import { createPassport, markAssessed } from "@/src/modules/talent/skill-passport";
+import {
+  createSeededTalentPassport,
+  createSeededTalentProfile,
+} from "@/src/fixtures/seeded-demo";
 
 export type ConsentSettings = {
   termsAndPrivacy: boolean; // Required
@@ -36,52 +40,18 @@ export type TalentProfileData = {
   consents: ConsentSettings;
 };
 
-const DEFAULT_CAREER: CareerDomainId = "frontend-dev";
-
-const INITIAL_PROFILE: TalentProfileData = {
-  id: "talent-nadia",
-  name: "Nadia Putri",
-  university: "Institut Teknologi Bandung",
-  major: "Teknik Informatika",
-  graduationYear: "2026",
-  bio: "Mahasiswa tingkat akhir yang antusias membangun web app modern dengan Next.js dan Tailwind CSS.",
-  targetCareerId: DEFAULT_CAREER,
-  availability: "PART_TIME",
-  workModePreference: "REMOTE",
-  city: "Bandung",
-  externalLinks: {
-    github: "https://github.com/nadiaputri",
-    linkedin: "https://linkedin.com/in/nadiaputri",
-    portfolio: "https://nadiaputri.dev",
-  },
-  consents: {
-    termsAndPrivacy: true,
-    publicPortfolio: true,
-    marketingResearch: false,
-  },
-};
+const SEED_DRAFT_KEY = "cocokin_seeded_demo_talent_draft";
 
 function createInitialPassport(careerId: CareerDomainId): TalentSkillPassport {
+  if (careerId === "frontend-dev") {
+    return createSeededTalentPassport();
+  }
   const career = CAREER_TAXONOMY[careerId];
   const allSkills = [...career.technicalSkills, ...career.softSkills].map((s) => ({
     skillId: s.skillId,
     name: s.name,
   }));
-  const passport = createPassport("talent-nadia", careerId, allSkills);
-  // Default fixture demo skills
-  if (passport.entries[0]) {
-    passport.entries[0].evidenceLevel = "ASSESSED";
-    passport.entries[0].assessedScore = 90;
-  }
-  if (passport.entries[1]) {
-    passport.entries[1].evidenceLevel = "ASSESSED";
-    passport.entries[1].assessedScore = 70;
-  }
-  if (passport.entries[3]) {
-    passport.entries[3].evidenceLevel = "PROJECT_VERIFIED";
-    passport.entries[3].verifiedProjectCount = 2;
-  }
-  return passport;
+  return createPassport("talent-nadia", careerId, allSkills);
 }
 
 type TalentContextValue = {
@@ -98,7 +68,7 @@ const TalentContext = createContext<TalentContextValue | null>(null);
 export function TalentProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<TalentProfileData>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("cocokin_talent_profile");
+      const saved = localStorage.getItem(SEED_DRAFT_KEY);
       if (saved) {
         try {
           return JSON.parse(saved);
@@ -107,7 +77,7 @@ export function TalentProvider({ children }: { children: ReactNode }) {
         }
       }
     }
-    return INITIAL_PROFILE;
+    return createSeededTalentProfile();
   });
 
   const [passport, setPassport] = useState<TalentSkillPassport>(() => {
@@ -119,7 +89,7 @@ export function TalentProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("cocokin_talent_profile", JSON.stringify(profile));
+      localStorage.setItem(SEED_DRAFT_KEY, JSON.stringify(profile));
     }
   }, [profile]);
 

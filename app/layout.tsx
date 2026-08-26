@@ -13,8 +13,17 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cocokin.id"),
-  title: "CocokIn Foundation",
-  description: "Responsive foundation preview for CocokIn Talent, UMKM, and Admin experiences.",
+  title: "CocokIn | Talent Bertumbuh, UMKM Naik Kelas",
+  description:
+    "CocokIn mempertemukan Talent dan UMKM melalui matching terukur, proyek digital, dan bukti kerja terverifikasi.",
+  openGraph: {
+    title: "CocokIn | Talent Bertumbuh, UMKM Naik Kelas",
+    description:
+      "Temukan kecocokan terukur, jalankan proyek digital, dan bangun bukti kerja terverifikasi bersama CocokIn.",
+    siteName: "CocokIn",
+    type: "website",
+    url: "/",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

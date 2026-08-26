@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "../src/design-system/styles/public.css";
+@import "../src/design-system/styles/auth.css";
 
 :root {
   --background: #f5fafc;

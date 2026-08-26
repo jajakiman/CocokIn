@@ -4,65 +4,10 @@ import { useState } from "react";
 import { PageHeader } from "@/src/design-system/page-header";
 import { StatusBadge, type StatusTone } from "@/src/design-system/status-badge";
 import { MetricTile } from "@/src/design-system/metric-tile";
-
-type Milestone = {
-  id: string;
-  order: number;
-  title: string;
-  weight: number; // e.g. 40%
-  status: "APPROVED" | "READY_FOR_REVIEW" | "IN_PROGRESS" | "PENDING";
-  deliverableSummary: string;
-  submittedUrl?: string;
-};
-
-type ActiveProject = {
-  id: string;
-  title: string;
-  businessName: string;
-  serviceValue: number;
-  status: "IN_PROGRESS";
-  durationDays: number;
-  remainingDays: number;
-  milestones: Milestone[];
-};
-
-const INITIAL_PROJECT: ActiveProject = {
-  id: "prj-act-01",
-  title: "Website Katalog & WhatsApp Warung Bu Siti",
-  businessName: "Warung Bu Siti",
-  serviceValue: 1500000,
-  status: "IN_PROGRESS",
-  durationDays: 8,
-  remainingDays: 3,
-  milestones: [
-    {
-      id: "m-1",
-      order: 1,
-      title: "Desain UI & Struktur Menu Katalog",
-      weight: 30,
-      status: "APPROVED",
-      deliverableSummary: "Wireframe & prototipe Figma tervalidasi pemilik warung.",
-      submittedUrl: "https://figma.com/file/warungbusiti",
-    },
-    {
-      id: "m-2",
-      order: 2,
-      title: "Implementasi Halaman Katalog & Filter Kategori",
-      weight: 40,
-      status: "READY_FOR_REVIEW",
-      deliverableSummary: "Katalog responsif live dengan tombol WhatsApp.",
-      submittedUrl: "https://staging-m2.warungbusiti.id",
-    },
-    {
-      id: "m-3",
-      order: 3,
-      title: "Deploy Production & Serah Terima Handover",
-      weight: 30,
-      status: "PENDING",
-      deliverableSummary: "Deployment ke domain utama dan dokumentasi penggunaan.",
-    },
-  ],
-};
+import {
+  createSeededWorkspace,
+  type SeedWorkspace,
+} from "@/src/fixtures/seeded-demo";
 
 const STATUS_TONE: Record<string, StatusTone> = {
   APPROVED: "success",
@@ -79,7 +24,9 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export function WorkspaceView() {
-  const [project, setProject] = useState<ActiveProject>(INITIAL_PROJECT);
+  const [project, setProject] = useState<SeedWorkspace>(() =>
+    createSeededWorkspace(),
+  );
   const [stagingUrl, setStagingUrl] = useState("");
   const [submissionNotes, setSubmissionNotes] = useState("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);

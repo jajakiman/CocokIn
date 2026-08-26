@@ -2,127 +2,14 @@
 
 import { useState } from "react";
 import type {
-  ProjectMatchRequirement,
   TalentMatchProfile,
 } from "@/src/modules/matching/types";
 import type { CareerDomainId } from "@/src/modules/talent/types";
 import { calculateCocokScore } from "@/src/modules/matching";
 import { getAllCareerIds, getCareerDomain } from "@/src/modules/talent/career-taxonomy";
 import { useTalent } from "@/src/context/talent-context";
+import { createSeededProjects } from "@/src/fixtures/seeded-demo";
 import { ProjectCard } from "./project-card";
-
-// ponytail: fixture data; replace with server-fetched projects when DB exists
-
-type ProjectFixture = {
-  id: string;
-  title: string;
-  businessName: string;
-  project: ProjectMatchRequirement;
-};
-
-const MOCK_PROJECTS: ProjectFixture[] = [
-  {
-    id: "prj-001",
-    title: "Website Katalog Warung Bu Siti",
-    businessName: "Warung Bu Siti",
-    project: {
-      requiredSkills: [
-        { skillId: "html", name: "HTML" },
-        { skillId: "css", name: "CSS" },
-        { skillId: "javascript", name: "JavaScript" },
-        { skillId: "nextjs", name: "Next.js" },
-      ],
-      targetCareerId: "frontend-dev",
-      difficulty: "BEGINNER",
-      durationDays: 8,
-      workMode: "REMOTE",
-    },
-  },
-  {
-    id: "prj-002",
-    title: "Landing Page Kopi Lereng",
-    businessName: "Kopi Lereng Manglayang",
-    project: {
-      requiredSkills: [
-        { skillId: "html", name: "HTML" },
-        { skillId: "css", name: "CSS" },
-        { skillId: "tailwind", name: "Tailwind CSS" },
-      ],
-      targetCareerId: "frontend-dev",
-      difficulty: "BEGINNER",
-      durationDays: 5,
-      workMode: "REMOTE",
-    },
-  },
-  {
-    id: "prj-003",
-    title: "Redesign App Laundry Kiloan",
-    businessName: "LaundryKu",
-    project: {
-      requiredSkills: [
-        { skillId: "figma", name: "Figma" },
-        { skillId: "user-research", name: "User Research" },
-        { skillId: "wireframing", name: "Wireframing" },
-        { skillId: "prototyping", name: "Prototyping" },
-      ],
-      targetCareerId: "ui-ux-designer",
-      difficulty: "INTERMEDIATE",
-      durationDays: 10,
-      workMode: "HYBRID",
-      city: "Bandung",
-    },
-  },
-  {
-    id: "prj-004",
-    title: "Dashboard Penjualan Toko Roti",
-    businessName: "Roti Manis Bakery",
-    project: {
-      requiredSkills: [
-        { skillId: "excel", name: "Excel / Spreadsheet" },
-        { skillId: "sql", name: "SQL" },
-        { skillId: "visualization", name: "Tableau / Power BI" },
-      ],
-      targetCareerId: "data-analyst",
-      difficulty: "INTERMEDIATE",
-      durationDays: 12,
-      workMode: "REMOTE",
-    },
-  },
-  {
-    id: "prj-005",
-    title: "Kampanye Instagram Kedai Kopi",
-    businessName: "Kedai Kopi Nusantara",
-    project: {
-      requiredSkills: [
-        { skillId: "content-strategy", name: "Content Strategy" },
-        { skillId: "meta-ads", name: "Meta Ads" },
-        { skillId: "copywriting", name: "Copywriting" },
-      ],
-      targetCareerId: "digital-marketer",
-      difficulty: "BEGINNER",
-      durationDays: 7,
-      workMode: "REMOTE",
-    },
-  },
-  {
-    id: "prj-006",
-    title: "Aplikasi Booking Salon Kecantikan",
-    businessName: "Salon Cantik Bunda",
-    project: {
-      requiredSkills: [
-        { skillId: "react", name: "React" },
-        { skillId: "nextjs", name: "Next.js" },
-        { skillId: "tailwind", name: "Tailwind CSS" },
-        { skillId: "javascript", name: "JavaScript" },
-      ],
-      targetCareerId: "frontend-dev",
-      difficulty: "ADVANCED",
-      durationDays: 14,
-      workMode: "HYBRID",
-      city: "Bandung",
-    },
-  },
-];
 
 export function ProjectCatalog() {
   const { profile, passport } = useTalent();
@@ -143,9 +30,10 @@ export function ProjectCatalog() {
     city: profile.city,
   };
 
+  const allProjects = createSeededProjects();
   const projects = filterCareer === "all"
-    ? MOCK_PROJECTS
-    : MOCK_PROJECTS.filter((p) => p.project.targetCareerId === filterCareer);
+    ? allProjects
+    : allProjects.filter((p) => p.project.targetCareerId === filterCareer);
 
   const scoredProjects = projects
     .map((p) => ({
