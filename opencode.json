@@ -1,0 +1,10 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      ".agents/matt-pocock-skills",
+      ".agents/ui-ux-pro-max",
+      ".agents/taste-skill/skills"
+    ]
+  }
+}

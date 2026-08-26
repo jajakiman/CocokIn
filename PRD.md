@@ -13,7 +13,7 @@
 | Version | Summary |
 |---|---|
 | 1.1 | Comprehensive SaaS architecture, matching, assessment, and project lifecycle. |
-| 1.2 | Milestone delivery, staging review, escrow, infrastructure handover, warranty, maintenance, and platform fees. |
+| 1.2 | Milestone delivery, staging review, treasury funding, infrastructure handover, warranty, maintenance, chat, and platform fees. |
 
 > System documentation: [`docs/README.md`](docs/README.md), [`docs/BUSINESS_FLOW.md`](docs/BUSINESS_FLOW.md), [`docs/BUSINESS_RULES.md`](docs/BUSINESS_RULES.md), [`docs/TECHNICAL_ARCHITECTURE.md`](docs/TECHNICAL_ARCHITECTURE.md), and [`docs/DATA_STATE_MODEL.md`](docs/DATA_STATE_MODEL.md).
 
@@ -173,18 +173,24 @@ Business Problem ➔ Digital Need Diagnosis ➔ Project Creation ➔ Smart Match
 
 ### 3.6 Modul Pembayaran, Warranty & Maintenance
 
-* **FR-PAY-01 — Protected Project Funding (Priority: P0)**
-  * Dana jasa proyek dikumpulkan dan dicairkan melalui Xendit xenPlatform sesuai model marketplace yang disetujui provider; CocokIn tidak menjadi kustodian dana secara langsung.
-  * Istilah *escrow* hanya boleh digunakan pada produk setelah model penahanan/pelepasan dana disetujui Xendit dan lolos review legal.
+* **FR-PAY-01 — Project Funding Receipt (Priority: P0)**
+  * UMKM mendanai Service Value dan fee platform ke rekening badan usaha CocokIn melalui transfer bank sebagai default atau GoPay Merchant QRIS sebagai opsi.
+  * Setiap pergerakan dana memiliki Platform Reference dan External Reference. Real-money mode tidak aktif sebelum legal, bank/acquirer, accounting, AML/KYC, reconciliation, dan treasury gates disetujui.
+  * CocokIn menjaga reserve kas 100% atas seluruh kewajiban pengguna dan tidak boleh menyebut layanan ini sebagai escrow berizin tanpa dasar legal.
   * Domain, hosting, VPS, database, lisensi, pajak, dan biaya payment gateway dipisahkan dari nilai jasa yang dikenakan platform fee.
 
-* **FR-PAY-02 — Split Platform Fee (Priority: P0)**
-  * UMKM membayar service fee 6% dan Talent membayar service fee 4% dari nilai jasa yang berhasil dicairkan, sehingga total take rate CocokIn adalah 10%.
-  * Refund dan partial payout menghitung fee hanya dari nominal jasa yang benar-benar dicairkan.
+* **FR-PAY-02 — Staged Platform Fee (Priority: P0)**
+  * UMKM membayar total fee 10% dari Service Value: 5% menjadi Activation Fee dan 5% menjadi Success Fee. Talent tidak dikenakan fee.
+  * Fee pending tetap refundable; fee earned mengikuti trigger kontraktual dan immutable ledger.
 
-* **FR-PAY-03 — Warranty Retention (Priority: P0)**
-  * Sebesar 10% dari setiap nilai milestone yang disetujui diakumulasi hingga setara 10% total nilai jasa Talent dan ditahan selama warranty 30 hari; retensi bukan platform fee dan tidak dikenakan fee dua kali.
-  * Retensi cair otomatis ketika masa warranty berakhir tanpa tiket valid atau sengketa aktif.
+* **FR-PAY-03 — Milestone Payout & Warranty Retention (Priority: P0)**
+  * Setiap milestone approved mengalokasikan 90% untuk payout Talent dan 10% sebagai warranty retention Talent.
+  * CocokIn menanggung biaya transfer payout. Retention cair setelah warranty berakhir tanpa tiket valid atau sengketa aktif.
+
+* **FR-CHT-01 — Project-Scoped In-App Chat (Priority: P0)**
+  * Chat aktif setelah Talent diterima, menggunakan PostgreSQL sebagai source of truth dan Pusher Channels untuk realtime transport.
+  * Chat mendukung text, reply, reaction, attachment, voice note, typing, presence, receipt, unread, search, report, system message, fallback polling, read-only closure, dan reopen consent Talent.
+  * Chat tidak dapat mengubah scope, milestone, deadline, approval, atau financial state tanpa aksi formal terkait.
 
 * **FR-SUP-01 — Bug Warranty (Priority: P1)**
   * Warranty bug gratis berlaku 30 hari kalender untuk ketidaksesuaian terhadap scope, acceptance criteria, dan baseline production saat handover.
@@ -329,7 +335,7 @@ Status proyek, milestone, pembayaran, infrastruktur, warranty, dan maintenance d
 │  │ Domain Modules:                                       │  │
 │  │ • Talent & Skill Engine     • Business Readiness      │  │
 │  │ • Matching & Cocok Engine   • Milestone & Review Hub  │  │
-│  │ • Escrow & Ledger           • Infra & Handover        │  │
+│  │ • Treasury & Ledger         • Infra & Handover        │  │
 │  │ • Warranty & Support        • Impact Aggregator       │  │
 │  └───────────────────────────────────────────────────────┘  │
 └──────────────────────────────┬──────────────────────────────┘
@@ -342,9 +348,9 @@ Status proyek, milestone, pembayaran, infrastruktur, warranty, dan maintenance d
 ```
 
 * **Reliability & AI Fallback:** Fitur AI (draf proyek otomatis & ringkasan matching) bersifat opsional/pendukung. Jika API LLM mengalami downtime, sistem secara otomatis menjalankan *deterministic rule-based matching* 100% normal tanpa interupsi.
-* **Payment Boundary:** Funding, payout, dan refund menggunakan penyedia pembayaran marketplace berizin. CocokIn menyimpan referensi transaksi serta immutable internal ledger, bukan credential pembayaran atau dana pengguna secara langsung.
+* **Payment Boundary:** Funding, payout, dan refund menggunakan rekening badan usaha CocokIn dengan reserve kewajiban 100%, dual reference, reconciliation, dan immutable ledger. Real-money launch tetap gated; foundation memakai simulasi.
 * **Infrastructure Boundary:** CocokIn mengorkestrasi diagnosis, rekomendasi, review, dan handover; domain, hosting, VPS, serta billing provider tetap dimiliki UMKM.
-* **Managed Providers:** Auth.js 5 untuk session/RBAC, Xendit xenPlatform untuk protected funding dan payout, Inngest untuk durable jobs, Resend untuk email, Google Gemini untuk AI assist, serta Sentry untuk observability.
+* **Managed Providers:** Auth.js 5 untuk session/RBAC, Pusher Channels untuk realtime chat, Inngest untuk durable jobs, Resend untuk email, Google Gemini untuk AI assist, serta Sentry untuk observability.
 * **Source & Deployment:** GitHub digunakan untuk source control dan Pull Request tanpa GitHub Actions. Vercel Git Integration membuat Preview Deployment dari branch/PR dan Production Deployment dari `main`.
 
 ---
@@ -355,6 +361,6 @@ Status proyek, milestone, pembayaran, infrastruktur, warranty, dan maintenance d
 * **Phase 2 — Dual Profile & Assessment Core (P0):** Onboarding profil talent & bisnis, kuis *Career Readiness*, formulir *Digital Readiness*, dan kalkulator *Skill Gap*.
 * **Phase 3 — Project Management & Smart Matching (P0):** Form pembuatan *Micro-Project*, algoritma kalkulasi *Cocok Score*, katalog marketplace proyek, dan alur pelamaran.
 * **Phase 4 — Milestone Delivery & Review Hub (P0):** Milestone workspace, Preview URL staging, versioned submission, acceptance checklist, revision, change request, dan review UMKM.
-* **Phase 5 — Escrow, Ledger & Dispute (P0/P1):** Integrasi payment provider, funding, payout, split fee 6%/4%, refund, retensi 10%, audit event, dan mediasi Admin.
+* **Phase 5 — Treasury, Ledger & Dispute (P0/P1):** Funding reconciliation, reserve 100%, fee 5%/5%, payout milestone 90/10, refund, dual reference, audit event, dan mediasi Admin.
 * **Phase 6 — Infrastructure, Handover & Support (P0/P1):** Diagnosis domain/hosting, production handover, ownership checklist, warranty 30 hari, maintenance 5 tiket, SLA, dan support ticket.
 * **Phase 7 — Analytics, AI Assist & Final Polish (P1/P2):** Auto-generate *Skill Passport* dan *Verified Portfolio*, AI Project Assistant, *Explainable Match*, dashboard dampak SDG 8/9, testing E2E Playwright, dan finalisasi seed data demo.

@@ -15,7 +15,8 @@ flowchart TB
     DAL --> P[Prisma ORM]
     P --> DB[(Supabase PostgreSQL)]
     DAL --> ST[Supabase Storage]
-    DAL --> XE[Xendit xenPlatform]
+    DAL --> TR[Bank and GoPay Merchant reconciliation]
+    DAL --> PU[Pusher Channels]
     DAL --> IN[Inngest]
     DAL --> RE[Resend]
     DAL --> GM[Google Gemini]
@@ -41,7 +42,8 @@ Microservices are deferred until a measured scaling or organizational boundary r
 | Database | Supabase-managed PostgreSQL 17 |
 | ORM and migrations | Prisma 7 |
 | Object storage | Supabase Storage |
-| Payment | Xendit xenPlatform |
+| Funding | Legal-entity account: bank transfer default, GoPay Merchant QRIS optional |
+| Realtime | Pusher Channels; PostgreSQL remains authoritative |
 | Background jobs | Inngest |
 | Transactional email | Resend + React Email |
 | AI assist | Google Gemini behind an adapter |
@@ -66,7 +68,8 @@ src/modules/
 ├── marketplace/       # Projects, applications, agreements
 ├── matching/          # Deterministic Cocok Score and explanations
 ├── delivery/          # Milestones, submissions, reviews, change requests
-├── payments/          # Funding references, ledger, payout, refund, reconciliation
+├── payments/          # Funding receipts, dual references, reserve, ledger, payout, refund
+├── chat/              # Durable project chat and Pusher delivery
 ├── infrastructure/    # Hosting recommendation and production handover
 ├── support/           # Warranty, retention guards, maintenance tickets, SLA
 ├── disputes/          # Evidence, Admin decisions, exceptional outcomes
@@ -114,7 +117,8 @@ Server Actions are not used for parallel data fetching or external webhooks.
 
 Use for machine-to-machine interfaces:
 
-- Xendit webhooks.
+- Bank/GoPay Merchant reconciliation callbacks where available.
+- Pusher private/presence channel authorization.
 - Inngest serve endpoint.
 - Resend webhooks when delivery tracking is enabled.
 - Public verification and health endpoints.
@@ -168,7 +172,7 @@ BusinessVerificationStatus:
 UNVERIFIED | BASIC_VERIFIED | VERIFIED_BUSINESS | REJECTED
 ```
 
-Role and verification are separate. Progressive KYC is required before a Talent can receive payout. Xendit sub-account onboarding requirements are integrated through the payment adapter and do not replace CocokIn authorization.
+Role and verification are separate. Progressive KYC is required before a Talent can receive payout. Foundation uses simulated verification; real-money launch requires an approved KYC/AML process.
 
 ## 7. Database and Transactions
 
@@ -178,7 +182,7 @@ PostgreSQL is the source of truth. Prisma owns schema migrations and type-safe a
 
 - Store IDR as integer minor units; because IDR has no fractional minor unit in this product, `2000000` represents `Rp2.000.000`.
 - Use `BigInt` where aggregate volume may exceed JavaScript safe integers.
-- Store percentages as basis points: `600`, `400`, and `1000`.
+- Store percentages as basis points: Activation Fee `500`, Success Fee `500`, milestone payout `9000`, and warranty retention `1000`.
 - Apply one documented rounding function for all ledger calculations.
 
 ### Financial mutation pattern
@@ -219,39 +223,41 @@ Required controls:
 
 Supabase Auth is not used. Cloudinary is not used.
 
-## 9. Protected Project Funding
+## 9. Treasury Funding
 
-Xendit xenPlatform is the selected provider for sub-accounts, payment collection, split routing, payout, refund, and reconciliation references.
+The intended production flow receives full Project funding into CocokIn's legal-entity account. Bank transfer is default and GoPay Merchant QRIS is optional. Every movement uses a unique Platform Reference and External Reference.
 
 ```mermaid
 sequenceDiagram
     participant U as UMKM
     participant C as CocokIn
-    participant X as Xendit
+    participant F as Admin/Finance
     participant DB as PostgreSQL Ledger
 
     U->>C: Fund project
-    C->>X: Create hosted checkout
-    X-->>C: Signed settlement webhook
-    C->>DB: Idempotent funding entries
-    C->>X: Payout/refund instruction after domain approval
-    X-->>C: Signed result webhook
-    C->>DB: Reconcile result entries
+    C-->>U: Bank/QRIS instruction + Platform Reference
+    U->>C: Transfer and evidence + External Reference
+    C-->>F: Reconciliation queue
+    F->>DB: Reconcile receipt and reserve liabilities
+    F->>DB: Reconcile payout/refund proof and confirmation
 ```
 
 ### Compliance gate
 
-The product and UI use **Protected Project Funding** until Xendit approves the exact fund-holding/release model and legal review authorizes the term escrow. Production payment launch requires:
+Real-money mode remains disabled until legal counsel, bank/QRIS acquirer, accounting, tax, AML/KYC, reconciliation, treasury, security, and incident controls approve the flow. Internal ledger and 100% reserve do not make CocokIn licensed escrow.
 
-- xenPlatform account approval.
-- Confirmed sub-account KYC/KYB and payout model.
-- Confirmed retention and release capability.
-- Tested refund, chargeback, failed split, and reconciliation flows.
-- Legal approval of user-facing terms.
+## 10. Realtime Project Chat
 
-Xendit split fees may not reverse automatically with a refund. CocokIn therefore keeps an independent ledger and operations queue for compensating transfers.
+Pusher Channels provides private/presence WebSocket delivery. PostgreSQL remains authoritative and Supabase Realtime is not used.
 
-## 10. Background Jobs
+```text
+Persist message -> commit -> publish Pusher event
+Pusher unavailable -> message remains durable -> client polls/syncs by sequence
+```
+
+Server-side channel authorization verifies Auth.js session, Project participation, account state, and conversation access. Client receives only public Pusher key/cluster; app ID and secret remain server-only. Pusher Sandbox limits are development/demo constraints, not unlimited production capacity.
+
+## 11. Background Jobs
 
 Inngest runs durable, retryable workflows:
 
@@ -266,13 +272,13 @@ Inngest runs durable, retryable workflows:
 
 Every handler uses a stable event ID/idempotency key. Redis and BullMQ are not used.
 
-## 11. Email and Notifications
+## 12. Email and Notifications
 
 Resend sends transactional email rendered with React Email. Production requires a verified sending domain and environment-held API key. Email sends use idempotency keys and are retried through Inngest.
 
 In-app notifications and the immutable activity timeline remain canonical. Email is a delivery channel, not proof that a financial notification was seen. SMS and WhatsApp are outside P0.
 
-## 12. AI Boundary
+## 13. AI Boundary
 
 Google Gemini assists with project drafts, nontechnical explanations, assessment summaries, and explainable matching text.
 
@@ -288,24 +294,24 @@ Minimized domain data
 
 Gemini cannot approve projects, calculate the authoritative Cocok Score, move money, decide KYC, accept milestones, or resolve disputes. Failure falls back to deterministic matching and project templates.
 
-## 13. Observability
+## 14. Observability
 
 Sentry captures client, server, and route-handler errors, traces, source maps, and structured operational logs. Sensitive fields, payment payloads, KYC evidence, credentials, and dispute documents are scrubbed. Session Replay is disabled on authentication, KYC, payment, and dispute flows.
 
 Vercel Analytics and Speed Insights measure public traffic and Web Vitals. They are not audit or business-metric sources.
 
-## 14. Testing Strategy
+## 15. Testing Strategy
 
 | Layer | Tools | Coverage |
 |---|---|---|
 | Domain unit | Vitest | Cocok Score, money, fee split, retention, state guards, SLA, quotas |
 | Component | Testing Library | Forms, accessibility, review decisions, role-specific UI |
-| Integration | Vitest + MSW | Xendit, Gemini, Resend, storage, idempotent webhook handling |
+| Integration | Vitest + MSW | Bank/QRIS reconciliation, Pusher, Gemini, Resend, storage, idempotency |
 | End-to-end | Playwright | Onboarding through funding, delivery, handover, warranty, and dispute |
 
 Playwright targets Chromium, Firefox, WebKit, and a 375px mobile viewport for critical flows.
 
-## 15. Source Control and Deployment
+## 16. Source Control and Deployment
 
 ### GitHub
 
@@ -330,22 +336,21 @@ pnpm build
 pnpm test:e2e  # when critical flow changes
 ```
 
-The project exposes `pnpm verify` for lint, typecheck, unit tests, and build. Pull Request templates record that the checks were run.
+The project exposes `pnpm verify` for lint, typecheck, unit tests, and build. Each task records verification in its GitHub Issue; release verification is recorded in the `dev` to `main` Pull Request.
 
 ### Vercel Git Integration
 
 ```text
-Feature branch push
-→ GitHub Pull Request
-→ Vercel Preview Deployment
-→ Review and local quality confirmation
-→ Merge to main
+Task commit pushed to dev
+→ Vercel Preview/Staging Deployment
+→ Integration and local quality confirmation
+→ Pull Request dev to main
 → Vercel Production Deployment
 ```
 
 Vercel build failure blocks that deployment. Preview uses a synthetic-data staging Supabase project; production uses a separate Supabase project. Preview never migrates or reads production data.
 
-## 16. Deliberate Non-Choices
+## 17. Deliberate Non-Choices
 
 | Not selected | Reason |
 |---|---|

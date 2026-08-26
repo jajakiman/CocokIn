@@ -6,7 +6,7 @@
 
 **Architecture:** Keep requirements in `PRD.md`, policies in `BUSINESS_RULES.md`, operational sequences in `BUSINESS_FLOW.md`, technology/runtime boundaries in `TECHNICAL_ARCHITECTURE.md`, and entities/transitions in `DATA_STATE_MODEL.md`. Cross-link them through `docs/README.md` and avoid duplicating policy formulas.
 
-**Tech Stack:** Markdown, Mermaid, Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Auth.js 5, Prisma 7, PostgreSQL 17, Supabase Storage, Xendit xenPlatform, Inngest, Resend, Gemini, Sentry, Vercel Git Integration.
+**Tech Stack:** Markdown, Mermaid, Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Auth.js 5, Prisma 7, PostgreSQL 17, Supabase Storage, Pusher Channels, Inngest, Resend, Gemini, Sentry, Vercel Git Integration.
 
 **Spec:** `PRD.md` and `docs/BUSINESS_RULES.md`
 
@@ -14,9 +14,9 @@
 
 - GitHub is source control only; GitHub Actions is not used.
 - Vercel Git Integration creates preview and production deployments.
-- Payment wording is `Protected Project Funding` until Xendit and legal approval authorize an escrow claim.
+- CocokIn is not described as licensed escrow; real-money treasury mode remains disabled until the documented launch gates pass.
 - Business flow diagrams reference existing `FR-*` and `BR-*` identifiers rather than redefining policy.
-- Project, milestone, payment, infrastructure, warranty, and maintenance states remain independent.
+- Project, milestone, payment, infrastructure, warranty, maintenance, conversation, and dispute states remain independent.
 
 ---
 

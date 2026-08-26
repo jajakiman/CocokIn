@@ -1,0 +1,22 @@
+# Dependencies and generated application output
+node_modules/
+.next/
+coverage/
+playwright-report/
+test-results/
+
+# Local environment and secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Tool and OS artifacts
+*.tsbuildinfo
+*.log
+.DS_Store
+Thumbs.db
+
+# Python artifacts from vendored skill runtime
+__pycache__/
+*.py[cod]

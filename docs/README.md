@@ -11,16 +11,20 @@ This directory separates product intent, business policy, operational flow, runt
 | [`BUSINESS_FLOW.md`](BUSINESS_FLOW.md) | Actor sequences, triggers, preconditions, side effects, notifications, and failure paths |
 | [`TECHNICAL_ARCHITECTURE.md`](TECHNICAL_ARCHITECTURE.md) | Locked stack, module/runtime boundaries, providers, security, testing, and deployment |
 | [`DATA_STATE_MODEL.md`](DATA_STATE_MODEL.md) | Aggregates, entities, independent state transitions, domain events, idempotency, ledger, and invariants |
+| [`TEAM_JOBDESCS.md`](TEAM_JOBDESCS.md) | Zaky, Rafi, and Farid responsibilities, deliverables, interfaces, review gates, and work sequence |
+| [`TEAM_WORKFLOW.md`](TEAM_WORKFLOW.md) | Meeting decisions, reading order, two-branch Git workflow, task management, commit/push, conflict, and release procedure |
 
 ## Reading Paths
 
 ### Developer
 
-1. [`TECHNICAL_ARCHITECTURE.md`](TECHNICAL_ARCHITECTURE.md)
-2. [`DATA_STATE_MODEL.md`](DATA_STATE_MODEL.md)
-3. [`BUSINESS_FLOW.md`](BUSINESS_FLOW.md)
-4. [`BUSINESS_RULES.md`](BUSINESS_RULES.md)
-5. [`../PRD.md`](../PRD.md)
+1. [`TEAM_WORKFLOW.md`](TEAM_WORKFLOW.md)
+2. [`TEAM_JOBDESCS.md`](TEAM_JOBDESCS.md)
+3. [`TECHNICAL_ARCHITECTURE.md`](TECHNICAL_ARCHITECTURE.md)
+4. [`DATA_STATE_MODEL.md`](DATA_STATE_MODEL.md)
+5. [`BUSINESS_FLOW.md`](BUSINESS_FLOW.md)
+6. [`BUSINESS_RULES.md`](BUSINESS_RULES.md)
+7. [`../PRD.md`](../PRD.md)
 
 ### QA
 
@@ -54,8 +58,9 @@ This directory separates product intent, business policy, operational flow, runt
 ## Documentation Rules
 
 - Reference `FR-*` and `BR-*` IDs rather than copying policy text into multiple documents.
-- Keep project, milestone, payment, infrastructure, warranty, and maintenance states independent.
-- Use **Protected Project Funding** in product documentation until Xendit and legal approval authorize an escrow claim.
+- Keep project, milestone, payment, infrastructure, warranty, maintenance, conversation, and dispute states independent.
+- Do not describe CocokIn as licensed escrow. Real-money treasury mode remains disabled until legal, bank/acquirer, accounting, AML/KYC, reconciliation, and reserve gates pass.
+- Pusher Channels is the project-chat realtime transport; Supabase Realtime is not used.
 - Keep Mermaid diagrams valid GitHub-flavored Markdown.
 - Do not include API keys, credentials, personal evidence, or production URLs.
 - Record unresolved provider/legal decisions as explicit launch gates, not hidden assumptions.

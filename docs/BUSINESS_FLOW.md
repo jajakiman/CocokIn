@@ -1,274 +1,146 @@
 # CocokIn Business Flow
 
-> **Applies to:** [`../PRD.md`](../PRD.md) v1.2 and [`BUSINESS_RULES.md`](BUSINESS_RULES.md) v1.0  
 > **Audience:** Developers and QA  
-> **Purpose:** Describe actor interactions, system decisions, state changes, and exception paths without redefining policy.
+> **Policy source:** [`BUSINESS_RULES.md`](BUSINESS_RULES.md)
 
-## 1. Actors and Responsibilities
+## Actors
 
-| Actor | Primary responsibilities |
+| Actor | Responsibility |
 |---|---|
-| Talent | Complete profile and assessment, apply to projects, deliver milestones, perform production handover, honor warranty. |
-| UMKM | Complete business diagnosis, publish and fund projects, review outputs, own production infrastructure, accept handover. |
-| Admin | Verify businesses, moderate content, review disputes, and authorize exceptional financial outcomes. |
-| CocokIn | Calculate deterministic matching, enforce state guards, record audit history, orchestrate notifications and provider calls. |
-| Xendit | Collect protected project funding, manage sub-accounts, execute split routing, payout, and refund operations. |
-| External infrastructure provider | Host the UMKM production result under an account owned by the UMKM. |
+| Talent | Profile, assessment, application, delivery, chat, handover, warranty |
+| UMKM | Diagnosis, project, funding, selection, review, infrastructure ownership |
+| Admin/Finance | Verification, reconciliation, payout/refund execution, moderation, dispute |
+| CocokIn | Deterministic matching, state guards, ledger, audit, notification orchestration |
+| Pusher | Realtime delivery and presence only; never authoritative message storage |
 
-## 2. Lifecycle Overview
+## End-to-End Lifecycle
 
 ```mermaid
 flowchart LR
-    A[Onboarding] --> B[Assessment and diagnosis]
-    B --> C[Project publication]
-    C --> D[Matching and application]
-    D --> E[Agreement and funding]
-    E --> F[Milestone delivery]
-    F --> G[Staging review]
-    G -->|Revision| F
-    G -->|Approved| H[Production and handover]
-    H --> I[Warranty and retention]
-    I --> J[Verified portfolio and digital growth]
-    H --> K[Optional maintenance]
-    E -. Exception .-> L[Cancellation or dispute]
-    F -. Exception .-> L
-    G -. Exception .-> L
-    I -. Exception .-> L
+  A[Consent and onboarding] --> B[Assessment and diagnosis]
+  B --> C[Project and matching]
+  C --> D[Talent selection and chat]
+  D --> E[Agreement and funding]
+  E --> F[Milestone delivery and payout]
+  F --> G[Handover]
+  G --> H[Warranty and retention]
+  H --> I[Verified outcome]
+  E -. cancellation/dispute .-> J[Refund review]
+  F -. dispute .-> J
+  H -. dispute .-> J
 ```
 
-Project, milestone, payment, infrastructure, warranty, and maintenance state changes are independent. See [`DATA_STATE_MODEL.md`](DATA_STATE_MODEL.md).
-
-## 3. Onboarding, Diagnosis, and Matching
-
-**Trigger:** A new Talent or UMKM creates an account.  
-**Preconditions:** Contact information is verifiable.  
-**Related requirements:** `FR-TAL-01..03`, `FR-BIZ-01..04`, `FR-MTC-01..02`.  
-**Financial effect:** None.
+## Onboarding and Matching
 
 ```mermaid
 sequenceDiagram
-    actor T as Talent
-    actor U as UMKM
-    participant C as CocokIn
-    participant A as Admin
-
-    par Talent onboarding
-        T->>C: Register and verify contact
-        T->>C: Complete profile, target career, and skills
-        T->>C: Complete career assessment
-        C->>C: Calculate readiness and skill gaps
-    and UMKM onboarding
-        U->>C: Register and verify contact
-        U->>C: Complete business profile and readiness assessment
-        C->>C: Diagnose problem and propose project template
-        U->>C: Submit business verification evidence
-        C-->>A: Request verification review
-        A-->>C: Approve or reject verification
-    end
-
-    U->>C: Publish project with scope and qualifications
-    C->>C: Calculate Cocok Score candidates deterministically
-    C-->>T: Show relevant project and explainable factors
-    T->>C: Apply with motivation and availability
-    C-->>U: Rank applicants with factor breakdown
-    U->>C: Select Talent
+  actor T as Talent
+  actor U as UMKM
+  participant C as CocokIn
+  T->>C: Consent, profile, assessment
+  C->>C: Calculate readiness and skill gap
+  U->>C: Consent, business profile, readiness
+  C-->>U: Rule/template-assisted project draft
+  U->>C: Publish project
+  C->>C: Calculate deterministic Cocok Score
+  T->>C: Apply
+  U->>C: Select Talent
+  C->>C: Create Project Conversation
 ```
 
-### System outcomes
+Gemini may draft explanations from sanitized data but cannot determine a score, publish a project, approve work, or move money.
 
-- Talent skills remain `SELF_DECLARED` or `ASSESSED` until project evidence raises their level.
-- AI may draft a project explanation, but the UMKM must review it before publication.
-- Gemini failure falls back to templates and deterministic rules; project publication remains available.
-- A Cocok Score never authorizes acceptance automatically.
-
-### Notifications
-
-- Assessment completed.
-- Business verification approved or rejected.
-- Relevant project available.
-- Application received, accepted, or rejected.
-
-## 4. Agreement, Funding, and Milestone Delivery
-
-**Trigger:** The UMKM selects a Talent.  
-**Preconditions:** Project scope, one to four milestones, and acceptance criteria are complete.  
-**Related requirements:** `FR-PRJ-01..03`, `FR-MIL-01..04`, `FR-PAY-01..03`.  
-**Related policies:** `BR-AGR-*`, `BR-PAY-01`, `BR-SUB-*`, `BR-REV-*`.
+## Chat and Agreement
 
 ```mermaid
 sequenceDiagram
-    actor U as UMKM
-    actor T as Talent
-    participant C as CocokIn
-    participant X as Xendit
-    participant J as Inngest
-
-    U->>C: Approve Project Agreement Summary
-    T->>C: Approve Project Agreement Summary
-    C->>C: Validate milestone weights equal 100%
-    C->>X: Create protected funding checkout
-    X-->>U: Hosted checkout
-    U->>X: Complete payment
-    X-->>C: Signed payment webhook
-    C->>C: Idempotently post funding ledger
-    C->>C: Set payment FUNDED and project FUNDED
-    C-->>T: Authorize work start
-
-    loop Each milestone
-        T->>C: Submit HTTPS staging URL and evidence
-        C->>C: Validate required fields and URL availability
-        C->>J: Schedule review reminders and deadline
-        C-->>U: Open Review Hub
-
-        alt Criteria satisfied
-            U->>C: Approve milestone
-            C->>C: Record 90% payable and 10% retention
-            C->>X: Request permitted milestone payout
-            X-->>C: Payout status webhook
-            C->>C: Post payout ledger and mark milestone PAID
-        else Existing scope incomplete
-            U->>C: Request revision linked to criterion
-            C-->>T: Return revision request
-        else New requirement
-            U->>C: Open Change Request
-            T->>C: Accept or reject value/deadline change
-        else Disagreement
-            U->>C: Open dispute
-            C->>C: Freeze affected funds
-        else No UMKM response
-            J->>C: Review window elapsed
-            C->>C: Verify submission valid and no dispute
-            C->>C: Auto-approve and follow payout path
-        end
-    end
+  actor T as Talent
+  actor U as UMKM
+  participant C as CocokIn
+  participant P as Pusher
+  T->>C: Send message
+  C->>C: Authorize and persist in PostgreSQL
+  C-->>P: Broadcast persisted event
+  P-->>U: Realtime update
+  U->>C: Propose structured agreement
+  T->>C: Accept agreement
+  U->>C: Accept agreement
 ```
 
-### Guards and failure paths
+Typing and presence are ephemeral Pusher events. Messages, reactions, receipts, reports, and system events are persistent. Pusher failure falls back to polling without message loss. Chat cannot amend scope, value, deadline, approval, or financial state.
 
-- Funding webhook signature and idempotency key must be valid.
-- Work cannot start from a browser-only status change; funding is confirmed server-side.
-- If staging is unavailable, the review timer pauses and auto-approval is blocked.
-- `REVISION_REQUESTED` cannot add scope. New scope uses `CHANGE_REQUESTED`.
-- Provider calls happen outside database transactions; confirmed results are reconciled through webhooks.
-- Xendit split/refund mismatches enter an operations queue for compensating transfer.
-
-### Financial effects
-
-Formulas are canonical in `BR-FEE-*` and `BR-REV-03`. Each approved milestone makes 90% immediately payable and accumulates 10% as project warranty retention. CocokIn recognizes fees only on successfully released Service Value.
-
-## 5. Infrastructure, Production, and Handover
-
-**Trigger:** Staging deliverables are approved and production is in scope.  
-**Preconditions:** Infrastructure plan and ownership responsibilities are agreed.  
-**Related requirements:** `FR-INF-01..02`, `FR-HOV-01`.  
-**Related policies:** `BR-INF-*`, `BR-HOV-*`.
+## Funding and Reconciliation
 
 ```mermaid
 sequenceDiagram
-    actor U as UMKM
-    actor T as Talent
-    participant C as CocokIn
-    participant H as Hosting Provider
-    participant X as Xendit
-
-    C-->>U: Recommend managed hosting by default
-    alt UMKM needs production
-        U->>H: Purchase domain and hosting using UMKM account
-        U->>C: Confirm ownership and recurring cost
-        U->>H: Invite Talent with limited access
-        T->>H: Configure production deployment and domain
-        T->>C: Submit production handover checklist
-        C-->>U: Request production review
-        U->>H: Test production result
-
-        alt Handover complete
-            U->>C: Accept handover
-            C->>C: Mark project COMPLETED
-            C->>C: Start 30-day warranty
-            C->>X: Request final milestone 90% payout
-        else Handover criterion missing
-            U->>C: Request bounded correction
-            C-->>T: Return missing checklist item
-        end
-    else Staging-only project
-        U->>C: Accept final files and documentation
-        C->>C: Complete applicable handover checklist
-    end
+  actor U as UMKM
+  participant C as CocokIn
+  participant F as Admin/Finance
+  U->>C: Choose bank transfer or GoPay Merchant QRIS
+  C-->>U: Amount + Platform Reference
+  U->>C: Pay and submit External Reference/evidence
+  C-->>F: Reconciliation queue
+  F->>C: Match account/acquirer record
+  C->>C: Post balanced ledger and 100% liability reserve
+  C->>C: Recognize 5% Activation Fee
+  C->>C: Set Project FUNDED/IN_PROGRESS
 ```
 
-### Ownership rules
+- Bank transfer is default; sender-bank fee is borne by UMKM.
+- QRIS has no consumer surcharge. MDR is evidence-backed configuration and, if nonzero, borne by CocokIn.
+- Proof upload alone never funds a Project.
 
-- Domain, hosting, VPS, database, and provider billing remain owned by the UMKM.
-- Third-party costs are paid directly by the UMKM and excluded from CocokIn platform fees.
-- Passwords, API keys, recovery codes, and private keys cannot be sent through CocokIn chat.
-- VPS requires a documented reason, recurring cost, backup owner, security owner, and monitoring owner.
-
-## 6. Warranty, Maintenance, and Dispute
-
-**Trigger:** Handover is accepted.  
-**Preconditions:** Production baseline and warranty start timestamp are recorded.  
-**Related requirements:** `FR-SUP-01..02`, `FR-ADM-04`.  
-**Related policies:** `BR-WAR-*`, `BR-MNT-*`, `BR-DSP-*`.
+## Milestone Review and Payout
 
 ```mermaid
 sequenceDiagram
-    actor U as UMKM
-    actor T as Talent
-    participant C as CocokIn
-    participant J as Inngest
-    participant A as Admin
-    participant X as Xendit
-
-    C->>J: Schedule warranty reminders and day-30 release
-
-    alt UMKM reports agreed functionality is broken
-        U->>C: Open warranty ticket with evidence
-        C-->>T: Start two-business-day response SLA
-        T->>C: Classify and diagnose ticket
-        alt Valid warranty
-            T->>C: Deliver fix within severity target
-            U->>C: Confirm resolution
-        else Talent marks out of scope
-            U->>C: Accept classification or escalate
-        end
-    else UMKM requests small operational change
-        U->>C: Purchase or use maintenance package
-        C->>C: Consume one of five tickets when work starts
-        T->>C: Deliver maintenance result
-    else UMKM requests new capability
-        C->>C: Route to Change Request or new project
-    end
-
-    alt SLA breach or disagreement
-        C->>C: Freeze retention
-        C-->>A: Open dispute with immutable evidence
-        A->>C: Decide release, partial release, refund, or replacement
-        C->>X: Execute authorized financial instruction
-    else Day 30 and no valid unresolved ticket
-        J->>C: Request retention release
-        C->>C: Idempotently validate release guards
-        C->>X: Release accumulated retention
-        X-->>C: Payout webhook
-        C->>C: Close warranty and ledger
-    end
+  actor T as Talent
+  actor U as UMKM
+  participant C as CocokIn
+  participant F as Admin/Finance
+  T->>C: Submit staging URL and evidence
+  C-->>U: Review Hub
+  alt Approved
+    U->>C: Approve acceptance criteria
+    C->>C: Allocate 90% payout + 10% warranty retention
+    C-->>F: Payout instruction with Platform Reference
+    F->>C: Transfer and record External Reference/proof
+    T->>C: Confirm receipt
+  else Revision
+    U->>C: Request revision linked to criterion
+  else Changed scope
+    U->>C: Create Change Request
+    T->>C: Accept or reject
+  else Dispute
+    U->>C: Open dispute and freeze affected liability
+  end
 ```
 
-### SLA and support outcomes
+CocokIn bears payout transfer cost. Approval and money movement are separate permissions and states.
 
-- Talent acknowledges a complete warranty ticket within two Business Days.
-- Repair targets are one Business Day for Critical, three for Major, and five for Minor.
-- Maintenance lasts 30 calendar days and permits five small tickets with no rollover.
-- A warranty defect never consumes maintenance quota.
-- An out-of-scope request cannot extend retention.
+## Handover, Warranty, and Refund
 
-## 7. Completion Effects
+```mermaid
+sequenceDiagram
+  actor T as Talent
+  actor U as UMKM
+  participant C as CocokIn
+  participant A as Admin
+  T->>C: Submit production handover
+  U->>C: Accept checklist
+  C->>C: Recognize 5% Success Fee and start warranty
+  alt Warranty closes cleanly
+    C->>C: Make retention payout eligible
+    C-->>T: Payout confirmation flow
+  else Valid unresolved ticket/dispute
+    C->>C: Freeze affected retention
+    A->>C: Decide payout/refund/revision
+  else Cancellation/refund
+    C->>C: Calculate ledger-backed refund breakdown
+    U->>C: Confirm breakdown
+    A->>C: Execute transfer and External Reference
+    U->>C: Confirm receipt
+  end
+```
 
-After the project and applicable financial operations complete:
-
-1. CocokIn creates a verified portfolio entry for Talent.
-2. Applied skills become `PROJECT_VERIFIED` when supported by accepted project evidence.
-3. UMKM performs the post-project Digital Readiness assessment.
-4. CocokIn records Digital Growth and SDG impact metrics.
-5. Both parties may submit ratings after financial outcomes are final.
-
-These effects must be idempotent because payment and background-job events may be retried.
+Refund transfer cost is borne by UMKM except when CocokIn caused the refund. Completion may generate a private portfolio draft; publication requires explicit Talent consent and UMKM attribution approval.
