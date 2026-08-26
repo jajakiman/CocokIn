@@ -71,6 +71,7 @@ describe("PublicFooter", () => {
     expect(screen.getByRole("link", { name: "Masuk ke Akun" })).toHaveAttribute("href", "/login");
     expect(screen.getByRole("link", { name: "Pendaftaran Talent" })).toHaveAttribute("href", "/register/talent");
     expect(screen.queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /design system/i })).not.toBeInTheDocument();
     expect(screen.getByText(/Platform Resmi Penyelarasan SDG 8 & 9 Indonesia/i)).toBeVisible();
   });
 });

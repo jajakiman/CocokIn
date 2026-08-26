@@ -15,7 +15,7 @@ export function AnimatedHero() {
         <div className="landing-hero__copy">
           <div className="landing-pill">
             <span className="landing-pill__dot" aria-hidden="true" />
-            <span>Marketplace-Enabled Vertical SaaS Indonesia</span>
+            <span>Platform Kolaborasi Proyek Digital</span>
           </div>
 
           <h1>
@@ -50,7 +50,7 @@ export function AnimatedHero() {
             }}
           >
             <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <CheckCircle size={16} weight="fill" color="var(--success)" /> Matching 100% Deterministik
+              <CheckCircle size={16} weight="fill" color="var(--success)" /> Pencocokan Objektif & Adil
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
               <ShieldCheck size={16} weight="fill" color="var(--primary)" /> Milestone Bergaransi 30 Hari
@@ -63,10 +63,10 @@ export function AnimatedHero() {
           <div className="hero-match-widget__header">
             <h3>
               <Lightning size={16} weight="fill" style={{ display: "inline", marginRight: "4px" }} />
-              Live Match Simulation
+              Simulasi Pencocokan
             </h3>
             <span className="status-badge" data-tone="success">
-              Algoritma Aktif
+              Siap Mencocokkan
             </span>
           </div>
 

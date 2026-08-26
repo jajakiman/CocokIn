@@ -13,8 +13,8 @@ export function PublicFooter() {
               <strong>CocokIn</strong>
             </Link>
             <p className="public-footer__desc">
-              Marketplace-Enabled Vertical SaaS yang menghubungkan talenta muda siap kerja dengan
-              kebutuhan transformasi digital UMKM secara terstruktur, terukur, dan bergaransi.
+              CocokIn menghubungkan talenta muda dengan kebutuhan digital UMKM melalui proyek yang
+              terarah, mudah dipantau, dan memiliki perlindungan hasil kerja.
             </p>
             <p className="public-footer__platform-note">
               <ShieldCheck aria-hidden="true" size={18} />
@@ -42,7 +42,6 @@ export function PublicFooter() {
               <li><Link href="/register/talent">Pendaftaran Talent</Link></li>
               <li><Link href="/register/business">Pendaftaran UMKM</Link></li>
               <li><Link href="/p/talent-nadia">Contoh Paspor Digital</Link></li>
-              <li><Link href="/dev/design-system">Design System Catalog</Link></li>
             </ul>
           </div>
         </div>
@@ -50,7 +49,7 @@ export function PublicFooter() {
         <div className="public-footer__bottom">
           <p>© 2026 CocokIn Ecosystem. Hak cipta dilindungi undang-undang.</p>
           <div className="public-footer__legal-badges">
-            <span>100% Liability Reserve</span>
+            <span>Dana Proyek Terlindungi</span>
             <span>Garansi 30 Hari</span>
             <span>Atribusi Terverifikasi</span>
           </div>

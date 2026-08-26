@@ -22,36 +22,37 @@ export function TalentFeatureSplit() {
             <span>Untuk Mahasiswa & Fresh Graduate</span>
           </div>
 
-          <h2>B2Talent Career Development SaaS</h2>
+          <h2>Pengembangan Karier & Pengalaman Nyata</h2>
           <p className="feature-split__lead">
-            Raih jam terbang kerja nyata, ukur celah kompetensi terhadap standar industri, dan terbitkan paspor keahlian yang terbukti valid.
+            Dapatkan pengalaman langsung dari kebutuhan bisnis nyata, kenali kemampuan yang perlu
+            ditingkatkan, dan bangun portofolio yang diakui pemilik usaha.
           </p>
 
           <ul className="feature-checklist">
             <li>
               <Check size={20} weight="bold" color="var(--primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Career Readiness Assessment</strong>
+                <strong>Uji Kesiapan Karier</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Uji logika teknis dan soft-skill adaptif sesuai 4 jalur profesi masa depan.
+                  Kenali kesiapan teknis dan cara kerja Anda sesuai jalur karier yang dipilih.
                 </p>
               </div>
             </li>
             <li>
               <Check size={20} weight="bold" color="var(--primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Skill Gap Analyzer</strong>
+                <strong>Pemetaan Kebutuhan Belajar</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Deteksi deviasi negatif keahlian untuk mendapatkan rekomendasi proyek yang tepat sasaran.
+                  Temukan kemampuan yang perlu diasah dan proyek yang tepat untuk mengembangkannya.
                 </p>
               </div>
             </li>
             <li>
               <Check size={20} weight="bold" color="var(--primary)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Verified Skill Passport & Portfolio</strong>
+                <strong>Paspor Keahlian & Portofolio Resmi</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Validitas bukti 4 level (Self-Declared hingga Verified) berstempel resmi pelaku usaha.
+                  Tampilkan bukti keahlian yang diperkuat oleh hasil tes dan pengakuan pemilik usaha.
                 </p>
               </div>
             </li>
@@ -60,7 +61,7 @@ export function TalentFeatureSplit() {
               <div>
                 <strong>Kompensasi Utuh 100%</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Talent menerima 100% Service Value tanpa potongan biaya platform.
+                  Talent menerima pembayaran proyek secara penuh tanpa potongan biaya platform.
                 </p>
               </div>
             </li>
@@ -106,7 +107,7 @@ export function TalentFeatureSplit() {
           <div style={{ background: "var(--surface-subtle)", border: "1px solid var(--border)", borderRadius: "var(--radius-md)", padding: "1rem", marginTop: "0.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <span style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>Major Skill Gap Terdeteksi</span>
+                <span style={{ fontSize: "0.75rem", color: "var(--muted-foreground)" }}>Kemampuan yang Perlu Ditingkatkan</span>
                 <strong style={{ display: "block", color: "var(--destructive)", fontSize: "0.9rem" }}>Next.js (-20) & JavaScript (-20)</strong>
               </div>
               <span className="status-badge" data-tone="warning">Prioritas Proyek</span>

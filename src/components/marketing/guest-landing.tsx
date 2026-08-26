@@ -37,8 +37,8 @@ export function GuestLanding() {
                 <Scales size={22} weight="duotone" />
               </div>
               <div>
-                <strong>100% Liability Reserve</strong>
-                <span>Dana aman di penampungan terpisah</span>
+                <strong>Dana Pembayaran Terlindungi</strong>
+                <span>Dana proyek dijaga sesuai kewajiban pengguna</span>
               </div>
             </div>
 
@@ -57,8 +57,8 @@ export function GuestLanding() {
                 <LockKey size={22} weight="duotone" />
               </div>
               <div>
-                <strong>Atribusi Hak Ganda</strong>
-                <span>Izin Talent & Atribusi UMKM</span>
+                <strong>Portofolio atas Persetujuan Bersama</strong>
+                <span>Izin Talent dan persetujuan UMKM</span>
               </div>
             </div>
 
@@ -92,9 +92,9 @@ export function GuestLanding() {
             <div className="section-header-editorial">
               <div>
                 <p className="editorial-tag-pill">Etika & Keamanan</p>
-                <h2>Tata Kelola Platform yang Mengikat & Transparan</h2>
+                <h2>Perlindungan yang Jelas untuk Setiap Proyek</h2>
                 <p>
-                  Aturan bisnis resmi yang melindungi dana, hak cipta portofolio, dan kualitas hasil kerja.
+                  Aturan yang mudah dipahami untuk menjaga pembayaran, izin portofolio, dan kualitas hasil kerja.
                 </p>
               </div>
             </div>
@@ -104,10 +104,10 @@ export function GuestLanding() {
                 <div className="trust-item-card__icon">
                   <Scales size={28} weight="duotone" />
                 </div>
-                <h3>100% Liability Reserve Coverage</h3>
+                <h3>Dana Pembayaran Aman & Terlindungi</h3>
                 <p>
-                  Dana pembayaran proyek disimpan aman di rekening terpisah dengan rasio proteksi 100%.
-                  CocokIn menjamin hak pembayaran Talent dan hak pengembalian dana UMKM jika terjadi sengketa.
+                  Dana proyek dijaga sesuai kewajiban kepada pengguna. Hak pembayaran Talent dan hak
+                  pengembalian dana UMKM tetap tercatat jika terjadi kendala.
                 </p>
               </article>
 
@@ -115,10 +115,10 @@ export function GuestLanding() {
                 <div className="trust-item-card__icon">
                   <ShieldCheck size={28} weight="duotone" />
                 </div>
-                <h3>Penerbitan Portofolio Berizin Ganda</h3>
+                <h3>Portofolio Terbit atas Persetujuan Bersama</h3>
                 <p>
-                  Portofolio publik tidak dapat diterbitkan sepihak. Publikasi mensyaratkan izin eksplisit
-                  dari Talent serta persetujuan atribusi bisnis dari pemilik UMKM.
+                  Portofolio publik hanya dapat diterbitkan setelah Talent memberikan izin dan pemilik
+                  UMKM menyetujui penyebutan usahanya.
                 </p>
               </article>
 
@@ -126,10 +126,10 @@ export function GuestLanding() {
                 <div className="trust-item-card__icon">
                   <ArrowsClockwise size={28} weight="duotone" />
                 </div>
-                <h3>Penjaminan Bug & Retensi 30 Hari</h3>
+                <h3>Garansi Perbaikan 30 Hari</h3>
                 <p>
-                  10% dari setiap milestone pembayaran dialokasikan sebagai retensi garansi bug selama
-                  30 hari setelah serah terima production handover tuntas.
+                  Sebagian pembayaran ditahan selama masa garansi agar kendala hasil kerja tetap ditangani
+                  hingga 30 hari setelah serah terima.
                 </p>
               </article>
             </div>

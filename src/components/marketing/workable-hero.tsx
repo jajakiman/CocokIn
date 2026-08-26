@@ -16,7 +16,7 @@ export function WorkableHero() {
         >
           <div className="workable-pill">
             <Sparkle size={14} weight="fill" />
-            <span>Marketplace-Enabled Vertical SaaS</span>
+            <span>Platform Kolaborasi Proyek Digital</span>
           </div>
 
           <h1>
@@ -24,8 +24,8 @@ export function WorkableHero() {
           </h1>
 
           <p className="workable-hero__lead">
-            Bukan platform freelance biasa. Pengerjaan terstruktur 3–14 hari berbasis milestone,
-            pencocokan 100% deterministik, dan penerbitan portofolio resmi berstempel UMKM.
+            Bukan sekadar tempat kerja lepas. Proyek berlangsung 3–14 hari dengan target yang jelas,
+            pencocokan yang adil, dan portofolio resmi yang diakui pemilik usaha.
           </p>
 
           <div className="workable-hero__ctas">
@@ -43,10 +43,10 @@ export function WorkableHero() {
 
           <div style={{ display: "flex", gap: "1.5rem", marginTop: "2rem", flexWrap: "wrap", fontSize: "0.85rem", color: "var(--muted-foreground)" }}>
             <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <CheckCircle size={16} weight="fill" color="var(--success)" /> Matching 100% Deterministik
+              <CheckCircle size={16} weight="fill" color="var(--success)" /> Pencocokan Objektif & Adil
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <ShieldCheck size={16} weight="fill" color="var(--primary)" /> 100% Liability Reserve & Garansi
+              <ShieldCheck size={16} weight="fill" color="var(--primary)" /> Dana Aman & Bergaransi
             </span>
           </div>
         </motion.div>

@@ -24,45 +24,46 @@ export function BusinessFeatureSplit() {
             <span>Untuk Pemilik Bisnis & UMKM</span>
           </div>
 
-          <h2>B2B MSME Enablement SaaS</h2>
+          <h2>Solusi Digital untuk UMKM</h2>
           <p className="feature-split__lead">
-            Selesaikan kebutuhan transformasi digital usahamu dengan biaya terukur, alur kerja bebas jargon rumit, dan hasil kerja yang dapat diuji langsung.
+            Selesaikan kebutuhan digital usaha dengan biaya yang jelas, proses yang mudah dipahami,
+            dan hasil kerja yang dapat diperiksa langsung.
           </p>
 
           <ul className="feature-checklist">
             <li>
               <Check size={20} weight="bold" color="var(--success)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Problem-to-Project Diagnosis</strong>
+                <strong>Ubah Masalah Usaha Jadi Proyek Nyata</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Formulasi masalah operasional bisnis menjadi lingkup proyek mikro 3–14 hari.
+                  Susun kendala usaha menjadi rencana proyek digital 3–14 hari yang praktis.
                 </p>
               </div>
             </li>
             <li>
               <Check size={20} weight="bold" color="var(--success)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Deterministic Smart Matching</strong>
+                <strong>Pencocokan Cerdas & Terbuka</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Rekomendasi pelaksana dengan Cocok Score tertinggi tanpa rekrutmen manual yang melelahkan.
+                  Temukan Talent yang paling sesuai tanpa proses seleksi manual yang memakan waktu.
                 </p>
               </div>
             </li>
             <li>
               <Check size={20} weight="bold" color="var(--success)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Milestone Review Hub di Staging</strong>
+                <strong>Periksa Hasil Sebelum Menyetujui</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  Tinjau deliverable live di HTTPS preview sebelum dana milestone dicairkan.
+                  Lihat dan uji hasil kerja melalui tautan pratinjau sebelum pembayaran disetujui.
                 </p>
               </div>
             </li>
             <li>
               <Check size={20} weight="bold" color="var(--success)" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div>
-                <strong>Garansi Kualitas Bug 30 Hari</strong>
+                <strong>Garansi Perbaikan 30 Hari</strong>
                 <p style={{ margin: 0, fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-                  10% retensi garansi menjaga keamanan paska serah terima production.
+                  Perlindungan garansi memastikan kendala hasil kerja tetap ditangani setelah serah terima.
                 </p>
               </div>
             </li>

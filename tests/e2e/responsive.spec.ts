@@ -49,11 +49,6 @@ test.describe("ZAKY-01 Multi-Viewport & Accessibility E2E Suite", () => {
       await page.goto("/p/talent-nadia");
       await expect(page.getByRole("heading", { name: "Nadia Putri" })).toBeVisible();
 
-      // 9. Design System Catalog
-      await page.goto("/dev/design-system");
-      await expect(
-        page.getByRole("heading", { name: "Arctic Depths Design System" }),
-      ).toBeVisible();
     });
   }
 });

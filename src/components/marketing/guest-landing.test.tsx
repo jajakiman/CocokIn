@@ -23,20 +23,21 @@ describe("GuestLanding (Workable B2B SaaS Style)", () => {
     expect(screen.queryByRole("link", { name: /daftar sebagai admin/i })).not.toBeInTheDocument();
   });
 
-  it("renders deep feature splits for Talent and UMKM", () => {
+  it("explains the product in clear language for Talent and UMKM", () => {
     render(<GuestLanding />);
 
-    expect(screen.getByRole("heading", { name: /B2Talent Career Development SaaS/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /B2B MSME Enablement SaaS/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Pencocokan Cerdas 100% Deterministik/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Pengembangan Karier & Pengalaman Nyata/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Solusi Digital untuk UMKM/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Sistem Pencocokan yang Terbuka & Adil/i })).toBeInTheDocument();
+    expect(screen.queryByText(/PRD §4\.1|black-box|Vertical SaaS/i)).not.toBeInTheDocument();
   });
 
   it("renders real case studies and institutional trust governance", () => {
     render(<GuestLanding />);
 
     expect(screen.getByRole("heading", { name: /Hasil Kerja Nyata yang Telah Tervalidasi/i })).toBeInTheDocument();
-    expect(screen.getByText(/100% Liability Reserve Coverage/i)).toBeInTheDocument();
-    expect(screen.getByText(/Penerbitan Portofolio Berizin Ganda/i)).toBeInTheDocument();
-    expect(screen.getByText(/Penjaminan Bug & Retensi 30 Hari/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dana Pembayaran Aman & Terlindungi/i)).toBeInTheDocument();
+    expect(screen.getByText(/Portofolio Terbit atas Persetujuan Bersama/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Garansi Perbaikan 30 Hari/i })).toBeInTheDocument();
   });
 });

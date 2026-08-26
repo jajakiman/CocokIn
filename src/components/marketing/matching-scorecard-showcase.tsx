@@ -8,31 +8,31 @@ export function MatchingScorecardShowcase() {
     {
       name: "Skill Match",
       weight: "Bobot 40%",
-      desc: "Multiplier level bukti (Self-Declared 0.5, Assessed 0.8, Verified 1.0).",
+      desc: "Menilai kesesuaian keahlian berdasarkan hasil tes dan proyek yang pernah diselesaikan.",
       score: 85,
     },
     {
       name: "Career Alignment",
       weight: "Bobot 20%",
-      desc: "Kesesuaian target profesi & bonus penutupan Major Skill Gap (+20 poin).",
+      desc: "Memastikan proyek sejalan dengan minat karier Talent agar pengerjaan lebih maksimal.",
       score: 100,
     },
     {
       name: "Availability",
       weight: "Bobot 15%",
-      desc: "Ketersediaan jam kerja (Full-Time, Part-Time, Weekend) vs durasi proyek.",
+      desc: "Mencocokkan waktu luang Talent dengan tenggat yang dibutuhkan pemilik usaha.",
       score: 100,
     },
     {
       name: "Experience Level",
       weight: "Bobot 15%",
-      desc: "Jumlah proyek tuntas vs tingkat kesulitan proyek (Beginner hingga Advanced).",
+      desc: "Menyelaraskan tingkat kerumitan tugas dengan pengalaman kerja Talent sebelumnya.",
       score: 80,
     },
     {
       name: "Work Mode & City",
       weight: "Bobot 10%",
-      desc: "Kesesuaian sistem Remote (100%), Hybrid (100%/50%), atau Onsite satu kota.",
+      desc: "Menyesuaikan pilihan kerja jarak jauh, hybrid, atau tatap muka dengan kebutuhan proyek.",
       score: 100,
     },
   ];
@@ -49,11 +49,12 @@ export function MatchingScorecardShowcase() {
         >
           <div className="workable-pill">
             <Gauge size={14} weight="bold" />
-            <span>Smart Matching Engine</span>
+            <span>Pencocokan Cerdas & Terbuka</span>
           </div>
-          <h2>Pencocokan Cerdas 100% Deterministik</h2>
+          <h2>Sistem Pencocokan yang Terbuka & Adil</h2>
           <p>
-            Formula matematis transparan PRD §4.1 tanpa black-box. Memberikan kepastian rasional bagi UMKM dan keadilan bagi Talent.
+            Menghubungkan kebutuhan bisnis dengan keahlian Talent secara objektif dan transparan.
+            UMKM mendapatkan orang yang tepat, Talent mendapatkan proyek yang sesuai.
           </p>
         </motion.div>
 
