@@ -4,7 +4,7 @@ test.describe("Responsive Design System Shell", () => {
   test("navigates from landing to dashboards cleanly", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Satu ekosistem untuk membuktikan skill",
+      "Ekosistem Kerja Nyata untuk Talenta Muda",
     );
 
     await page.goto("/talent");

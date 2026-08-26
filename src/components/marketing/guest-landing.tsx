@@ -1,20 +1,20 @@
 import Link from "next/link";
 import { PublicHeader } from "@/src/components/public/public-header";
 import { PublicFooter } from "@/src/components/public/public-footer";
-import { EditorialHero } from "./editorial-hero";
+import { WorkableHero } from "./workable-hero";
+import { TalentFeatureSplit } from "./talent-feature-split";
+import { BusinessFeatureSplit } from "./business-feature-split";
+import { MatchingScorecardShowcase } from "./matching-scorecard-showcase";
 import { FeaturedProjects } from "./featured-projects";
-import { RolePathways } from "./role-pathways";
-import { HowItWorksProcess } from "./how-it-works-process";
-import { ProductProof } from "./product-proof";
 import {
-  ShieldCheck,
   Scales,
+  ShieldCheck,
+  LockKey,
+  Sparkle,
   ArrowsClockwise,
   User,
   Storefront,
   ArrowRight,
-  Sparkle,
-  LockKey,
 } from "@phosphor-icons/react/dist/ssr";
 
 export function GuestLanding() {
@@ -26,64 +26,72 @@ export function GuestLanding() {
       <PublicHeader />
 
       <main id="main-content" tabIndex={-1}>
-        {/* 1. Editorial Hero with Case Study Browser Frame */}
-        <EditorialHero />
+        {/* 1. Workable Hero */}
+        <WorkableHero />
 
-        {/* 2. Trust & Metric Strip */}
-        <section className="metric-strip" aria-label="Ringkasan standar platform">
-          <div className="metric-strip__container">
-            <div className="metric-strip-item">
-              <Scales size={24} weight="duotone" className="metric-strip-item__icon" />
+        {/* 2. Credibility / Trust Strip */}
+        <section className="credibility-strip" aria-label="Standar Kepercayaan Platform">
+          <div className="credibility-strip__container">
+            <div className="credibility-item">
+              <div className="credibility-item__icon">
+                <Scales size={22} weight="duotone" />
+              </div>
               <div>
                 <strong>100% Liability Reserve</strong>
-                <span>Kompensasi aman di penampungan</span>
+                <span>Dana aman di penampungan terpisah</span>
               </div>
             </div>
 
-            <div className="metric-strip-item">
-              <ShieldCheck size={24} weight="duotone" className="metric-strip-item__icon" />
+            <div className="credibility-item">
+              <div className="credibility-item__icon">
+                <ShieldCheck size={22} weight="duotone" />
+              </div>
               <div>
-                <strong>Garansi Kualitas 30 Hari</strong>
-                <span>Retensi 10% pasca handover</span>
+                <strong>Garansi Bug 30 Hari</strong>
+                <span>10% retensi pasca serah terima</span>
               </div>
             </div>
 
-            <div className="metric-strip-item">
-              <LockKey size={24} weight="duotone" className="metric-strip-item__icon" />
+            <div className="credibility-item">
+              <div className="credibility-item__icon">
+                <LockKey size={22} weight="duotone" />
+              </div>
               <div>
-                <strong>Persetujuan Hak Ganda</strong>
+                <strong>Atribusi Hak Ganda</strong>
                 <span>Izin Talent & Atribusi UMKM</span>
               </div>
             </div>
 
-            <div className="metric-strip-item">
-              <Sparkle size={24} weight="duotone" className="metric-strip-item__icon" />
+            <div className="credibility-item">
+              <div className="credibility-item__icon">
+                <Sparkle size={22} weight="duotone" />
+              </div>
               <div>
                 <strong>Penyelarasan SDG 8 & 9</strong>
-                <span>Pemberdayaan talenta & UMKM</span>
+                <span>Pertumbuhan ekonomi & inovasi</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 3. Featured Real Projects & Case Studies */}
+        {/* 3. Deep Feature Split 1: Talent */}
+        <TalentFeatureSplit />
+
+        {/* 4. Deep Feature Split 2: UMKM */}
+        <BusinessFeatureSplit />
+
+        {/* 5. Smart Matching Engine Scorecard */}
+        <MatchingScorecardShowcase />
+
+        {/* 6. Featured Real Projects & Case Studies */}
         <FeaturedProjects />
 
-        {/* 4. Two-Sided Role Pathways (Talent vs UMKM) */}
-        <RolePathways />
-
-        {/* 5. 4-Step Process */}
-        <HowItWorksProcess />
-
-        {/* 6. Product Proof Section */}
-        <ProductProof />
-
-        {/* 7. Institutional Trust & Governance Policy */}
-        <section className="landing-section" id="trust">
-          <div className="landing-section__container">
+        {/* 7. Institutional Governance & Trust */}
+        <section className="trust-section" id="trust">
+          <div className="trust-container">
             <div className="section-header-editorial">
               <div>
-                <p className="editorial-tag-pill">Etika & Keamanan Transaksi</p>
+                <p className="editorial-tag-pill">Etika & Keamanan</p>
                 <h2>Tata Kelola Platform yang Mengikat & Transparan</h2>
                 <p>
                   Aturan bisnis resmi yang melindungi dana, hak cipta portofolio, dan kualitas hasil kerja.
@@ -91,9 +99,9 @@ export function GuestLanding() {
               </div>
             </div>
 
-            <div className="trust-cards-grid">
-              <article className="trust-card">
-                <div className="trust-card__icon">
+            <div className="trust-grid">
+              <article className="trust-item-card">
+                <div className="trust-item-card__icon">
                   <Scales size={28} weight="duotone" />
                 </div>
                 <h3>100% Liability Reserve Coverage</h3>
@@ -103,8 +111,8 @@ export function GuestLanding() {
                 </p>
               </article>
 
-              <article className="trust-card">
-                <div className="trust-card__icon">
+              <article className="trust-item-card">
+                <div className="trust-item-card__icon">
                   <ShieldCheck size={28} weight="duotone" />
                 </div>
                 <h3>Penerbitan Portofolio Berizin Ganda</h3>
@@ -114,8 +122,8 @@ export function GuestLanding() {
                 </p>
               </article>
 
-              <article className="trust-card">
-                <div className="trust-card__icon">
+              <article className="trust-item-card">
+                <div className="trust-item-card__icon">
                   <ArrowsClockwise size={28} weight="duotone" />
                 </div>
                 <h3>Penjaminan Bug & Retensi 30 Hari</h3>
@@ -128,24 +136,24 @@ export function GuestLanding() {
           </div>
         </section>
 
-        {/* 8. Strong Final Call to Action */}
-        <section className="final-cta-section" id="final-cta">
-          <div className="final-cta-container">
+        {/* 8. Workable-Style Pre-Footer Call to Action */}
+        <section className="pre-footer-cta" id="final-cta">
+          <div className="pre-footer-container">
             <p className="editorial-tag-pill" style={{ background: "rgba(255, 255, 255, 0.1)", color: "var(--brand-cyan)", borderColor: "rgba(255, 255, 255, 0.2)" }}>
               Langkah Selanjutnya
             </p>
             <h2>Mulai Kolaborasi Terukur Hari Ini</h2>
             <p>
-              Uji kesiapan kariermu dengan proyek nyata atau percepat digitalisasi usahamu dengan talenta muda terverifikasi.
+              Buktikan kesiapan kariermu dengan proyek nyata atau wujudkan digitalisasi usahamu dengan talenta muda terverifikasi.
             </p>
 
-            <div className="final-cta-actions">
-              <Link href="/register/talent" className="final-btn-talent">
+            <div className="pre-footer-actions">
+              <Link href="/register/talent" className="pre-footer-btn-talent">
                 <User size={18} weight="bold" />
                 <span>Mulai sebagai Talent</span>
                 <ArrowRight size={16} weight="bold" />
               </Link>
-              <Link href="/register/business" className="final-btn-business">
+              <Link href="/register/business" className="pre-footer-btn-business">
                 <Storefront size={18} weight="bold" />
                 <span>Mulai sebagai UMKM</span>
                 <ArrowRight size={16} weight="bold" />

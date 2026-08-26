@@ -1,14 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Guest Landing, Auth UX & Real System Flow E2E Suite (Lil Big Things Style)", () => {
-  test("guest landing displays editorial hero, dual CTAs, case studies, and pathways", async ({
+test.describe("Guest Landing, Auth UX & Real System Flow E2E Suite (Workable B2B SaaS Style)", () => {
+  test("guest landing displays Workable hero, dual CTAs, feature splits, and scorecard", async ({
     page,
   }) => {
     await page.goto("/");
 
     // 1. Header & Hero
     await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Satu ekosistem untuk membuktikan skill",
+      "Ekosistem Kerja Nyata untuk Talenta Muda",
     );
     await expect(
       page.locator("#hero").getByRole("link", { name: "Mulai sebagai Talent" }),
@@ -19,10 +19,10 @@ test.describe("Guest Landing, Auth UX & Real System Flow E2E Suite (Lil Big Thin
 
     // 2. Sections
     await expect(page.locator("#hero")).toBeVisible();
+    await expect(page.locator("#untuk-talent")).toBeVisible();
+    await expect(page.locator("#untuk-umkm")).toBeVisible();
+    await expect(page.locator("#matching-engine")).toBeVisible();
     await expect(page.locator("#proyek-unggulan")).toBeVisible();
-    await expect(page.locator("#alur-kebutuhan")).toBeVisible();
-    await expect(page.locator("#cara-kerja")).toBeVisible();
-    await expect(page.locator("#product-proof")).toBeVisible();
     await expect(page.locator("#trust")).toBeVisible();
     await expect(page.locator("#final-cta")).toBeVisible();
 
