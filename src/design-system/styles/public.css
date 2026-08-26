@@ -1,3 +1,157 @@
+/* ── Shared Section & Header Primitives ─────────────────── */
+
+.landing-section {
+  padding: clamp(4.5rem, 8vw, 6.5rem) 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-section__container {
+  max-width: 78rem;
+  margin: 0 auto;
+}
+
+.section-header-editorial {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 3.5rem;
+}
+
+.section-header-editorial h2 {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.6rem;
+}
+
+.section-header-editorial p:not(.editorial-tag-pill) {
+  color: var(--muted-foreground);
+  font-size: 1.05rem;
+  max-width: 52ch;
+  margin-bottom: 0;
+}
+
+@media (min-width: 768px) {
+  .section-header-editorial {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+  }
+  .section-header-editorial > div:first-child {
+    max-width: 44rem;
+  }
+  .section-header-editorial > a,
+  .section-header-editorial > .text-action {
+    white-space: nowrap;
+    margin-bottom: 0.35rem;
+  }
+}
+
+.editorial-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background: var(--surface-subtle);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+
+.portfolio-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* ── Featured Real Case Studies Grid ────────────────────── */
+
+.featured-projects-grid {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .featured-projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .featured-projects-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.project-case-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.project-case-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--brand-blue);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.project-case-card__header {
+  margin-bottom: 1rem;
+}
+
+.project-case-card__tags {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.project-case-card h3 {
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+
+.project-case-card__biz {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  font-weight: 600;
+  margin: 0;
+}
+
+.project-case-card__summary {
+  font-size: 0.925rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  flex: 1;
+}
+
+.project-case-card__footer {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
 /* ── Workable-Inspired B2B SaaS Layout (Arctic Depths Palette) ── */
 
 .public-shell {
