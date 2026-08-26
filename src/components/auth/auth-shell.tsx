@@ -20,23 +20,8 @@ export function AuthShell({
   return (
     <div className="auth-shell">
       <div className="auth-shell__form">
-        <Link className="auth-shell__brand" href="/">
-          <span
-            style={{
-              background: "var(--brand-cyan)",
-              color: "#0f2431",
-              fontWeight: 900,
-              width: "2.25rem",
-              height: "2.25rem",
-              borderRadius: "0.5rem",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              marginRight: "0.5rem",
-            }}
-          >
-            C
-          </span>
+        <Link className="auth-shell__brand" href="/" aria-label="CocokIn beranda">
+          <span className="brand-dot" aria-hidden="true" />
           <strong>CocokIn</strong>
         </Link>
 
@@ -49,34 +34,21 @@ export function AuthShell({
         </main>
       </div>
 
-      {/* Right-Side Visual Showcase Context (21st.dev Style) */}
       <aside className="auth-shell__context" aria-hidden="true">
-        <div>
-          <div className="landing-pill" style={{ background: "rgba(255, 255, 255, 0.08)", borderColor: "rgba(255, 255, 255, 0.15)", color: "var(--brand-cyan)" }}>
+        <div className="auth-shell__context-inner">
+          <div className="auth-shell__context-pill">
             <Sparkle size={14} weight="fill" />
-            <span>Ekosistem Terukur & Transparan</span>
+            <span>Kolaborasi yang Jelas & Terarah</span>
           </div>
-          <h2 style={{ fontSize: "2.25rem", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.2, marginBottom: "1.25rem" }}>
-            {contextTitle}
-          </h2>
-          <div style={{ fontSize: "1.05rem", opacity: 0.9, lineHeight: 1.6, marginBottom: "2rem" }}>
+          <h2>{contextTitle}</h2>
+          <div className="auth-shell__context-copy">
             {context}
           </div>
 
-          <div
-            style={{
-              background: "rgba(255, 255, 255, 0.06)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              borderRadius: "0.75rem",
-              padding: "1.25rem",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.85rem",
-            }}
-          >
-            <ShieldCheck size={28} weight="duotone" color="var(--brand-cyan)" />
-            <span style={{ fontSize: "0.875rem", color: "#c9e0e8" }}>
-              Seluruh transaksi pengerjaan terlindungi dengan 100% Liability Reserve & Garansi 30 Hari.
+          <div className="auth-shell__protection">
+            <ShieldCheck aria-hidden="true" size={28} weight="duotone" />
+            <span>
+              Dana proyek terlindungi dan hasil kerja bergaransi 30 hari.
             </span>
           </div>
         </div>
