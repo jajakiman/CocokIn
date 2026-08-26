@@ -1,20 +1,27 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Guest Landing, Auth UX & Real System Flow E2E Suite", () => {
-  test("guest landing displays 21st.dev hero, dual CTAs, bento grid, and score simulator", async ({
+test.describe("Guest Landing, Auth UX & Real System Flow E2E Suite (Lil Big Things Style)", () => {
+  test("guest landing displays editorial hero, dual CTAs, case studies, and pathways", async ({
     page,
   }) => {
     await page.goto("/");
 
     // 1. Header & Hero
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Ubah Potensi Jadi");
-    await expect(page.getByRole("link", { name: "Mulai sebagai Talent" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Mulai sebagai UMKM" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText(
+      "Satu ekosistem untuk membuktikan skill",
+    );
+    await expect(
+      page.locator("#hero").getByRole("link", { name: "Mulai sebagai Talent" }),
+    ).toBeVisible();
+    await expect(
+      page.locator("#hero").getByRole("link", { name: "Mulai sebagai UMKM" }),
+    ).toBeVisible();
 
     // 2. Sections
     await expect(page.locator("#hero")).toBeVisible();
-    await expect(page.locator("#fitur-unggulan")).toBeVisible();
-    await expect(page.locator("#simulator-matching")).toBeVisible();
+    await expect(page.locator("#proyek-unggulan")).toBeVisible();
+    await expect(page.locator("#alur-kebutuhan")).toBeVisible();
+    await expect(page.locator("#cara-kerja")).toBeVisible();
     await expect(page.locator("#product-proof")).toBeVisible();
     await expect(page.locator("#trust")).toBeVisible();
     await expect(page.locator("#final-cta")).toBeVisible();
