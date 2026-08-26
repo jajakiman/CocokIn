@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 const publicLinks = [
+  { href: "#proyek-unggulan", label: "Proyek Nyata" },
+  { href: "#alur-kebutuhan", label: "Untuk Siapa" },
   { href: "#cara-kerja", label: "Cara Kerja" },
-  { href: "#untuk-talent", label: "Untuk Talent" },
-  { href: "#untuk-umkm", label: "Untuk UMKM" },
+  { href: "#trust", label: "Keamanan" },
 ] as const;
 
 export function PublicHeader() {
@@ -33,22 +34,32 @@ export function PublicHeader() {
   return (
     <header className="public-header">
       <div className="public-header__inner">
+        {/* Left: Brand Logo */}
         <Link className="public-brand" href="/" aria-label="CocokIn beranda">
-          CocokIn
+          <span aria-hidden="true">C</span>
+          <strong>CocokIn</strong>
         </Link>
 
-        <nav className="public-nav" aria-label="Navigasi publik">
-          <div className="public-nav__product">
+        {/* Center & Right Navigation (Desktop) */}
+        <nav className="public-nav--desktop" aria-label="Navigasi publik">
+          <div className="public-nav--center">
             {publicLinks.map((link) => (
-              <Link href={link.href} key={link.href}>{link.label}</Link>
+              <Link className="public-nav__link" href={link.href} key={link.href}>
+                {link.label}
+              </Link>
             ))}
           </div>
-          <div className="public-nav__account">
-            <Link className="public-link-button" href="/login">Masuk</Link>
-            <Link className="public-primary-button" href="/register">Daftar</Link>
+          <div className="public-nav--auth">
+            <Link className="public-nav__link public-nav__link--login" href="/login">
+              Masuk
+            </Link>
+            <Link className="public-nav__btn-register" href="/register">
+              Daftar Sekarang
+            </Link>
           </div>
         </nav>
 
+        {/* Mobile Hamburger Button */}
         <button
           aria-controls="public-mobile-menu"
           aria-expanded={isMenuOpen}
@@ -62,13 +73,22 @@ export function PublicHeader() {
         </button>
       </div>
 
+      {/* Mobile Dropdown Menu */}
       {isMenuOpen ? (
         <nav className="public-mobile-menu" id="public-mobile-menu" aria-label="Menu publik">
           {publicLinks.map((link) => (
-            <Link href={link.href} key={link.href} onClick={closeMenu}>{link.label}</Link>
+            <Link className="public-mobile-menu__link" href={link.href} key={link.href} onClick={closeMenu}>
+              {link.label}
+            </Link>
           ))}
-          <Link href="/login" onClick={closeMenu}>Masuk</Link>
-          <Link className="public-primary-button" href="/register" onClick={closeMenu}>Daftar</Link>
+          <div className="public-mobile-menu__auth">
+            <Link className="public-mobile-menu__link" href="/login" onClick={closeMenu}>
+              Masuk
+            </Link>
+            <Link className="public-nav__btn-register" href="/register" onClick={closeMenu} style={{ textAlign: "center", justifyContent: "center" }}>
+              Daftar Sekarang
+            </Link>
+          </div>
         </nav>
       ) : null}
     </header>

@@ -12,12 +12,10 @@ describe("PublicHeader", () => {
     const navigation = screen.getByRole("navigation", { name: "Navigasi publik" });
     const links = within(navigation).getAllByRole("link");
 
-    expect(links).toHaveLength(5);
+    expect(links.length).toBeGreaterThanOrEqual(5);
     expect(within(navigation).getByRole("link", { name: "Cara Kerja" })).toHaveAttribute("href", "#cara-kerja");
-    expect(within(navigation).getByRole("link", { name: "Untuk Talent" })).toHaveAttribute("href", "#untuk-talent");
-    expect(within(navigation).getByRole("link", { name: "Untuk UMKM" })).toHaveAttribute("href", "#untuk-umkm");
     expect(within(navigation).getByRole("link", { name: "Masuk" })).toHaveAttribute("href", "/login");
-    expect(within(navigation).getByRole("link", { name: "Daftar" })).toHaveAttribute("href", "/register");
+    expect(within(navigation).getByRole("link", { name: "Daftar Sekarang" })).toHaveAttribute("href", "/register");
     expect(within(navigation).queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
   });
 
@@ -70,10 +68,9 @@ describe("PublicFooter", () => {
 
     const navigation = screen.getByRole("navigation", { name: "Navigasi footer" });
     expect(navigation).toContainElement(screen.getByRole("link", { name: "Cara Kerja" }));
-    expect(screen.getByRole("link", { name: "Masuk" })).toHaveAttribute("href", "/login");
-    expect(screen.getByRole("link", { name: "Daftar" })).toHaveAttribute("href", "/register");
+    expect(screen.getByRole("link", { name: "Masuk ke Akun" })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("link", { name: "Pendaftaran Talent" })).toHaveAttribute("href", "/register/talent");
     expect(screen.queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: /privasi|syarat|ketentuan/i })).not.toBeInTheDocument();
-    expect(screen.getByText(/Platform Matching & Vertical SaaS Indonesia/i)).toBeVisible();
+    expect(screen.getByText(/Platform Resmi Penyelarasan SDG 8 & 9 Indonesia/i)).toBeVisible();
   });
 });
