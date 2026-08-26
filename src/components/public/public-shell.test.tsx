@@ -74,6 +74,6 @@ describe("PublicFooter", () => {
     expect(screen.getByRole("link", { name: "Daftar" })).toHaveAttribute("href", "/register");
     expect(screen.queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /privasi|syarat|ketentuan/i })).not.toBeInTheDocument();
-    expect(screen.getByText("Demo menggunakan data sintetis")).toBeVisible();
+    expect(screen.getByText(/Platform Matching & Vertical SaaS Indonesia/i)).toBeVisible();
   });
 });

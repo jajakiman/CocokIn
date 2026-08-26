@@ -1,29 +1,23 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("Guest Landing, Auth UX & Demo Mode E2E Suite", () => {
-  test("guest landing displays value proposition, dual CTAs, and product proof", async ({
+test.describe("Guest Landing, Auth UX & Real System Flow E2E Suite", () => {
+  test("guest landing displays 21st.dev hero, dual CTAs, bento grid, and score simulator", async ({
     page,
   }) => {
     await page.goto("/");
 
     // 1. Header & Hero
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Proyek digital yang mempertemukan potensi dan kebutuhan nyata",
-    );
-    await expect(
-      page.locator("#hero").getByRole("link", { name: "Mulai sebagai Talent" }),
-    ).toBeVisible();
-    await expect(
-      page.locator("#hero").getByRole("link", { name: "Mulai sebagai UMKM" }),
-    ).toBeVisible();
-    await expect(page.getByRole("link", { name: "Lihat demo sistem" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Ubah Potensi Jadi");
+    await expect(page.getByRole("link", { name: "Mulai sebagai Talent" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Mulai sebagai UMKM" })).toBeVisible();
 
     // 2. Sections
-    await expect(page.locator("#cara-kerja")).toBeVisible();
-    await expect(page.locator("#untuk-talent")).toBeVisible();
-    await expect(page.locator("#untuk-umkm")).toBeVisible();
+    await expect(page.locator("#hero")).toBeVisible();
+    await expect(page.locator("#fitur-unggulan")).toBeVisible();
+    await expect(page.locator("#simulator-matching")).toBeVisible();
     await expect(page.locator("#product-proof")).toBeVisible();
     await expect(page.locator("#trust")).toBeVisible();
+    await expect(page.locator("#final-cta")).toBeVisible();
 
     // 3. No Admin registration link
     await expect(page.getByRole("link", { name: /Admin/i })).not.toBeVisible();
@@ -53,38 +47,19 @@ test.describe("Guest Landing, Auth UX & Demo Mode E2E Suite", () => {
 
     // Fill form
     await page.getByLabel("Email").fill("test@example.com");
-    await page.getByLabel("Kata sandi", { exact: true }).fill("password123");
+    const passwordInput = page.locator('input[name="password"]');
+    await passwordInput.fill("password123");
 
     // Toggle password visibility
-    const toggleBtn = page.getByRole("button", { name: /Tampilkan kata sandi/i });
+    const toggleBtn = page.getByTestId("password-toggle");
     await expect(toggleBtn).toBeVisible();
     await toggleBtn.click();
-    await expect(page.getByLabel("Kata sandi", { exact: true })).toHaveAttribute("type", "text");
+    await expect(passwordInput).toHaveAttribute("type", "text");
 
     // Submit
     await page.getByRole("button", { name: "Masuk", exact: true }).click();
 
     // Honest unavailable alert
     await expect(page.locator(".auth-alert")).toContainText("Autentikasi belum dikonfigurasi");
-  });
-
-  test("demo page launches talent and business demo with persistent banner and exit action", async ({
-    page,
-  }) => {
-    await page.goto("/demo");
-
-    await expect(page.getByRole("heading", { name: /Mode Demo/i })).toBeVisible();
-
-    // Launch Talent demo
-    await page.getByRole("link", { name: /Buka Demo Talent/i }).click();
-    await expect(page).toHaveURL(/talent\?demo=talent/);
-
-    // Verify Demo Banner is visible
-    await expect(page.getByLabel("Informasi status mode demo")).toBeVisible();
-    await expect(page.getByText(/SEEDED_DEMO/i)).toBeVisible();
-
-    // Exit demo
-    await page.getByRole("link", { name: /Keluar dari demo/i }).click();
-    await expect(page).toHaveURL("/");
   });
 });

@@ -10,7 +10,6 @@ import { EmptyState } from "@/src/design-system/empty-state";
 import { MoneyBreakdown } from "@/src/design-system/money-breakdown";
 import { AuditTimeline } from "@/src/design-system/audit-timeline";
 import { CocokScoreCard } from "@/src/design-system/cocok-score-card";
-import { DemoBanner } from "@/src/design-system/demo-banner";
 import { PermissionState } from "@/src/design-system/permission-state";
 import { AccountMenu } from "@/src/components/auth/account-menu";
 import { SEEDED_TALENT_IDENTITY } from "@/src/fixtures/seeded-demo";
@@ -135,11 +134,6 @@ export default function DesignSystemPage() {
           title="Belum ada riwayat aktivitas"
           description="Aktivitas dan log penugasan proyek akan otomatis tercatat di sini."
         />
-      </section>
-
-      <section className="catalog-section">
-        <h2>Demo Mode Banner</h2>
-        <DemoBanner role="Talent" />
       </section>
 
       <section className="catalog-section">

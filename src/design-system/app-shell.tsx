@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import type { ReactNode } from "react";
 import {
   House,
   ClipboardText,
@@ -21,12 +21,10 @@ import {
 } from "@phosphor-icons/react";
 
 import { getRoleConfig, type AppRole } from "./role-config";
-import { DemoBanner } from "./demo-banner";
 
 type AppShellProps = {
   children: ReactNode;
   role: AppRole;
-  showDemoBanner?: boolean;
 };
 
 // Map icon string or name to Phosphor Icon component
@@ -47,12 +45,9 @@ function renderNavIcon(href: string, size = 20) {
   return <Storefront size={size} weight="duotone" />;
 }
 
-function AppShellInner({ children, role, showDemoBanner }: AppShellProps) {
+export function AppShell({ children, role }: AppShellProps) {
   const config = getRoleConfig(role);
   const pathname = usePathname() ?? "/";
-  const searchParams = useSearchParams();
-  const demoParam = searchParams?.get("demo");
-  const isDemo = Boolean(demoParam) || showDemoBanner;
 
   const isNavActive = (href: string) => {
     if (href === `/${role}`) {
@@ -61,20 +56,11 @@ function AppShellInner({ children, role, showDemoBanner }: AppShellProps) {
     return pathname.startsWith(href);
   };
 
-  const getHrefWithDemo = (href: string) => {
-    if (demoParam) {
-      return `${href}?demo=${demoParam}`;
-    }
-    return href;
-  };
-
   return (
     <div className="app-shell" data-density={config.density} data-role={role}>
       <a className="skip-link" href="#main-content">
         Lewati ke konten utama
       </a>
-
-      {isDemo && <DemoBanner role={config.label} />}
 
       {/* Persistent / Collapsible Sidebar for Desktop & Tablet */}
       <aside className="app-sidebar">
@@ -93,7 +79,7 @@ function AppShellInner({ children, role, showDemoBanner }: AppShellProps) {
               <Link
                 className="nav-link"
                 data-active={active}
-                href={getHrefWithDemo(item.href)}
+                href={item.href}
                 key={item.href}
                 aria-current={active ? "page" : undefined}
               >
@@ -131,7 +117,7 @@ function AppShellInner({ children, role, showDemoBanner }: AppShellProps) {
           const active = isNavActive(item.href);
           return (
             <Link
-              href={getHrefWithDemo(item.href)}
+              href={item.href}
               key={item.href}
               className="mobile-nav-item"
               data-active={active}
@@ -146,13 +132,5 @@ function AppShellInner({ children, role, showDemoBanner }: AppShellProps) {
         })}
       </nav>
     </div>
-  );
-}
-
-export function AppShell(props: AppShellProps) {
-  return (
-    <Suspense fallback={null}>
-      <AppShellInner {...props} />
-    </Suspense>
   );
 }

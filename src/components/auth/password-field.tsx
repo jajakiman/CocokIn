@@ -45,8 +45,13 @@ export function PasswordField({
         <button
           aria-label={isVisible ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
           className="auth-password__toggle"
+          data-testid="password-toggle"
           disabled={disabled}
-          onClick={() => setIsVisible((visible) => !visible)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsVisible(!isVisible);
+          }}
           type="button"
         >
           {isVisible ? <EyeSlash aria-hidden="true" size={20} /> : <Eye aria-hidden="true" size={20} />}

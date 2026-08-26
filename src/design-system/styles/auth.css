@@ -139,6 +139,8 @@
   right: 0;
   top: 0;
   width: 2.75rem;
+  cursor: pointer;
+  z-index: 10;
 }
 
 .auth-google-button,

@@ -1,4 +1,4 @@
-import { Database } from "@phosphor-icons/react/dist/ssr";
+import { ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 const footerLinks = [
@@ -16,9 +16,9 @@ export function PublicFooter() {
         <div className="public-footer__summary">
           <Link className="public-brand public-brand--footer" href="/">CocokIn</Link>
           <p>Talent bertumbuh, UMKM naik kelas melalui proyek digital yang terukur.</p>
-          <p className="public-footer__demo-label">
-            <Database aria-hidden="true" size={20} />
-            Demo menggunakan data sintetis
+          <p className="public-footer__platform-note">
+            <ShieldCheck aria-hidden="true" size={18} />
+            Platform Matching & Vertical SaaS Indonesia
           </p>
         </div>
         <nav className="public-footer__nav" aria-label="Navigasi footer">

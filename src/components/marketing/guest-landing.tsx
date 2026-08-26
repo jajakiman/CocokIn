@@ -1,130 +1,132 @@
-import {
-  ArrowRight,
-  CheckCircle,
-  Coins,
-  Fingerprint,
-  FlowArrow,
-  ShieldCheck,
-} from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-
-import { PublicFooter } from "@/src/components/public/public-footer";
 import { PublicHeader } from "@/src/components/public/public-header";
-
+import { PublicFooter } from "@/src/components/public/public-footer";
+import { AnimatedHero } from "./animated-hero";
+import { BentoGrid } from "./bento-grid";
+import { CocokScoreSimulator } from "./cocok-score-simulator";
 import { ProductProof } from "./product-proof";
-import { RolePath } from "./role-path";
-
-const process = ["Skill", "Assessment", "Cocok Score", "Micro-project", "Verification"];
+import {
+  ShieldCheck,
+  Scales,
+  ArrowsClockwise,
+  User,
+  Storefront,
+} from "@phosphor-icons/react/dist/ssr";
 
 export function GuestLanding() {
   return (
-    <>
-      <a className="skip-link" href="#main-content">Lewati ke konten utama</a>
+    <div className="public-shell">
+      <a className="skip-link" href="#main-content">
+        Lewati ke konten utama
+      </a>
       <PublicHeader />
+
       <main id="main-content" tabIndex={-1}>
-        <section className="landing-hero" id="hero">
-          <div className="landing-hero__inner">
-            <div className="landing-hero__copy">
-              <p className="landing-eyebrow">Talent bertumbuh · UMKM naik kelas</p>
-              <h1>Proyek digital yang mempertemukan potensi dan kebutuhan nyata.</h1>
-              <p className="landing-hero__lead">
-                CocokIn membantu Talent membangun bukti kerja dan UMKM menyelesaikan kebutuhan
-                digital melalui proses yang terukur dari matching hingga verifikasi.
-              </p>
-              <div className="landing-actions landing-actions--primary">
-                <Link className="landing-button landing-button--primary" href="/register/talent">
-                  Mulai sebagai Talent
-                </Link>
-                <Link className="landing-button landing-button--primary" href="/register/business">
-                  Mulai sebagai UMKM
-                </Link>
-              </div>
-              <Link className="landing-demo-link" href="/demo">
-                Lihat demo sistem
-                <ArrowRight aria-hidden="true" size={20} />
-              </Link>
-              <p className="landing-hero__note">Demo sistem menggunakan data sintetis.</p>
-            </div>
+        {/* 1. 21st.dev Animated Hero */}
+        <AnimatedHero />
 
-            <div aria-label="Alur nilai CocokIn" className="landing-hero__visual">
-              <div className="landing-hero__signal landing-hero__signal--talent">
-                <span>Potensi Talent</span>
-                <strong>Skill + kesiapan</strong>
-              </div>
-              <div className="landing-hero__match">
-                <FlowArrow aria-hidden="true" size={32} />
-                <span>Cocok Score</span>
-                <strong>Terukur</strong>
-              </div>
-              <div className="landing-hero__signal landing-hero__signal--business">
-                <span>Kebutuhan UMKM</span>
-                <strong>Masalah + outcome</strong>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* 2. Bento Grid Value Proposition */}
+        <BentoGrid />
 
-        <section
-          aria-labelledby="role-paths-title"
-          className="landing-section landing-role-paths"
-          id="problem-outcome"
-        >
-          <div className="landing-section__heading">
-            <p className="landing-eyebrow">Dari hambatan menuju hasil</p>
-            <h2 id="role-paths-title">Satu alur, nilai yang jelas bagi kedua sisi.</h2>
-          </div>
-          <div className="landing-role-paths__list">
-            <div id="untuk-talent"><RolePath audience="talent" /></div>
-            <div id="untuk-umkm"><RolePath audience="umkm" /></div>
-          </div>
-        </section>
+        {/* 3. Interactive Cocok Score Simulator */}
+        <CocokScoreSimulator />
 
-        <section aria-labelledby="process-title" className="landing-section landing-process" id="cara-kerja">
-          <div className="landing-section__heading">
-            <p className="landing-eyebrow">Cara CocokIn bekerja</p>
-            <h2 id="process-title">Dari skill sampai bukti terverifikasi.</h2>
-          </div>
-          <ol className="landing-process__steps">
-            {process.map((step, index) => (
-              <li key={step}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <strong>{step}</strong>
-              </li>
-            ))}
-          </ol>
-        </section>
-
+        {/* 4. Product Proof Section */}
         <ProductProof />
 
-        <section aria-labelledby="trust-title" className="landing-section landing-trust" id="trust">
-          <div className="landing-trust__intro">
-            <p className="landing-eyebrow">Trust dibangun dari batas yang jelas</p>
-            <h2 id="trust-title">Transparan tentang apa yang sistem lakukan.</h2>
+        {/* 5. Trust, Governance, & Business Rules Policy */}
+        <section className="landing-section" id="trust">
+          <div className="landing-section__container">
+            <div className="landing-section__header">
+              <p className="landing-eyebrow">Etika & Keamanan Platform</p>
+              <h2>Fondasi Kepercayaan Tanpa Kompromi</h2>
+              <p>
+                Aturan bisnis yang mengikat seluruh transaksi, persetujuan privasi data, dan
+                penjaminan kualitas hasil.
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gap: "1.5rem",
+                gridTemplateColumns: "repeat(auto-fit, minmax(18rem, 1fr))",
+              }}
+            >
+              <article className="bento-card">
+                <div className="bento-card__icon">
+                  <Scales size={24} weight="duotone" />
+                </div>
+                <h3>100% Liability Reserve</h3>
+                <p>
+                  Dana proyek aman disimpan dalam cadangan kas terpisah dengan rasio proteksi 100%
+                  untuk menjamin pembayaran hak Talent dan hak pengembalian dana UMKM.
+                </p>
+              </article>
+
+              <article className="bento-card">
+                <div className="bento-card__icon">
+                  <ShieldCheck size={24} weight="duotone" />
+                </div>
+                <h3>Consent & Atribusi Resmi</h3>
+                <p>
+                  Penerbitan portofolio publik mewajibkan izin eksplisit dari Talent serta persetujuan
+                  atribusi bisnis dari pemilik UMKM.
+                </p>
+              </article>
+
+              <article className="bento-card">
+                <div className="bento-card__icon">
+                  <ArrowsClockwise size={24} weight="duotone" />
+                </div>
+                <h3>Garansi & Retensi 30 Hari</h3>
+                <p>
+                  10% nilai kompensasi proyek dialokasikan sebagai retensi garansi kualitas bug selama
+                  30 hari pasca serah terima production handover.
+                </p>
+              </article>
+            </div>
           </div>
-          <ul className="landing-trust__list">
-            <li><Fingerprint aria-hidden="true" size={24} /><span>Cocok Score dihitung secara deterministik dari faktor yang dapat dijelaskan.</span></li>
-            <li><CheckCircle aria-hidden="true" size={24} /><span>Publikasi portofolio memerlukan persetujuan publikasi Talent dan persetujuan atribusi UMKM.</span></li>
-            <li><ShieldCheck aria-hidden="true" size={24} /><span>Data demonstrasi seluruhnya sintetis dan tidak mewakili pengguna nyata.</span></li>
-            <li><Coins aria-hidden="true" size={24} /><span>Operasi uang nyata tetap dinonaktifkan sampai seluruh gate legal dan operasional terpenuhi.</span></li>
-          </ul>
         </section>
 
+        {/* 6. Final Call to Action */}
         <section
-          aria-labelledby="final-cta-title"
-          className="landing-section landing-final-cta"
+          className="landing-section"
           id="final-cta"
+          style={{ background: "linear-gradient(180deg, #ffffff 0%, var(--surface-subtle) 100%)" }}
         >
-          <div>
-            <p className="landing-eyebrow">Pilih jalur Anda</p>
-            <h2 id="final-cta-title">Mulai dari potensi atau kebutuhan yang nyata.</h2>
-          </div>
-          <div className="landing-actions">
-            <Link className="landing-button landing-button--primary" href="/register/talent">Mulai sebagai Talent</Link>
-            <Link className="landing-button landing-button--primary" href="/register/business">Mulai sebagai UMKM</Link>
+          <div className="landing-section__container" style={{ textAlign: "center" }}>
+            <p className="landing-eyebrow">Siap Memulai?</p>
+            <h2 style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)", marginBottom: "1rem" }}>
+              Bergabunglah dalam Ekosistem CocokIn
+            </h2>
+            <p
+              style={{
+                color: "var(--muted-foreground)",
+                fontSize: "1.1rem",
+                maxWidth: "52ch",
+                margin: "0 auto 2.5rem",
+              }}
+            >
+              Tingkatkan kesiapan kariermu dengan proyek nyata atau wujudkan digitalisasi usahamu
+              dengan talenta muda teruji.
+            </p>
+
+            <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
+              <Link href="/register/talent" className="cta-button--primary">
+                <User size={20} weight="bold" />
+                <span>Daftar sebagai Talent</span>
+              </Link>
+              <Link href="/register/business" className="cta-button--secondary">
+                <Storefront size={20} weight="bold" />
+                <span>Daftar sebagai UMKM</span>
+              </Link>
+            </div>
           </div>
         </section>
       </main>
+
       <PublicFooter />
-    </>
+    </div>
   );
 }

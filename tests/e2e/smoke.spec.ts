@@ -1,14 +1,9 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Responsive Design System Shell", () => {
-  test("navigates from landing to demo and dashboards", async ({ page }) => {
+  test("navigates from landing to dashboards cleanly", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText(
-      "Proyek digital yang mempertemukan potensi dan kebutuhan nyata",
-    );
-
-    await page.goto("/demo");
-    await expect(page.getByRole("heading", { name: /Eksplorasi Mode Demo/i })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Ubah Potensi Jadi");
 
     await page.goto("/talent");
     await expect(page.getByRole("heading", { name: "Selamat datang, Nadia" })).toBeVisible();
