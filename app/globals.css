@@ -159,25 +159,17 @@ h3 {
 .brand-mark {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  text-decoration: none;
 }
-.brand-mark__icon {
-  background: var(--brand-cyan);
-  color: #0f2431;
-  font-weight: 900;
-  font-size: 1.15rem;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--radius-md);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.brand-mark__icon--sm {
-  width: 1.85rem;
-  height: 1.85rem;
-  font-size: 1rem;
-  border-radius: var(--radius-sm);
+.brand-mark .brand-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--brand-cyan, #0ea5e9);
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
+  display: inline-block;
+  flex-shrink: 0;
 }
 .brand-mark__text {
   font-size: 1.25rem;
@@ -1022,17 +1014,10 @@ h3 {
   gap: 1rem;
 }
 
-.brand-mark--public span {
-  background: var(--brand-cyan);
-  color: #0f2431;
-  font-weight: 900;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 0.4rem;
-  display: inline-flex;
+.brand-mark--public {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  margin-right: 0.5rem;
+  gap: 0.5rem;
 }
 
 .brand-mark--public strong {

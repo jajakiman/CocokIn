@@ -3,6 +3,7 @@
 import { List, X } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const publicLinks = [
   { href: "#proyek-unggulan", label: "Proyek Nyata" },
@@ -34,9 +35,9 @@ export function PublicHeader() {
   return (
     <header className="public-header">
       <div className="public-header__inner">
-        {/* Left: Brand Logo */}
+        {/* Left: Brand Logo (Minimalist Wordmark) */}
         <Link className="public-brand" href="/" aria-label="CocokIn beranda">
-          <span aria-hidden="true">C</span>
+          <span className="brand-dot" aria-hidden="true" />
           <strong>CocokIn</strong>
         </Link>
 
@@ -73,24 +74,34 @@ export function PublicHeader() {
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu */}
-      {isMenuOpen ? (
-        <nav className="public-mobile-menu" id="public-mobile-menu" aria-label="Menu publik">
-          {publicLinks.map((link) => (
-            <Link className="public-mobile-menu__link" href={link.href} key={link.href} onClick={closeMenu}>
-              {link.label}
-            </Link>
-          ))}
-          <div className="public-mobile-menu__auth">
-            <Link className="public-mobile-menu__link" href="/login" onClick={closeMenu}>
-              Masuk
-            </Link>
-            <Link className="public-nav__btn-register" href="/register" onClick={closeMenu} style={{ textAlign: "center", justifyContent: "center" }}>
-              Daftar Sekarang
-            </Link>
-          </div>
-        </nav>
-      ) : null}
+      {/* Mobile Dropdown Menu with Framer Motion */}
+      <AnimatePresence>
+        {isMenuOpen ? (
+          <motion.nav
+            className="public-mobile-menu"
+            id="public-mobile-menu"
+            aria-label="Menu publik"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          >
+            {publicLinks.map((link) => (
+              <Link className="public-mobile-menu__link" href={link.href} key={link.href} onClick={closeMenu}>
+                {link.label}
+              </Link>
+            ))}
+            <div className="public-mobile-menu__auth">
+              <Link className="public-mobile-menu__link" href="/login" onClick={closeMenu}>
+                Masuk
+              </Link>
+              <Link className="public-nav__btn-register" href="/register" onClick={closeMenu} style={{ textAlign: "center", justifyContent: "center" }}>
+                Daftar Sekarang
+              </Link>
+            </div>
+          </motion.nav>
+        ) : null}
+      </AnimatePresence>
     </header>
   );
 }

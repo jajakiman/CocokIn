@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { Check, ArrowRight, Storefront, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { Check, ArrowRight, Storefront, CheckCircle } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import { SEEDED_WORKSPACE } from "@/src/fixtures/seeded-demo";
 
 export function BusinessFeatureSplit() {
@@ -9,7 +12,13 @@ export function BusinessFeatureSplit() {
     <section className="feature-split-section feature-split-section--alt" id="untuk-umkm">
       <div className="feature-split-container feature-split-container--reverse">
         {/* Right (In LTR): Copy & Value Proposition */}
-        <div className="feature-split__content">
+        <motion.div
+          className="feature-split__content"
+          initial={{ opacity: 0, x: 24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           <div className="workable-pill" style={{ background: "var(--success-subtle)", color: "var(--success)" }}>
             <Storefront size={14} weight="bold" />
             <span>Untuk Pemilik Bisnis & UMKM</span>
@@ -63,10 +72,17 @@ export function BusinessFeatureSplit() {
             <span>Daftar sebagai UMKM</span>
             <ArrowRight size={16} weight="bold" />
           </Link>
-        </div>
+        </motion.div>
 
         {/* Left (In LTR): Milestone & Workspace UI Card Showcase */}
-        <div className="feature-split__card">
+        <motion.div
+          className="feature-split__card"
+          initial={{ opacity: 0, x: -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          whileHover={{ y: -3, transition: { duration: 0.2 } }}
+        >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border)", paddingBottom: "1rem" }}>
             <div>
               <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--success)", textTransform: "uppercase" }}>Ruang Review UMKM</span>
@@ -98,7 +114,7 @@ export function BusinessFeatureSplit() {
             </div>
             <span className="status-badge" data-tone="success">100% Liability Reserve</span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

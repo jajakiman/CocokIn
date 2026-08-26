@@ -1,4 +1,7 @@
-import { Gauge } from "@phosphor-icons/react/dist/ssr";
+"use client";
+
+import { Gauge } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 
 export function MatchingScorecardShowcase() {
   const factors = [
@@ -37,7 +40,13 @@ export function MatchingScorecardShowcase() {
   return (
     <section className="scorecard-section" id="matching-engine">
       <div className="scorecard-container">
-        <div className="scorecard-header">
+        <motion.div
+          className="scorecard-header"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           <div className="workable-pill">
             <Gauge size={14} weight="bold" />
             <span>Smart Matching Engine</span>
@@ -46,11 +55,33 @@ export function MatchingScorecardShowcase() {
           <p>
             Formula matematis transparan PRD §4.1 tanpa black-box. Memberikan kepastian rasional bagi UMKM dan keadilan bagi Talent.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="scorecard-grid">
+        <motion.div
+          className="scorecard-grid"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.08,
+              },
+            },
+          }}
+        >
           {factors.map((f) => (
-            <article key={f.name} className="scorecard-factor-card">
+            <motion.article
+              key={f.name}
+              className="scorecard-factor-card"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+              }}
+              whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            >
               <div>
                 <div className="scorecard-factor-card__top">
                   <span className="scorecard-factor-card__weight">{f.weight}</span>
@@ -61,9 +92,9 @@ export function MatchingScorecardShowcase() {
                 <h3>{f.name}</h3>
                 <p>{f.desc}</p>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

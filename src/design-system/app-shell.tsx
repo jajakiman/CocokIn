@@ -66,7 +66,7 @@ export function AppShell({ children, role }: AppShellProps) {
       <aside className="app-sidebar">
         <div className="app-sidebar__brand-container">
           <Link className="brand-mark" href="/">
-            <span className="brand-mark__icon" aria-hidden="true">C</span>
+            <span className="brand-dot" aria-hidden="true" />
             <span className="brand-mark__text">CocokIn</span>
           </Link>
           <span className="role-pill">Mode {config.label}</span>
@@ -96,7 +96,7 @@ export function AppShell({ children, role }: AppShellProps) {
       {/* Topbar for Mobile Header */}
       <header className="app-topbar">
         <Link className="brand-mark brand-mark--sm" href="/">
-          <span className="brand-mark__icon brand-mark__icon--sm" aria-hidden="true">C</span>
+          <span className="brand-dot" aria-hidden="true" />
           <strong className="mobile-brand">CocokIn</strong>
         </Link>
         <div className="topbar-role-badge">

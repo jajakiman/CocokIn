@@ -190,23 +190,27 @@
   align-items: center;
   color: var(--foreground);
   display: inline-flex;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 850;
-  gap: 0.625rem;
-  letter-spacing: -0.035em;
+  gap: 0.5rem;
+  letter-spacing: -0.04em;
+  text-decoration: none;
 }
 
-.public-brand span:first-child {
-  align-items: center;
-  background: var(--brand-cyan);
-  border-radius: 0.5rem;
-  color: #0f2431;
-  display: inline-flex;
-  font-size: 1.1rem;
-  font-weight: 900;
-  height: 2.15rem;
-  justify-content: center;
-  width: 2.15rem;
+.public-brand .brand-dot,
+.brand-mark .brand-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--brand-cyan, #0ea5e9);
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.6);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.public-brand strong {
+  font-weight: 850;
+  letter-spacing: -0.035em;
 }
 
 .public-nav--desktop {

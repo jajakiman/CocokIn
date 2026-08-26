@@ -1,12 +1,19 @@
+"use client";
+
 import Link from "next/link";
-import { User, Storefront, ArrowRight, Sparkle, ShieldCheck, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { User, Storefront, ArrowRight, Sparkle, ShieldCheck, CheckCircle } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 
 export function WorkableHero() {
   return (
     <section className="workable-hero" id="hero">
       <div className="workable-hero__container">
         {/* Left: Value Proposition & CTAs */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           <div className="workable-pill">
             <Sparkle size={14} weight="fill" />
             <span>Marketplace-Enabled Vertical SaaS</span>
@@ -42,10 +49,17 @@ export function WorkableHero() {
               <ShieldCheck size={16} weight="fill" color="var(--primary)" /> 100% Liability Reserve & Garansi
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right: Authentic Product UI Frame */}
-        <div className="hero-product-card" aria-label="Pratinjau antarmuka pengerjaan proyek CocokIn">
+        <motion.div
+          className="hero-product-card"
+          aria-label="Pratinjau antarmuka pengerjaan proyek CocokIn"
+          initial={{ opacity: 0, y: 30, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+          whileHover={{ y: -3, transition: { duration: 0.2 } }}
+        >
           <div className="hero-product-card__header">
             <h3>Pusat Kerja & Kolaborasi Terukur</h3>
             <span className="status-badge" data-tone="success">Proyek Aktif</span>
@@ -89,7 +103,7 @@ export function WorkableHero() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

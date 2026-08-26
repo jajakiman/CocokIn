@@ -51,7 +51,7 @@ export function PublicPassportCard({
       {/* Brand Watermark Header */}
       <header className="public-passport-header">
         <Link href="/" className="brand-mark brand-mark--public">
-          <span aria-hidden="true">C</span>
+          <span className="brand-dot" aria-hidden="true" />
           <strong>CocokIn Skill Passport</strong>
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>

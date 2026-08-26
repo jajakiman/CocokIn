@@ -26,17 +26,17 @@ describe("GuestLanding (Workable B2B SaaS Style)", () => {
   it("renders deep feature splits for Talent and UMKM", () => {
     render(<GuestLanding />);
 
-    expect(screen.getByRole("heading", { name: /B2Talent Career Development SaaS/i })).toBeVisible();
-    expect(screen.getByRole("heading", { name: /B2B MSME Enablement SaaS/i })).toBeVisible();
-    expect(screen.getByRole("heading", { name: /Pencocokan Cerdas 100% Deterministik/i })).toBeVisible();
+    expect(screen.getByRole("heading", { name: /B2Talent Career Development SaaS/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /B2B MSME Enablement SaaS/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Pencocokan Cerdas 100% Deterministik/i })).toBeInTheDocument();
   });
 
   it("renders real case studies and institutional trust governance", () => {
     render(<GuestLanding />);
 
-    expect(screen.getByRole("heading", { name: /Hasil Kerja Nyata yang Telah Tervalidasi/i })).toBeVisible();
-    expect(screen.getByText(/100% Liability Reserve Coverage/i)).toBeVisible();
-    expect(screen.getByText(/Penerbitan Portofolio Berizin Ganda/i)).toBeVisible();
-    expect(screen.getByText(/Penjaminan Bug & Retensi 30 Hari/i)).toBeVisible();
+    expect(screen.getByRole("heading", { name: /Hasil Kerja Nyata yang Telah Tervalidasi/i })).toBeInTheDocument();
+    expect(screen.getByText(/100% Liability Reserve Coverage/i)).toBeInTheDocument();
+    expect(screen.getByText(/Penerbitan Portofolio Berizin Ganda/i)).toBeInTheDocument();
+    expect(screen.getByText(/Penjaminan Bug & Retensi 30 Hari/i)).toBeInTheDocument();
   });
 });

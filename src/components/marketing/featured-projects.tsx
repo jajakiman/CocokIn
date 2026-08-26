@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { Clock, ArrowRight, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
+import { Clock, ArrowRight, ShieldCheck } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 
 export function FeaturedProjects() {
   const caseStudies = [
@@ -41,7 +44,13 @@ export function FeaturedProjects() {
   return (
     <section className="landing-section" id="proyek-unggulan">
       <div className="landing-section__container">
-        <div className="section-header-editorial">
+        <motion.div
+          className="section-header-editorial"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
           <div>
             <p className="editorial-tag-pill" style={{ color: "var(--success)" }}>
               Rekam Jejak Nyata
@@ -54,11 +63,33 @@ export function FeaturedProjects() {
           <Link href="/register/talent" className="text-action" style={{ fontSize: "0.95rem" }}>
             Lihat semua peluang proyek <ArrowRight size={16} weight="bold" />
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="featured-projects-grid">
+        <motion.div
+          className="featured-projects-grid"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+              },
+            },
+          }}
+        >
           {caseStudies.map((item) => (
-            <article key={item.id} className="project-case-card">
+            <motion.article
+              key={item.id}
+              className="project-case-card"
+              variants={{
+                hidden: { opacity: 0, y: 24 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+              }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            >
               <div>
                 <div className="project-case-card__header">
                   <div className="project-case-card__tags">
@@ -92,9 +123,9 @@ export function FeaturedProjects() {
                   {item.milestones}
                 </span>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -9,7 +9,7 @@ export function PublicFooter() {
           {/* Col 1: Brand & Tagline */}
           <div className="public-footer__brand-col">
             <Link className="public-brand public-brand--footer" href="/">
-              <span>C</span>
+              <span className="brand-dot" aria-hidden="true" />
               <strong>CocokIn</strong>
             </Link>
             <p className="public-footer__desc">
