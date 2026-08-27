@@ -1,0 +1,10 @@
+[33m747758a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdev[m[33m, [m[1;31morigin/dev[m[33m)[m feat(ui): add framer-motion animations and streamline minimalist brand wordmark
+[33m857408d[m fix(ui): restore missing landing-section and project-case-card primitives in public.css
+[33mce2f1e0[m fix(css): clean up global stylesheet duplication and harmonize all landing sections
+[33mb8a2882[m feat(marketing): implement Workable-inspired B2B SaaS landing page & clean alternating showcases
+[33m16c7390[m fix(ui): polish public header, structured footer, and styled product proof cards
+[33m1aee7ce[m feat(marketing): redesign landing page with Lil Big Things editorial aesthetic & real CocokIn case studies
+[33made41f4[m feat(ui): implement 21st.dev interactive aesthetics and clean real system flow
+[33m11438aa[m feat(marketing,auth-ui,seed): implement guest landing, accessible auth UI contract, and centralized SEEDED_DEMO
+[33mf84092c[m docs: specify guest auth UI and seeded demo slice
+[33md9c3b9c[m feat(ui): polish responsive UI/UX, Phosphor Icons, adaptive navigation, and Arctic Depths aesthetics

@@ -26,11 +26,11 @@ export function PublicFooter() {
           <nav className="public-footer__nav-col" aria-label="Navigasi footer">
             <h4>Navigasi</h4>
             <ul>
-              <li><Link href="#proyek-unggulan">Proyek Nyata</Link></li>
-              <li><Link href="#alur-kebutuhan">Pilihan Jalur</Link></li>
-              <li><Link href="#cara-kerja">Cara Kerja</Link></li>
-              <li><Link href="#product-proof">Bukti Produk</Link></li>
-              <li><Link href="#trust">Keamanan & Garansi</Link></li>
+              <li><Link href="/#untuk-talent">Untuk Talent</Link></li>
+              <li><Link href="/#untuk-umkm">Untuk UMKM</Link></li>
+              <li><Link href="/#matching-engine">Pencocokan</Link></li>
+              <li><Link href="/#proyek-unggulan">Proyek Nyata</Link></li>
+              <li><Link href="/#trust">Keamanan & Garansi</Link></li>
             </ul>
           </nav>
 

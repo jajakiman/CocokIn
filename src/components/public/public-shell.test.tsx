@@ -10,12 +10,20 @@ describe("PublicHeader", () => {
     render(<PublicHeader />);
 
     const navigation = screen.getByRole("navigation", { name: "Navigasi publik" });
-    const links = within(navigation).getAllByRole("link");
+    const sectionLinks = {
+      "Untuk Talent": "/#untuk-talent",
+      "Untuk UMKM": "/#untuk-umkm",
+      Pencocokan: "/#matching-engine",
+      "Proyek Nyata": "/#proyek-unggulan",
+      Keamanan: "/#trust",
+    };
 
-    expect(links.length).toBeGreaterThanOrEqual(5);
-    expect(within(navigation).getByRole("link", { name: "Cara Kerja" })).toHaveAttribute("href", "#cara-kerja");
+    for (const [name, href] of Object.entries(sectionLinks)) {
+      expect(within(navigation).getByRole("link", { name })).toHaveAttribute("href", href);
+    }
     expect(within(navigation).getByRole("link", { name: "Masuk" })).toHaveAttribute("href", "/login");
-    expect(within(navigation).getByRole("link", { name: "Daftar Sekarang" })).toHaveAttribute("href", "/register");
+    expect(within(navigation).getByRole("link", { name: "Daftar" })).toHaveAttribute("href", "/register");
+    expect(within(navigation).getByRole("link", { name: "Mulai Sekarang" })).toHaveAttribute("href", "/register");
     expect(within(navigation).queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
   });
 
@@ -43,7 +51,10 @@ describe("PublicHeader", () => {
     expect(trigger).toHaveAttribute("aria-expanded", "true");
 
     const mobileMenu = screen.getByRole("navigation", { name: "Menu publik" });
-    await user.click(within(mobileMenu).getByRole("link", { name: "Cara Kerja" }));
+    const talentLink = within(mobileMenu).getByRole("link", { name: "Untuk Talent" });
+    expect(talentLink).toHaveAttribute("href", "/#untuk-talent");
+    expect(within(mobileMenu).getByRole("link", { name: "Mulai Sekarang" })).toHaveAttribute("href", "/register");
+    await user.click(talentLink);
     expect(trigger).toHaveAttribute("aria-expanded", "false");
     expect(trigger).toHaveFocus();
   });
@@ -67,7 +78,11 @@ describe("PublicFooter", () => {
     render(<PublicFooter />);
 
     const navigation = screen.getByRole("navigation", { name: "Navigasi footer" });
-    expect(navigation).toContainElement(screen.getByRole("link", { name: "Cara Kerja" }));
+    expect(within(navigation).getByRole("link", { name: "Untuk Talent" })).toHaveAttribute("href", "/#untuk-talent");
+    expect(within(navigation).getByRole("link", { name: "Untuk UMKM" })).toHaveAttribute("href", "/#untuk-umkm");
+    expect(within(navigation).getByRole("link", { name: "Pencocokan" })).toHaveAttribute("href", "/#matching-engine");
+    expect(within(navigation).getByRole("link", { name: "Proyek Nyata" })).toHaveAttribute("href", "/#proyek-unggulan");
+    expect(within(navigation).getByRole("link", { name: "Keamanan & Garansi" })).toHaveAttribute("href", "/#trust");
     expect(screen.getByRole("link", { name: "Masuk ke Akun" })).toHaveAttribute("href", "/login");
     expect(screen.getByRole("link", { name: "Pendaftaran Talent" })).toHaveAttribute("href", "/register/talent");
     expect(screen.queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
