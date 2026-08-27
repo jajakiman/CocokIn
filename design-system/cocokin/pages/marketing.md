@@ -1,3 +1,3 @@
 # Marketing Override
 
-Use a more spacious rhythm and Arctic Depths gradient only for controlled hero/brand areas. Keep primary CTA `#065B98` with white text. Move social proof below the hero. Avoid generic purple gradients, repeated three-card rows, and decorative glass on product trust content.
+Use a spacious rhythm and the official CocokIn logo assets without recreating their internal gradient in CSS. Keep primary CTA navy `#001040` with white text, links/focus on `interactive`, and orange as a restrained opportunity/UMKM accent with navy text. Move social proof below the hero. Avoid generic gradients, repeated three-card rows, and decorative glass on product trust content.

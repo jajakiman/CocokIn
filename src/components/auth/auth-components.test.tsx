@@ -52,7 +52,7 @@ describe("AuthShell", () => {
     );
   });
 
-  it("uses the shared minimalist wordmark and plain-language protection message", () => {
+  it("uses the official wordmark and plain-language protection message", () => {
     const { container } = render(
       <AuthShell
         title="Masuk ke CocokIn"
@@ -65,7 +65,11 @@ describe("AuthShell", () => {
     );
 
     expect(screen.getByRole("link", { name: "CocokIn beranda" })).toBeVisible();
-    expect(container.querySelector(".auth-shell__brand .brand-dot")).toBeInTheDocument();
+    expect(container.querySelector(".auth-shell__brand img")).toHaveAttribute(
+      "src",
+      "/brand/cocokin/logo-wordmark.webp",
+    );
+    expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
     expect(screen.getByText(/Dana proyek terlindungi dan hasil kerja bergaransi 30 hari/i)).toBeInTheDocument();
     expect(screen.queryByText(/100% Liability Reserve/i)).not.toBeInTheDocument();
   });

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ShieldCheck, Sparkle } from "@phosphor-icons/react/dist/ssr";
+import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 type AuthShellProps = {
   children: ReactNode;
@@ -21,8 +22,7 @@ export function AuthShell({
     <div className="auth-shell">
       <div className="auth-shell__form">
         <Link className="auth-shell__brand" href="/" aria-label="CocokIn beranda">
-          <span className="brand-dot" aria-hidden="true" />
-          <strong>CocokIn</strong>
+          <CocokInBrand className="auth-shell__wordmark" decorative priority variant="wordmark" />
         </Link>
 
         <main id="main-content" tabIndex={-1} className="auth-shell__form-inner">

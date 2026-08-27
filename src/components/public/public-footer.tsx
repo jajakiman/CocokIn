@@ -1,5 +1,6 @@
 import { ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 export function PublicFooter() {
   return (
@@ -9,8 +10,7 @@ export function PublicFooter() {
           {/* Col 1: Brand & Tagline */}
           <div className="public-footer__brand-col">
             <Link className="public-brand public-brand--footer" href="/">
-              <span className="brand-dot" aria-hidden="true" />
-              <strong>CocokIn</strong>
+              <CocokInBrand className="public-brand__wordmark" decorative variant="wordmark" />
             </Link>
             <p className="public-footer__desc">
               CocokIn menghubungkan talenta muda dengan kebutuhan digital UMKM melalui proyek yang

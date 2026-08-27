@@ -21,6 +21,7 @@ import {
 } from "@phosphor-icons/react";
 
 import { getRoleConfig, type AppRole } from "./role-config";
+import { CocokInBrand } from "./cocokin-brand";
 
 type AppShellProps = {
   children: ReactNode;
@@ -66,8 +67,9 @@ export function AppShell({ children, role }: AppShellProps) {
       <aside className="app-sidebar">
         <div className="app-sidebar__brand-container">
           <Link className="brand-mark" href="/">
-            <span className="brand-dot" aria-hidden="true" />
-            <span className="brand-mark__text">CocokIn</span>
+            <CocokInBrand className="brand-mark__image brand-mark__image--rail" decorative priority variant="mark" />
+            <CocokInBrand className="brand-mark__wordmark" decorative priority variant="wordmark" />
+            <span className="sr-only">CocokIn</span>
           </Link>
           <span className="role-pill">Mode {config.label}</span>
         </div>
@@ -96,7 +98,7 @@ export function AppShell({ children, role }: AppShellProps) {
       {/* Topbar for Mobile Header */}
       <header className="app-topbar">
         <Link className="brand-mark brand-mark--sm" href="/">
-          <span className="brand-dot" aria-hidden="true" />
+          <CocokInBrand className="brand-mark__image brand-mark__image--sm" decorative priority variant="mark" />
           <strong className="mobile-brand">CocokIn</strong>
         </Link>
         <div className="topbar-role-badge">

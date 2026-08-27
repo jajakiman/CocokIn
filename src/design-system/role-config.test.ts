@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getRoleConfig, roleConfigs } from "./role-config";
 
 describe("roleConfigs", () => {
-  it("uses one shared Arctic Depths theme for every role", () => {
+  it("uses one shared CocokIn theme for every role", () => {
     expect(Object.values(roleConfigs).map((config) => config.theme)).toEqual([
       "arctic-depths",
       "arctic-depths",

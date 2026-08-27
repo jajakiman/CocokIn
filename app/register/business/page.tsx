@@ -4,7 +4,7 @@ import { AuthShell } from "@/src/components/auth/auth-shell";
 import { UnavailableRegistrationForm } from "@/src/components/auth/registration-form";
 
 export const metadata: Metadata = {
-  title: "Daftar sebagai UMKM | CocokIn",
+  title: "Daftar sebagai UMKM",
   description: "Buat akun UMKM CocokIn untuk mendiagnosis kebutuhan dan menjalankan proyek digital terukur.",
 };
 

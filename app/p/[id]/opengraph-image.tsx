@@ -14,6 +14,9 @@ export default async function Image({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const siteUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "https://cocokin.id";
 
   return new ImageResponse(
     (
@@ -25,42 +28,35 @@ export default async function Image({
           flexDirection: "column",
           alignItems: "flex-start",
           justifyContent: "space-between",
-          backgroundColor: "#0F2431",
+          backgroundColor: "#001040",
           padding: "60px 80px",
           fontFamily: "sans-serif",
           color: "white",
         }}
       >
-        {/* Brand Header */}
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div
+          {/* ImageResponse requires a plain img element. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            alt=""
+            height="64"
+            src={`${siteUrl}/brand/cocokin/logo-mark.webp`}
             style={{
-              backgroundColor: "#0DB8D3",
-              color: "#0F2431",
-              fontWeight: 900,
-              fontSize: "28px",
-              width: "48px",
-              height: "48px",
-              borderRadius: "10px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              objectFit: "contain",
+              width: "54px",
             }}
-          >
-            C
-          </div>
+          />
           <span style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.02em" }}>
             CocokIn Skill Passport
           </span>
         </div>
 
-        {/* Passport Content Body */}
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <div
             style={{
               fontSize: "18px",
               fontWeight: 700,
-              color: "#0DB8D3",
+              color: "#FF8010",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
             }}
@@ -70,27 +66,26 @@ export default async function Image({
           <div style={{ fontSize: "52px", fontWeight: 900, letterSpacing: "-0.03em" }}>
             {id.replace(/^talent-/, "").toUpperCase() || "TALENT"}
           </div>
-          <div style={{ fontSize: "22px", color: "#C9E0E8" }}>
+          <div style={{ fontSize: "22px", color: "#D8E1EE" }}>
             Bukti Kesiapan Karier & Portofolio Tervalidasi UMKM
           </div>
         </div>
 
-        {/* Footer Meta Badge */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
-            borderTop: "2px solid rgba(201, 224, 232, 0.2)",
+            borderTop: "2px solid rgba(216, 225, 238, 0.2)",
             paddingTop: "24px",
           }}
         >
           <div
             style={{
-              backgroundColor: "rgba(13, 184, 211, 0.15)",
-              border: "1px solid #0DB8D3",
-              color: "#0DB8D3",
+              backgroundColor: "rgba(255, 128, 16, 0.12)",
+              border: "1px solid #FF8010",
+              color: "#FF8010",
               padding: "8px 18px",
               borderRadius: "999px",
               fontSize: "16px",
@@ -99,7 +94,7 @@ export default async function Image({
           >
             ✓ Official CocokIn Verified Document
           </div>
-          <div style={{ fontSize: "16px", color: "#94B9C7" }}>cocokin.id</div>
+          <div style={{ fontSize: "16px", color: "#9AABC2" }}>cocokin.id</div>
         </div>
       </div>
     ),

@@ -5,7 +5,7 @@ import { AppShell } from "./app-shell";
 
 describe("AppShell", () => {
   it("renders role navigation through one shared accessible shell", () => {
-    render(
+    const { container } = render(
       <AppShell role="talent">
         <h1>Dashboard Talent</h1>
       </AppShell>,
@@ -17,5 +17,8 @@ describe("AppShell", () => {
       "href",
       "#main-content",
     );
+    expect(container.querySelectorAll('img[src="/brand/cocokin/logo-mark.webp"]')).toHaveLength(2);
+    expect(container.querySelector('img[src="/brand/cocokin/logo-wordmark.webp"]')).toBeInTheDocument();
+    expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
   });
 });

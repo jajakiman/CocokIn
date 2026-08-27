@@ -139,7 +139,7 @@ export function GuestLanding() {
         {/* 8. Workable-Style Pre-Footer Call to Action */}
         <section className="pre-footer-cta" id="final-cta">
           <div className="pre-footer-container">
-            <p className="editorial-tag-pill" style={{ background: "rgba(255, 255, 255, 0.1)", color: "var(--brand-cyan)", borderColor: "rgba(255, 255, 255, 0.2)" }}>
+            <p className="editorial-tag-pill" style={{ background: "rgba(255, 255, 255, 0.1)", color: "var(--brand-orange)", borderColor: "rgba(255, 255, 255, 0.2)" }}>
               Langkah Selanjutnya
             </p>
             <h2>Mulai Kolaborasi Terukur Hari Ini</h2>

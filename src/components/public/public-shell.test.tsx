@@ -7,7 +7,7 @@ import { PublicHeader } from "./public-header";
 
 describe("PublicHeader", () => {
   it("provides the public product and account navigation", () => {
-    render(<PublicHeader />);
+    const { container } = render(<PublicHeader />);
 
     const navigation = screen.getByRole("navigation", { name: "Navigasi publik" });
     const sectionLinks = {
@@ -25,6 +25,8 @@ describe("PublicHeader", () => {
     expect(within(navigation).getByRole("link", { name: "Daftar" })).toHaveAttribute("href", "/register");
     expect(within(navigation).getByRole("link", { name: "Mulai Sekarang" })).toHaveAttribute("href", "/register");
     expect(within(navigation).queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
+    expect(container.querySelector(".public-brand img")).toHaveAttribute("src", "/brand/cocokin/logo-wordmark.webp");
+    expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
   });
 
   it("opens the mobile menu from the keyboard", async () => {

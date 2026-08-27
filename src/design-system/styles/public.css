@@ -152,7 +152,7 @@
   font-size: 0.85rem;
 }
 
-/* ── Workable-Inspired B2B SaaS Layout (Arctic Depths Palette) ── */
+/* ── CocokIn Public Experience ───────────────────────────── */
 
 .public-shell {
   background: var(--background);
@@ -190,27 +190,13 @@
   align-items: center;
   color: var(--foreground);
   display: inline-flex;
-  font-size: 1.3rem;
-  font-weight: 850;
-  gap: 0.5rem;
-  letter-spacing: -0.04em;
+  min-height: 2.75rem;
   text-decoration: none;
 }
 
-.public-brand .brand-dot,
-.brand-mark .brand-dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: var(--brand-cyan, #0ea5e9);
-  box-shadow: 0 0 10px rgba(14, 165, 233, 0.6);
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.public-brand strong {
-  font-weight: 850;
-  letter-spacing: -0.035em;
+.public-brand__wordmark {
+  height: auto;
+  width: 8.75rem;
 }
 
 .public-nav--desktop {
@@ -438,7 +424,7 @@
   align-items: center;
   gap: 0.5rem;
   transition: all 180ms ease;
-  box-shadow: 0 4px 14px rgb(6 91 152 / 0.25);
+  box-shadow: 0 4px 14px rgb(0 16 64 / 0.25);
 }
 
 .cta-btn-primary:hover {
@@ -472,7 +458,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: 0 16px 36px -8px rgb(25 53 70 / 0.1);
+  box-shadow: 0 16px 36px -8px rgb(0 16 64 / 0.1);
   padding: 1.75rem;
   display: grid;
   gap: 1.25rem;
@@ -617,7 +603,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  box-shadow: 0 12px 32px -6px rgb(25 53 70 / 0.08);
+  box-shadow: 0 12px 32px -6px rgb(0 16 64 / 0.08);
   padding: 2rem;
   display: grid;
   gap: 1.25rem;
@@ -833,7 +819,7 @@
 /* ── Pre-Footer CTA (Workable Deep Navy Banner) ─────────── */
 
 .pre-footer-cta {
-  background: #0f2431;
+  background: var(--brand-navy);
   color: white;
   padding: clamp(4.5rem, 8vw, 6.5rem) 1.5rem;
   text-align: center;
@@ -867,8 +853,8 @@
 }
 
 .pre-footer-btn-talent {
-  background: var(--brand-cyan);
-  color: #0f2431;
+  background: var(--brand-orange);
+  color: var(--brand-navy);
   font-weight: 800;
   padding: 0.85rem 1.75rem;
   border-radius: var(--radius-md);
@@ -880,7 +866,7 @@
 }
 
 .pre-footer-btn-talent:hover {
-  background: #0ba5bd;
+  background: var(--brand-gold);
   transform: translateY(-1px);
 }
 
@@ -906,7 +892,7 @@
 /* ── Structured 4-Column Footer ─────────────────────────── */
 
 .public-footer {
-  background: #091822;
+  background: var(--brand-navy);
   color: white;
   padding: clamp(3.5rem, 6vw, 5rem) 1.5rem 2.5rem;
 }
@@ -937,7 +923,13 @@
 }
 
 .public-brand--footer {
-  color: white;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 0.25rem 0.5rem;
+}
+
+.public-brand--footer .public-brand__wordmark {
+  width: 8.25rem;
 }
 
 .public-footer__desc {
@@ -953,7 +945,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: var(--brand-cyan);
+  color: var(--brand-orange);
   margin: 0;
 }
 

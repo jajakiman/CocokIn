@@ -22,14 +22,9 @@
   text-decoration: none;
 }
 
-.auth-shell__brand .brand-dot {
-  background: var(--brand-cyan);
-  border-radius: 999px;
-  box-shadow: 0 0 8px rgb(13 184 211 / 0.45);
-  display: inline-block;
-  flex: 0 0 auto;
-  height: 0.55rem;
-  width: 0.55rem;
+.auth-shell__wordmark {
+  height: auto;
+  width: 8.5rem;
 }
 
 .auth-shell__form-inner {
@@ -82,7 +77,7 @@
 
 .auth-shell__context-pill {
   align-items: center;
-  color: var(--brand-cyan);
+  color: var(--brand-orange);
   display: inline-flex;
   font-size: 0.75rem;
   font-weight: 800;
@@ -117,7 +112,7 @@
 }
 
 .auth-shell__protection svg {
-  color: var(--brand-cyan);
+  color: var(--brand-orange);
   flex: 0 0 auto;
 }
 

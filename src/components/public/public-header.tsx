@@ -4,6 +4,7 @@ import { ArrowRight, List, X } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 const publicLinks = [
   { href: "/#untuk-talent", label: "Untuk Talent" },
@@ -37,8 +38,7 @@ export function PublicHeader() {
     <header className="public-header">
       <div className="public-header__inner">
         <Link className="public-brand" href="/" aria-label="CocokIn beranda">
-          <span className="brand-dot" aria-hidden="true" />
-          <strong>CocokIn</strong>
+          <CocokInBrand className="public-brand__wordmark" decorative priority variant="wordmark" />
         </Link>
 
         <nav className="public-nav--desktop" aria-label="Navigasi publik">

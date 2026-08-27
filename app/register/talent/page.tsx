@@ -4,7 +4,7 @@ import { AuthShell } from "@/src/components/auth/auth-shell";
 import { UnavailableRegistrationForm } from "@/src/components/auth/registration-form";
 
 export const metadata: Metadata = {
-  title: "Daftar sebagai Talent | CocokIn",
+  title: "Daftar sebagai Talent",
   description: "Buat akun Talent CocokIn untuk mengukur kesiapan karier dan membangun bukti kerja terverifikasi.",
 };
 

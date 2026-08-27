@@ -13,7 +13,10 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cocokin.id"),
-  title: "CocokIn | Talent Bertumbuh, UMKM Naik Kelas",
+  title: {
+    default: "CocokIn | Talent Bertumbuh, UMKM Naik Kelas",
+    template: "%s | CocokIn",
+  },
   description:
     "CocokIn mempertemukan Talent dan UMKM melalui matching terukur, proyek digital, dan bukti kerja terverifikasi.",
   openGraph: {
@@ -23,6 +26,25 @@ export const metadata: Metadata = {
     siteName: "CocokIn",
     type: "website",
     url: "/",
+    images: [
+      {
+        url: "/brand/cocokin/logo-full.webp",
+        width: 2089,
+        height: 753,
+        alt: "CocokIn",
+      },
+    ],
+  },
+  icons: {
+    icon: "/brand/cocokin/logo-mark.webp",
+    shortcut: "/brand/cocokin/logo-mark.webp",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CocokIn | Talent Bertumbuh, UMKM Naik Kelas",
+    description:
+      "Temukan kecocokan terukur, jalankan proyek digital, dan bangun bukti kerja terverifikasi bersama CocokIn.",
+    images: ["/brand/cocokin/logo-full.webp"],
   },
 };
 

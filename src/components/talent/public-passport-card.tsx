@@ -6,6 +6,7 @@ import type { TalentSkillPassport } from "@/src/modules/talent/types";
 import { getCareerDomain } from "@/src/modules/talent/career-taxonomy";
 import { StatusBadge } from "@/src/design-system/status-badge";
 import { ShareNetwork, Check, ShieldCheck, Sparkle } from "@phosphor-icons/react";
+import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 type PublicPassportCardProps = {
   talentName: string;
@@ -51,7 +52,7 @@ export function PublicPassportCard({
       {/* Brand Watermark Header */}
       <header className="public-passport-header">
         <Link href="/" className="brand-mark brand-mark--public">
-          <span className="brand-dot" aria-hidden="true" />
+          <CocokInBrand className="brand-mark__image brand-mark__image--public" decorative variant="mark" />
           <strong>CocokIn Skill Passport</strong>
         </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>

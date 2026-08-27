@@ -4,7 +4,7 @@ import { AuthShell } from "@/src/components/auth/auth-shell";
 import { UnavailableForgotPasswordForm } from "@/src/components/auth/forgot-password-form";
 
 export const metadata: Metadata = {
-  title: "Lupa Kata Sandi | CocokIn",
+  title: "Lupa Kata Sandi",
   description: "Minta instruksi untuk mengatur ulang kata sandi akun CocokIn.",
 };
 

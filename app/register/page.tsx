@@ -4,7 +4,7 @@ import { AuthShell } from "@/src/components/auth/auth-shell";
 import { RoleChoice } from "@/src/components/auth/role-choice";
 
 export const metadata: Metadata = {
-  title: "Daftar | CocokIn",
+  title: "Daftar",
   description: "Pilih jalur pendaftaran CocokIn sebagai Talent atau UMKM.",
 };
 

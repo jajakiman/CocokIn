@@ -4,7 +4,7 @@ import { AuthShell } from "@/src/components/auth/auth-shell";
 import { UnavailableLoginForm } from "@/src/components/auth/login-form";
 
 export const metadata: Metadata = {
-  title: "Masuk | CocokIn",
+  title: "Masuk",
   description: "Masuk ke CocokIn dengan Google atau email dan kata sandi.",
 };
 
