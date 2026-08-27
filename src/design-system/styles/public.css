@@ -162,27 +162,29 @@
   color: var(--foreground);
 }
 
-/* ── Public Navigation ───────────────────────────────────── */
+/* ── Public Navigation (HeyRetro-Inspired Floating Capsule) ── */
 
 .public-header {
-  align-items: center;
-  background: rgb(255 255 255 / 0.96);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  min-height: 4rem;
-  padding: 0 1rem;
   position: sticky;
   top: 0;
   z-index: 50;
+  padding: 0.75rem 1rem;
+  background: transparent;
 }
 
 .public-header__inner {
   align-items: center;
+  background: rgb(255 255 255 / 0.92);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  box-shadow: 0 8px 32px -4px rgb(0 16 64 / 0.08);
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
-  max-width: 80rem;
+  max-width: 76rem;
+  min-height: 3.75rem;
+  padding: 0.4rem 1.25rem;
   width: 100%;
 }
 
@@ -190,13 +192,13 @@
   align-items: center;
   color: var(--foreground);
   display: inline-flex;
-  min-height: 2.75rem;
+  min-height: 2.5rem;
   text-decoration: none;
 }
 
 .public-brand__wordmark {
   height: auto;
-  width: 8.75rem;
+  width: 8rem;
 }
 
 .public-nav--desktop {
@@ -205,12 +207,13 @@
 
 @media (min-width: 1024px) {
   .public-header {
-    padding-inline: 1.5rem;
+    padding: 1rem 1.5rem 0.5rem;
   }
 
   .public-header__inner {
     display: grid;
-    grid-template-columns: minmax(10rem, 1fr) auto minmax(16rem, 1fr);
+    grid-template-columns: auto 1fr auto;
+    gap: 1.5rem;
   }
 
   .public-nav--desktop {
@@ -218,38 +221,29 @@
   }
 
   .public-nav--center {
-    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
   }
 
   .public-nav--auth {
-    grid-column: 3;
-    justify-self: end;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
   }
-}
-
-.public-nav--center,
-.public-nav--auth {
-  align-items: center;
-  display: flex;
-}
-
-.public-nav--center {
-  gap: 0.125rem;
-}
-
-.public-nav--auth {
-  gap: 0.25rem;
 }
 
 .public-nav__link {
   align-items: center;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   color: var(--muted-foreground);
   display: inline-flex;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 650;
-  min-height: 2.75rem;
-  padding: 0.5rem 0.75rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.85rem;
   transition: background 150ms ease, color 150ms ease;
 }
 
@@ -259,29 +253,36 @@
 }
 
 .public-nav__link--login {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
   color: var(--foreground);
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 750;
+  padding: 0.4rem 1.1rem;
 }
 
-.public-nav__link--signup {
-  color: var(--foreground);
-  font-weight: 700;
+.public-nav__link--login:hover {
+  background: var(--surface-subtle);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .public-nav__cta {
   align-items: center;
-  background: var(--foreground);
-  border: 1px solid var(--foreground);
-  border-radius: 999px;
-  color: var(--surface);
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 9999px;
+  color: white !important;
   display: inline-flex;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 750;
-  gap: 0.5rem;
+  gap: 0.4rem;
   justify-content: center;
-  min-height: 2.75rem;
-  padding: 0.5rem 1rem;
-  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+  min-height: 2.35rem;
+  padding: 0.4rem 1.15rem;
+  transition: all 150ms ease;
+  box-shadow: 0 2px 8px rgb(0 16 64 / 0.15);
 }
 
 .public-nav__cta:hover {
@@ -292,14 +293,14 @@
 
 .public-menu-trigger {
   align-items: center;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
+  background: transparent;
+  border: 0;
+  border-radius: 9999px;
   color: var(--foreground);
   display: inline-flex;
-  height: 2.5rem;
+  height: 2.35rem;
   justify-content: center;
-  width: 2.5rem;
+  width: 2.35rem;
 }
 
 @media (min-width: 1024px) {
@@ -309,32 +310,39 @@
 }
 
 .public-mobile-menu {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: rgb(255 255 255 / 0.96);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
   padding: 1.25rem;
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 4rem;
-  box-shadow: var(--shadow-card);
+  left: 1rem;
+  right: 1rem;
+  top: 4.5rem;
+  box-shadow: 0 16px 40px -8px rgb(0 16 64 / 0.15);
 }
 
 .public-mobile-menu__link {
-  padding: 0.6rem 0.5rem;
+  padding: 0.6rem 0.75rem;
   font-weight: 650;
   font-size: 0.95rem;
   color: var(--foreground);
+  border-radius: var(--radius-md);
+}
+
+.public-mobile-menu__link:hover {
+  background: var(--surface-subtle);
 }
 
 .public-mobile-menu__auth {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
   margin-top: 0.5rem;
-  padding-top: 0.75rem;
+  padding-top: 0.85rem;
   border-top: 1px solid var(--border);
 }
 
@@ -348,7 +356,7 @@
 #matching-engine,
 #proyek-unggulan,
 #trust {
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 5.5rem;
 }
 
 /* ── HeyRetro-Inspired Light & Airy SaaS Layout ─────────────────── */

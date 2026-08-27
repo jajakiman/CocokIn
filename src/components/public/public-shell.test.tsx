@@ -22,8 +22,8 @@ describe("PublicHeader", () => {
       expect(within(navigation).getByRole("link", { name })).toHaveAttribute("href", href);
     }
     expect(within(navigation).getByRole("link", { name: "Masuk" })).toHaveAttribute("href", "/login");
-    expect(within(navigation).getByRole("link", { name: "Daftar" })).toHaveAttribute("href", "/register");
     expect(within(navigation).getByRole("link", { name: "Mulai Sekarang" })).toHaveAttribute("href", "/register");
+    expect(within(navigation).queryByRole("link", { name: "Daftar" })).not.toBeInTheDocument();
     expect(within(navigation).queryByRole("link", { name: /admin/i })).not.toBeInTheDocument();
     expect(container.querySelector(".public-brand img")).toHaveAttribute("src", "/brand/cocokin/logo-wordmark.webp");
     expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();

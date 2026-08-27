@@ -53,9 +53,6 @@ export function PublicHeader() {
             <Link className="public-nav__link public-nav__link--login" href="/login">
               Masuk
             </Link>
-            <Link className="public-nav__link public-nav__link--signup" href="/register">
-              Daftar
-            </Link>
             <Link className="public-nav__cta" href="/register">
               <span>Mulai Sekarang</span>
               <ArrowRight aria-hidden="true" size={16} weight="bold" />
@@ -95,9 +92,6 @@ export function PublicHeader() {
             <div className="public-mobile-menu__auth">
               <Link className="public-mobile-menu__link" href="/login" onClick={closeMenu}>
                 Masuk
-              </Link>
-              <Link className="public-mobile-menu__link" href="/register" onClick={closeMenu}>
-                Daftar
               </Link>
               <Link className="public-nav__cta public-nav__cta--mobile" href="/register" onClick={closeMenu}>
                 <span>Mulai Sekarang</span>
