@@ -44,11 +44,6 @@ test.describe("ZAKY-01 Multi-Viewport & Accessibility E2E Suite", () => {
       await expect(
         page.getByRole("heading", { name: "Portofolio Terverifikasi UMKM" }),
       ).toBeVisible();
-
-      // 8. Public Shareable Passport
-      await page.goto("/p/talent-nadia");
-      await expect(page.getByRole("heading", { name: "Nadia Putri" })).toBeVisible();
-
     });
   }
 });

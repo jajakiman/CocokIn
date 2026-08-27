@@ -1,106 +1,157 @@
 "use client";
 
 import Link from "next/link";
-import { User, Storefront, ArrowRight, Sparkle, ShieldCheck, CheckCircle } from "@phosphor-icons/react";
+import { User, Storefront, ArrowRight, Sparkle, ShieldCheck, CheckCircle, Clock, Code, Trophy } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 
 export function WorkableHero() {
   return (
-    <section className="workable-hero" id="hero">
-      <div className="workable-hero__container">
-        {/* Left: Value Proposition & CTAs */}
+    <section className="heyretro-hero" id="hero">
+      <div className="heyretro-hero__container">
+        {/* Centered Top Value Proposition (HeyRetro Style) */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          className="heyretro-hero__header"
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="workable-pill">
+          <div className="hero-pill">
             <Sparkle size={14} weight="fill" />
             <span>Platform Kolaborasi Proyek Digital</span>
           </div>
 
           <h1>
-            Ekosistem Kerja Nyata untuk Talenta Muda & Digitalisasi UMKM.
+            Potensi Bertemu Kebutuhan, <br className="hidden md:inline" />
+            Proyek Nyata Mulai Berjalan.
           </h1>
 
-          <p className="workable-hero__lead">
-            Bukan sekadar tempat kerja lepas. Proyek berlangsung 3–14 hari dengan target yang jelas,
-            pencocokan yang adil, dan portofolio resmi yang diakui pemilik usaha.
+          <p className="heyretro-hero__lead">
+            CocokIn mempertemukan talenta muda dan UMKM melalui pengerjaan proyek 3–14 hari
+            dengan pencocokan terbuka, hasil yang dapat ditinjau, dan perlindungan yang jelas.
           </p>
 
-          <div className="workable-hero__ctas">
-            <Link href="/register/talent" className="cta-btn-primary">
+          <div className="heyretro-hero__ctas">
+            <Link href="/register/talent" className="hero-cta-btn hero-cta-btn--talent">
               <User size={18} weight="bold" />
               <span>Mulai sebagai Talent</span>
               <ArrowRight size={16} weight="bold" />
             </Link>
-            <Link href="/register/business" className="cta-btn-secondary">
+            <Link href="/register/business" className="hero-cta-btn hero-cta-btn--business">
               <Storefront size={18} weight="bold" />
               <span>Mulai sebagai UMKM</span>
               <ArrowRight size={16} weight="bold" />
             </Link>
           </div>
 
-          <div style={{ display: "flex", gap: "1.5rem", marginTop: "2rem", flexWrap: "wrap", fontSize: "0.85rem", color: "var(--muted-foreground)" }}>
-            <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <CheckCircle size={16} weight="fill" color="var(--success)" /> Pencocokan Objektif & Adil
+          <div className="hero-trust-proofs">
+            <span>
+              <CheckCircle size={16} weight="fill" /> Pencocokan Objektif & Adil
             </span>
-            <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <ShieldCheck size={16} weight="fill" color="var(--primary)" /> Dana Aman & Bergaransi
+            <span>
+              <Clock size={16} weight="fill" /> Durasi Nyata 3–14 Hari
+            </span>
+            <span>
+              <ShieldCheck size={16} weight="fill" /> Dana Aman & Garansi 30 Hari
             </span>
           </div>
         </motion.div>
 
-        {/* Right: Authentic Product UI Frame */}
+        {/* Large Central Product In-Use Showcase (HeyRetro Board Preview) */}
         <motion.div
-          className="hero-product-card"
-          aria-label="Pratinjau antarmuka pengerjaan proyek CocokIn"
-          initial={{ opacity: 0, y: 30, scale: 0.98 }}
+          className="heyretro-board-wrapper"
+          initial={{ opacity: 0, y: 32, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-          whileHover={{ y: -3, transition: { duration: 0.2 } }}
         >
-          <div className="hero-product-card__header">
-            <h3>Pusat Kerja & Kolaborasi Terukur</h3>
-            <span className="status-badge" data-tone="success">Proyek Aktif</span>
-          </div>
-
-          <div className="hero-product-card__body">
-            {/* Top Subcard: Talent Card */}
-            <div className="hero-subcard">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <div>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--primary)", textTransform: "uppercase" }}>Talent Pelaksana</span>
-                  <strong style={{ display: "block", fontSize: "1.05rem" }}>Nadia Putri</strong>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <span style={{ fontSize: "0.7rem", color: "var(--muted-foreground)" }}>Cocok Score</span>
-                  <strong style={{ display: "block", color: "var(--success)", fontSize: "1.2rem", fontVariantNumeric: "tabular-nums" }}>87/100</strong>
-                </div>
+          {/* Main Board Container */}
+          <div className="heyretro-board">
+            {/* Board Topbar */}
+            <div className="heyretro-board__topbar">
+              <div className="topbar-left">
+                <span className="dot dot--red" />
+                <span className="dot dot--yellow" />
+                <span className="dot dot--green" />
+                <span className="topbar-title">Project Workspace • Warung Bu Siti × Nadia Putri</span>
               </div>
-              <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", fontSize: "0.75rem" }}>
-                <span className="skill-tag">React Verified</span>
-                <span className="skill-tag">HTML/CSS Assessed</span>
-                <span className="skill-tag">Next.js</span>
+              <div className="topbar-right">
+                <span className="live-status-pill">
+                  <span className="live-indicator" /> Staging Live Review
+                </span>
               </div>
             </div>
 
-            {/* Bottom Subcard: MSME Project Card */}
-            <div className="hero-subcard" style={{ background: "var(--surface-selected)", borderColor: "var(--brand-blue)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <div>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "var(--success)", textTransform: "uppercase" }}>Proyek UMKM</span>
-                  <strong style={{ display: "block", fontSize: "1.05rem" }}>Warung Bu Siti</strong>
+            {/* Board Inner Grid */}
+            <div className="heyretro-board__grid">
+              {/* Column 1: Kebutuhan Proyek */}
+              <div className="board-col">
+                <div className="board-col__header">
+                  <span className="col-tag col-tag--biz">Klien UMKM</span>
+                  <h4>Warung Bu Siti</h4>
                 </div>
-                <span className="status-badge" data-tone="warning">Milestone 2/3</span>
+                <div className="board-card">
+                  <p className="board-card__title">Website Katalog & Pemesanan WA</p>
+                  <p className="board-card__desc">Menu digital responsif agar pesanan masuk langsung via chat.</p>
+                  <div className="board-card__footer">
+                    <span className="badge-meta">Durasi: 8 Hari</span>
+                    <span className="badge-meta badge-meta--paid">Rp 1.500.000</span>
+                  </div>
+                </div>
               </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--foreground)", fontWeight: 600, margin: "0 0 0.5rem" }}>
-                Website Katalog & Pemesanan WhatsApp (8 Hari)
-              </p>
-              <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "0.375rem", padding: "0.5rem 0.75rem", fontSize: "0.75rem", display: "flex", justifyContent: "space-between" }}>
-                <span>Deliverable: <code>staging.warungbusiti.id</code></span>
-                <span style={{ color: "var(--success)", fontWeight: 700 }}>✓ HTTPS Review Ready</span>
+
+              {/* Column 2: Talent & Cocok Score */}
+              <div className="board-col">
+                <div className="board-col__header">
+                  <span className="col-tag col-tag--talent">Talent Terpilih</span>
+                  <h4>Nadia Putri</h4>
+                </div>
+                <div className="board-card board-card--highlight">
+                  <div className="board-score-row">
+                    <span>Cocok Score Engine</span>
+                    <strong>87/100</strong>
+                  </div>
+                  <div className="skill-chips-row">
+                    <span>React Verified</span>
+                    <span>Next.js</span>
+                    <span>Tailwind</span>
+                  </div>
+                  <p className="board-card__note">✓ Major skill gap terpenuhi</p>
+                </div>
               </div>
+
+              {/* Column 3: Progres Milestone */}
+              <div className="board-col">
+                <div className="board-col__header">
+                  <span className="col-tag col-tag--milestone">Milestone 2/3</span>
+                  <h4>Tinjauan Deliverable</h4>
+                </div>
+                <div className="board-card">
+                  <p className="board-card__title">Integrasi WhatsApp & Katalog</p>
+                  <div className="staging-link-box">
+                    <span>Preview Link:</span>
+                    <code>staging.warungbusiti.id</code>
+                  </div>
+                  <span className="status-badge" data-tone="success" style={{ marginTop: "0.5rem" }}>
+                    ✓ HTTPS Valid & Siap Uji
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating Subtle Proof Chips (Desktop only) */}
+          <div className="floating-chip floating-chip--left">
+            <Trophy size={18} weight="fill" />
+            <div>
+              <strong>Portofolio Resmi</strong>
+              <span>Disahkan oleh Pemilik Usaha</span>
+            </div>
+          </div>
+
+          <div className="floating-chip floating-chip--right">
+            <Code size={18} weight="fill" />
+            <div>
+              <strong>Kompensasi Utuh 100%</strong>
+              <span>Tanpa potongan komisi Talent</span>
             </div>
           </div>
         </motion.div>

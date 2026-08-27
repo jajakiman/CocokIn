@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, ArrowRight, ShieldCheck } from "@phosphor-icons/react";
+import { Clock, ArrowRight, ShieldCheck, Sparkle } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
 
 export function FeaturedProjects() {
@@ -42,31 +42,27 @@ export function FeaturedProjects() {
   ];
 
   return (
-    <section className="landing-section" id="proyek-unggulan">
-      <div className="landing-section__container">
+    <section className="heyretro-section heyretro-section--alt" id="proyek-unggulan">
+      <div className="heyretro-container">
         <motion.div
-          className="section-header-editorial"
-          initial={{ opacity: 0, y: 20 }}
+          className="section-header-centered"
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div>
-            <p className="editorial-tag-pill" style={{ color: "var(--success)" }}>
-              Rekam Jejak Nyata
-            </p>
-            <h2>Hasil Kerja Nyata yang Telah Tervalidasi</h2>
-            <p>
-              Proyek mikro berdurasi 3–14 hari yang diselesaikan talenta muda dan disahkan langsung oleh pelaku usaha UMKM.
-            </p>
+          <div className="section-pill">
+            <Sparkle size={14} weight="fill" />
+            <span>Rekam Jejak Nyata</span>
           </div>
-          <Link href="/register/talent" className="text-action" style={{ fontSize: "0.95rem" }}>
-            Lihat semua peluang proyek <ArrowRight size={16} weight="bold" />
-          </Link>
+          <h2>Hasil Kerja Nyata yang Telah Tervalidasi</h2>
+          <p>
+            Proyek mikro berdurasi 3–14 hari yang diselesaikan talenta muda dan disahkan langsung oleh pelaku usaha UMKM.
+          </p>
         </motion.div>
 
         <motion.div
-          className="featured-projects-grid"
+          className="heyretro-projects-grid"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-60px" }}
@@ -75,7 +71,7 @@ export function FeaturedProjects() {
             visible: {
               opacity: 1,
               transition: {
-                staggerChildren: 0.1,
+                staggerChildren: 0.08,
               },
             },
           }}
@@ -83,49 +79,50 @@ export function FeaturedProjects() {
           {caseStudies.map((item) => (
             <motion.article
               key={item.id}
-              className="project-case-card"
+              className="heyretro-case-card"
               variants={{
-                hidden: { opacity: 0, y: 24 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
               }}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
-              <div>
-                <div className="project-case-card__header">
-                  <div className="project-case-card__tags">
-                    <span className="status-badge" data-tone="info">
-                      {item.category}
-                    </span>
-                    <span className="status-badge" data-tone="success">
-                      <ShieldCheck size={14} weight="fill" /> Verified
-                    </span>
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p className="project-case-card__biz">Klien: {item.businessName}</p>
+              <div className="case-card__top">
+                <div className="case-card__badges">
+                  <span className="case-cat-tag">{item.category}</span>
+                  <span className="case-verified-tag">
+                    <ShieldCheck size={14} weight="fill" /> Verified
+                  </span>
                 </div>
+                <h3>{item.title}</h3>
+                <p className="case-client">Klien: <strong>{item.businessName}</strong></p>
+                <p className="case-outcome">{item.outcome}</p>
+              </div>
 
-                <p className="project-case-card__summary">{item.outcome}</p>
-
-                <div className="portfolio-skills" style={{ marginBottom: "1.25rem" }}>
+              <div className="case-card__bottom">
+                <div className="case-skills">
                   {item.skills.map((s) => (
-                    <span key={s} className="skill-tag">
+                    <span key={s} className="skill-chip">
                       {s}
                     </span>
                   ))}
                 </div>
-              </div>
 
-              <div className="project-case-card__footer">
-                <span style={{ color: "var(--muted-foreground)", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                  <Clock size={14} weight="bold" /> {item.duration}
-                </span>
-                <span style={{ fontWeight: 700, color: "var(--primary)" }}>
-                  {item.milestones}
-                </span>
+                <div className="case-footer">
+                  <span className="case-duration">
+                    <Clock size={14} weight="bold" /> {item.duration}
+                  </span>
+                  <span className="case-milestones">{item.milestones}</span>
+                </div>
               </div>
             </motion.article>
           ))}
         </motion.div>
+
+        <div className="projects-bottom-cta">
+          <Link href="/register/talent" className="text-action">
+            Lihat semua peluang proyek <ArrowRight size={16} weight="bold" />
+          </Link>
+        </div>
       </div>
     </section>
   );

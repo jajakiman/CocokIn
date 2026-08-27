@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { GuestLanding } from "./guest-landing";
 
-describe("GuestLanding (Workable B2B SaaS Style)", () => {
+describe("GuestLanding (Modern SaaS Style)", () => {
   it("renders with a skip-to-main link targeting the main region", () => {
     render(<GuestLanding />);
 

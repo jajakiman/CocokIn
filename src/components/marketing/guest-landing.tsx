@@ -26,83 +26,86 @@ export function GuestLanding() {
       <PublicHeader />
 
       <main id="main-content" tabIndex={-1}>
-        {/* 1. Workable Hero */}
+        {/* 1. Centered HeyRetro Hero & Live Board Showcase */}
         <WorkableHero />
 
-        {/* 2. Credibility / Trust Strip */}
-        <section className="credibility-strip" aria-label="Standar Kepercayaan Platform">
-          <div className="credibility-strip__container">
-            <div className="credibility-item">
-              <div className="credibility-item__icon">
-                <Scales size={22} weight="duotone" />
+        {/* 2. Compact Proof Bar */}
+        <section className="heyretro-proof-bar" aria-label="Standar Kepercayaan Platform">
+          <div className="heyretro-container">
+            <div className="proof-bar-grid">
+              <div className="proof-item">
+                <div className="proof-item__icon">
+                  <Scales size={20} weight="duotone" />
+                </div>
+                <div>
+                  <strong>Dana Pembayaran Terlindungi</strong>
+                  <span>Kewajiban pengguna tercatat transparan</span>
+                </div>
               </div>
-              <div>
-                <strong>Dana Pembayaran Terlindungi</strong>
-                <span>Dana proyek dijaga sesuai kewajiban pengguna</span>
-              </div>
-            </div>
 
-            <div className="credibility-item">
-              <div className="credibility-item__icon">
-                <ShieldCheck size={22} weight="duotone" />
+              <div className="proof-item">
+                <div className="proof-item__icon">
+                  <ShieldCheck size={20} weight="duotone" />
+                </div>
+                <div>
+                  <strong>Garansi Perbaikan 30 Hari</strong>
+                  <span>Retensi aman pasca serah terima</span>
+                </div>
               </div>
-              <div>
-                <strong>Garansi Bug 30 Hari</strong>
-                <span>10% retensi pasca serah terima</span>
-              </div>
-            </div>
 
-            <div className="credibility-item">
-              <div className="credibility-item__icon">
-                <LockKey size={22} weight="duotone" />
+              <div className="proof-item">
+                <div className="proof-item__icon">
+                  <LockKey size={20} weight="duotone" />
+                </div>
+                <div>
+                  <strong>Persetujuan Bersama</strong>
+                  <span>Izin Talent & persetujuan UMKM</span>
+                </div>
               </div>
-              <div>
-                <strong>Portofolio atas Persetujuan Bersama</strong>
-                <span>Izin Talent dan persetujuan UMKM</span>
-              </div>
-            </div>
 
-            <div className="credibility-item">
-              <div className="credibility-item__icon">
-                <Sparkle size={22} weight="duotone" />
-              </div>
-              <div>
-                <strong>Penyelarasan SDG 8 & 9</strong>
-                <span>Pertumbuhan ekonomi & inovasi</span>
+              <div className="proof-item">
+                <div className="proof-item__icon">
+                  <Sparkle size={20} weight="duotone" />
+                </div>
+                <div>
+                  <strong>Penyelarasan SDG 8 & 9</strong>
+                  <span>Karier bermakna & digitalisasi usaha</span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* 3. Deep Feature Split 1: Talent */}
+        {/* 3. Role Split 1: Talent */}
         <TalentFeatureSplit />
 
-        {/* 4. Deep Feature Split 2: UMKM */}
+        {/* 4. Role Split 2: UMKM */}
         <BusinessFeatureSplit />
 
-        {/* 5. Smart Matching Engine Scorecard */}
+        {/* 5. Smart Matching Showcase */}
         <MatchingScorecardShowcase />
 
-        {/* 6. Featured Real Projects & Case Studies */}
+        {/* 6. Real Projects & Case Studies */}
         <FeaturedProjects />
 
-        {/* 7. Institutional Governance & Trust */}
-        <section className="trust-section" id="trust">
-          <div className="trust-container">
-            <div className="section-header-editorial">
-              <div>
-                <p className="editorial-tag-pill">Etika & Keamanan</p>
-                <h2>Perlindungan yang Jelas untuk Setiap Proyek</h2>
-                <p>
-                  Aturan yang mudah dipahami untuk menjaga pembayaran, izin portofolio, dan kualitas hasil kerja.
-                </p>
+        {/* 7. Trust & Institutional Governance */}
+        <section className="heyretro-trust-section" id="trust">
+          <div className="heyretro-container">
+            <div className="section-header-centered section-header-centered--dark">
+              <div className="section-pill section-pill--trust">
+                <ShieldCheck size={14} weight="fill" />
+                <span>Etika & Keamanan</span>
               </div>
+              <h2>Perlindungan yang Jelas untuk Setiap Proyek</h2>
+              <p>
+                Aturan yang mudah dipahami untuk menjaga pembayaran, izin portofolio, dan kualitas hasil kerja.
+              </p>
             </div>
 
-            <div className="trust-grid">
-              <article className="trust-item-card">
-                <div className="trust-item-card__icon">
-                  <Scales size={28} weight="duotone" />
+            <div className="trust-cards-grid">
+              <article className="trust-card">
+                <div className="trust-card__icon">
+                  <Scales size={26} weight="duotone" />
                 </div>
                 <h3>Dana Pembayaran Aman & Terlindungi</h3>
                 <p>
@@ -111,9 +114,9 @@ export function GuestLanding() {
                 </p>
               </article>
 
-              <article className="trust-item-card">
-                <div className="trust-item-card__icon">
-                  <ShieldCheck size={28} weight="duotone" />
+              <article className="trust-card">
+                <div className="trust-card__icon">
+                  <ShieldCheck size={26} weight="duotone" />
                 </div>
                 <h3>Portofolio Terbit atas Persetujuan Bersama</h3>
                 <p>
@@ -122,9 +125,9 @@ export function GuestLanding() {
                 </p>
               </article>
 
-              <article className="trust-item-card">
-                <div className="trust-item-card__icon">
-                  <ArrowsClockwise size={28} weight="duotone" />
+              <article className="trust-card">
+                <div className="trust-card__icon">
+                  <ArrowsClockwise size={26} weight="duotone" />
                 </div>
                 <h3>Garansi Perbaikan 30 Hari</h3>
                 <p>
@@ -136,28 +139,31 @@ export function GuestLanding() {
           </div>
         </section>
 
-        {/* 8. Workable-Style Pre-Footer Call to Action */}
-        <section className="pre-footer-cta" id="final-cta">
-          <div className="pre-footer-container">
-            <p className="editorial-tag-pill" style={{ background: "rgba(255, 255, 255, 0.1)", color: "var(--brand-orange)", borderColor: "rgba(255, 255, 255, 0.2)" }}>
-              Langkah Selanjutnya
-            </p>
-            <h2>Mulai Kolaborasi Terukur Hari Ini</h2>
-            <p>
-              Buktikan kesiapan kariermu dengan proyek nyata atau wujudkan digitalisasi usahamu dengan talenta muda terverifikasi.
-            </p>
+        {/* 8. HeyRetro Style Final Action Banner */}
+        <section className="heyretro-cta-section" id="final-cta">
+          <div className="heyretro-container">
+            <div className="cta-banner-box">
+              <div className="section-pill section-pill--cta">
+                <Sparkle size={14} weight="fill" />
+                <span>Langkah Selanjutnya</span>
+              </div>
+              <h2>Mulai Kolaborasi Terukur Hari Ini</h2>
+              <p>
+                Buktikan kesiapan kariermu dengan proyek nyata atau wujudkan digitalisasi usahamu dengan talenta muda terverifikasi.
+              </p>
 
-            <div className="pre-footer-actions">
-              <Link href="/register/talent" className="pre-footer-btn-talent">
-                <User size={18} weight="bold" />
-                <span>Mulai sebagai Talent</span>
-                <ArrowRight size={16} weight="bold" />
-              </Link>
-              <Link href="/register/business" className="pre-footer-btn-business">
-                <Storefront size={18} weight="bold" />
-                <span>Mulai sebagai UMKM</span>
-                <ArrowRight size={16} weight="bold" />
-              </Link>
+              <div className="cta-banner-buttons">
+                <Link href="/register/talent" className="hero-cta-btn hero-cta-btn--talent">
+                  <User size={18} weight="bold" />
+                  <span>Mulai sebagai Talent</span>
+                  <ArrowRight size={16} weight="bold" />
+                </Link>
+                <Link href="/register/business" className="hero-cta-btn hero-cta-btn--business-dark">
+                  <Storefront size={18} weight="bold" />
+                  <span>Mulai sebagai UMKM</span>
+                  <ArrowRight size={16} weight="bold" />
+                </Link>
+              </div>
             </div>
           </div>
         </section>

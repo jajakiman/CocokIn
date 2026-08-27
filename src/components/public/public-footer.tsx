@@ -41,7 +41,6 @@ export function PublicFooter() {
               <li><Link href="/login">Masuk ke Akun</Link></li>
               <li><Link href="/register/talent">Pendaftaran Talent</Link></li>
               <li><Link href="/register/business">Pendaftaran UMKM</Link></li>
-              <li><Link href="/p/talent-nadia">Contoh Paspor Digital</Link></li>
             </ul>
           </div>
         </div>
