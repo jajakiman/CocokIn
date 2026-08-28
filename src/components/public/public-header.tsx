@@ -16,7 +16,9 @@ const publicLinks = [
 
 export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const brandRef = useRef<HTMLAnchorElement>(null);
 
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
@@ -34,10 +36,30 @@ export function PublicHeader() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [closeMenu, isMenuOpen]);
 
+  useEffect(() => {
+    const updateScrolledState = () => setIsScrolled(window.scrollY > 16);
+    const closeMenuOnDesktop = () => {
+      if (window.innerWidth >= 1100) {
+        setIsMenuOpen((wasOpen) => {
+          if (wasOpen) brandRef.current?.focus();
+          return false;
+        });
+      }
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+    window.addEventListener("resize", closeMenuOnDesktop);
+    return () => {
+      window.removeEventListener("scroll", updateScrolledState);
+      window.removeEventListener("resize", closeMenuOnDesktop);
+    };
+  }, []);
+
   return (
-    <header className="public-header">
+    <header className="public-header" data-scrolled={isScrolled}>
       <div className="public-header__inner">
-        <Link className="public-brand" href="/" aria-label="CocokIn beranda">
+        <Link className="public-brand" href="/" aria-label="CocokIn beranda" ref={brandRef}>
           <CocokInBrand className="public-brand__wordmark" decorative priority variant="wordmark" />
         </Link>
 

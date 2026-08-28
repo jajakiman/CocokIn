@@ -9,10 +9,11 @@ import { calculateCocokScore } from "@/src/modules/matching";
 import { getAllCareerIds, getCareerDomain } from "@/src/modules/talent/career-taxonomy";
 import { useTalent } from "@/src/context/talent-context";
 import { createSeededProjects } from "@/src/fixtures/seeded-demo";
+import { getReadinessSkillGapIds } from "@/src/modules/talent";
 import { ProjectCard } from "./project-card";
 
 export function ProjectCatalog() {
-  const { profile, passport } = useTalent();
+  const { profile, passport, latestReadinessResult } = useTalent();
   const [filterCareer, setFilterCareer] = useState<CareerDomainId | "all">("all");
   const careerIds = getAllCareerIds();
 
@@ -23,7 +24,8 @@ export function ProjectCatalog() {
       name: e.name,
       level: e.evidenceLevel,
     })),
-    targetCareerId: profile.targetCareerId,
+    targetCareerId: latestReadinessResult?.careerId ?? profile.targetCareerId,
+    majorSkillGapIds: getReadinessSkillGapIds(latestReadinessResult),
     availability: profile.availability,
     completedProjectsCount: 2, // fixture count
     workModePreference: profile.workModePreference,

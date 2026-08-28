@@ -98,6 +98,7 @@ export function TalentProvider({ children }: { children: ReactNode }) {
       const next = { ...prev, ...updates };
       if (updates.targetCareerId && updates.targetCareerId !== prev.targetCareerId) {
         setPassport(createInitialPassport(updates.targetCareerId));
+        setLatestReadinessResult(null);
       }
       return next;
     });
@@ -121,7 +122,12 @@ export function TalentProvider({ children }: { children: ReactNode }) {
       assessedIds.push(item.skillId);
     }
 
-    setPassport((prev) => markAssessed(prev, assessedIds, scoreMap));
+    setPassport((prev) => {
+      const careerPassport = prev.careerId === result.careerId
+        ? prev
+        : createInitialPassport(result.careerId);
+      return markAssessed(careerPassport, assessedIds, scoreMap);
+    });
   };
 
   return (

@@ -31,6 +31,11 @@ export {
 
 export { calculateCareerReadiness } from "./career-readiness";
 export { analyzeSkillGap } from "./skill-gap";
+export {
+  getReadinessScores,
+  getReadinessSkillGapIds,
+  resolveSkillGapInput,
+} from "./readiness-flow";
 
 export {
   canPromote,

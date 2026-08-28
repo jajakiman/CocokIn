@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -38,7 +38,38 @@ describe("PublicHeader", () => {
     await user.keyboard(" ");
 
     expect(trigger).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("navigation", { name: "Menu publik" })).toBeVisible();
+    await waitFor(() => {
+      expect(screen.getByRole("navigation", { name: "Menu publik" })).toBeVisible();
+    });
+  });
+
+  it("adds a stable visual state only after the page is scrolled", () => {
+    render(<PublicHeader />);
+    const header = screen.getByRole("banner");
+
+    expect(header).toHaveAttribute("data-scrolled", "false");
+
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 24 });
+    act(() => window.dispatchEvent(new Event("scroll")));
+    expect(header).toHaveAttribute("data-scrolled", "true");
+
+    Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
+    act(() => window.dispatchEvent(new Event("scroll")));
+    expect(header).toHaveAttribute("data-scrolled", "false");
+  });
+
+  it("closes the mobile menu when the viewport switches to desktop", async () => {
+    const user = userEvent.setup();
+    render(<PublicHeader />);
+    const trigger = screen.getByRole("button", { name: "Buka menu" });
+
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1100 });
+    act(() => window.dispatchEvent(new Event("resize")));
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("link", { name: "CocokIn beranda" })).toHaveFocus();
   });
 
   it("closes the mobile menu after selecting a link", async () => {
