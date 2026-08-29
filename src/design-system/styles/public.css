@@ -176,8 +176,8 @@
 }
 
 .public-header[data-scrolled="true"] {
-  background: rgb(247 249 252 / 0.72);
-  backdrop-filter: blur(16px);
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .public-header__inner {
@@ -197,10 +197,12 @@
 }
 
 .public-header[data-scrolled="true"] .public-header__inner {
-  background: rgb(255 255 255 / 0.96);
-  backdrop-filter: blur(20px);
+  background: rgb(255 255 255 / 0.9);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   border-color: var(--border-strong);
-  box-shadow: 0 12px 32px -8px rgb(0 16 64 / 0.16);
+  box-shadow: 0 10px 28px -10px rgb(0 16 64 / 0.18);
+  overflow: hidden;
 }
 
 .public-brand {

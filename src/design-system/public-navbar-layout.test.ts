@@ -10,4 +10,20 @@ describe("public navbar layout", () => {
     expect(css).toMatch(/\.public-header\s*{[^}]*position:\s*fixed/s);
     expect(css).not.toMatch(/\.public-header\s*{[^}]*position:\s*sticky/s);
   });
+
+  it("applies scroll blur only inside the navbar capsule", () => {
+    const css = readFileSync("src/design-system/styles/public.css", "utf8");
+    const outerScrolledRule = css.match(
+      /\.public-header\[data-scrolled="true"\]\s*{([^}]*)}/s,
+    )?.[1];
+    const capsuleScrolledRule = css.match(
+      /\.public-header\[data-scrolled="true"\]\s+\.public-header__inner\s*{([^}]*)}/s,
+    )?.[1];
+
+    expect(outerScrolledRule).toBeDefined();
+    expect(outerScrolledRule).toContain("background: transparent");
+    expect(outerScrolledRule).toContain("backdrop-filter: none");
+    expect(capsuleScrolledRule).toContain("backdrop-filter: blur(14px)");
+    expect(capsuleScrolledRule).toContain("-webkit-backdrop-filter: blur(14px)");
+  });
 });
