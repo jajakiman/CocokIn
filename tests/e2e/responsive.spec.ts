@@ -18,6 +18,20 @@ test.describe("ZAKY-01 Multi-Viewport & Accessibility E2E Suite", () => {
       // 1. Landing
       await page.goto("/");
       await expect(page.locator("body")).toBeVisible();
+      const publicHeader = page.locator(".public-header");
+      const initialHeaderBox = await publicHeader.boundingBox();
+      expect(initialHeaderBox).not.toBeNull();
+
+      await page.evaluate(() => window.scrollTo(0, 700));
+      await expect(publicHeader).toHaveAttribute("data-scrolled", "true");
+      const scrolledHeaderBox = await publicHeader.boundingBox();
+      expect(scrolledHeaderBox).not.toBeNull();
+      expect(Math.abs((scrolledHeaderBox?.y ?? 0) - (initialHeaderBox?.y ?? 0))).toBeLessThan(1);
+
+      const horizontalOverflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      );
+      expect(horizontalOverflow).toBe(false);
 
       // 2. Talent Projects Catalog
       await page.goto("/talent/projects");
