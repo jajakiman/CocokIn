@@ -192,6 +192,41 @@
   z-index: 10;
 }
 
+.auth-password-strength {
+  display: grid;
+  gap: 0.375rem;
+  margin-top: -0.375rem;
+}
+
+.auth-password-strength__track {
+  display: grid;
+  gap: 0.375rem;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.auth-password-strength__track span {
+  background: var(--border);
+  border-radius: 999px;
+  height: 0.375rem;
+}
+
+.auth-password-strength__track span[data-active="true"][data-strength="1"] { background: var(--destructive); }
+.auth-password-strength__track span[data-active="true"][data-strength="2"] { background: var(--warning); }
+.auth-password-strength__track span[data-active="true"][data-strength="3"] { background: var(--primary); }
+.auth-password-strength__track span[data-active="true"][data-strength="4"] { background: var(--success); }
+
+.auth-password-strength p {
+  color: var(--muted-foreground);
+  display: flex;
+  font-size: 0.75rem;
+  justify-content: space-between;
+  margin: 0;
+}
+
+.auth-password-strength p strong { color: var(--foreground); }
+.auth-password-match { color: var(--destructive); font-size: 0.875rem; margin: -0.375rem 0 0; }
+.auth-password-match[data-match="true"] { color: var(--success); }
+
 .auth-google-button,
 .auth-submit {
   align-items: center;

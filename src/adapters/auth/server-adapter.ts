@@ -5,6 +5,20 @@ import { prisma } from "@/src/adapters/database/prisma";
 import { createSession, destroySession } from "@/src/lib/session";
 import type { AuthResult, AuthUiAdapter, RegistrationRequest, AuthUser } from "@/src/auth-ui/types";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+
+const serverRegistrationSchema = z.object({
+  role: z.enum(["TALENT", "BUSINESS"]),
+  fullName: z.string().trim().min(1),
+  email: z.string().email(),
+  password: z.string().min(8),
+  termsAccepted: z.literal(true),
+  privacyAccepted: z.literal(true),
+});
+
+export async function parseRegistrationRequest(input: unknown) {
+  return serverRegistrationSchema.parse(input);
+}
 
 export async function loginWithCredentials({ email, password }: Parameters<AuthUiAdapter['loginWithCredentials']>[0]) {
   try {
@@ -36,8 +50,9 @@ export async function loginWithGoogle() {
   return { ok: false, code: "PROVIDER_UNAVAILABLE", message: "Google login belum diimplementasikan." } as AuthResult;
 }
 
-export async function register(req: RegistrationRequest) {
+export async function register(input: RegistrationRequest) {
   try {
+    const req = await parseRegistrationRequest(input);
     const existingUser = await prisma.user.findUnique({ where: { email: req.email } });
     if (existingUser) {
       return { ok: false, code: "INVALID_CREDENTIALS", message: "Email sudah terdaftar." } as AuthResult;
@@ -45,13 +60,17 @@ export async function register(req: RegistrationRequest) {
 
     const passwordHash = await bcrypt.hash(req.password, 10);
     
-    const user = await prisma.user.create({
-      data: {
-        email: req.email,
-        name: req.fullName,
-        passwordHash,
-        role: req.role,
-      }
+    const user = await prisma.$transaction(async (tx) => {
+      const createdUser = await tx.user.create({
+        data: { email: req.email, name: req.fullName, passwordHash, role: req.role }
+      });
+      await tx.consentRecord.createMany({
+        data: [
+          { userId: createdUser.id, purpose: "TERMS_ACCEPTANCE", status: "GRANTED", source: "REGISTRATION" },
+          { userId: createdUser.id, purpose: "PRIVACY_PROCESSING", status: "GRANTED", source: "REGISTRATION" },
+        ],
+      });
+      return createdUser;
     });
 
     const authUser: AuthUser = {

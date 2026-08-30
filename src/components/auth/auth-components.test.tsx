@@ -214,6 +214,27 @@ describe("RoleChoice", () => {
 });
 
 describe("RegistrationForm", () => {
+  it("shows live password strength and confirmation feedback", async () => {
+    const user = userEvent.setup();
+    render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
+
+    const password = screen.getByLabelText("Kata sandi");
+    const confirmation = screen.getByLabelText("Konfirmasi kata sandi");
+
+    await user.type(password, "aman1234");
+    expect(screen.getByRole("progressbar", { name: "Kekuatan kata sandi" })).toHaveAttribute("aria-valuenow", "3");
+    expect(screen.getByText("Bagus")).toBeVisible();
+
+    await user.type(confirmation, "beda123");
+    expect(screen.getByText("Kata sandi belum cocok")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Daftar sebagai Talent" })).toBeDisabled();
+
+    await user.clear(confirmation);
+    await user.type(confirmation, "aman1234");
+    expect(screen.getByText("Kata sandi cocok")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Daftar sebagai Talent" })).toBeEnabled();
+  });
+
   it("keeps required Terms and Privacy consent separate with no optional consent", () => {
     render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
 

@@ -39,8 +39,15 @@ export function RegistrationForm({
   const [failure, setFailure] = useState<string>();
   const [isPending, setIsPending] = useState(false);
   const [invalidAttempt, setInvalidAttempt] = useState(0);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const summaryRef = useRef<HTMLDivElement>(null);
   const roleLabel = role === "TALENT" ? "Talent" : "UMKM";
+  const passwordStrength = password.length === 0
+    ? 0
+    : 1 + Number(password.length >= 8) + Number(/[A-Za-z]/.test(password) && /\d/.test(password)) + Number(/[A-Z]/.test(password) && /[a-z]/.test(password) && /[^A-Za-z0-9]/.test(password));
+  const strengthLabel = ["", "Lemah", "Cukup", "Bagus", "Kuat"][passwordStrength];
+  const hasInvalidPasswordFeedback = Boolean(password || confirmPassword) && (password.length < 8 || password !== confirmPassword);
 
   useEffect(() => {
     if (invalidAttempt > 0) summaryRef.current?.focus();
@@ -113,8 +120,19 @@ export function RegistrationForm({
         <input aria-describedby={errors.email ? "register-email-error" : undefined} aria-invalid={errors.email ? true : undefined} autoComplete="email" disabled={isPending} id="register-email" name="email" type="email" />
         {errors.email ? <p className="auth-field__error" id="register-email-error">{errors.email}</p> : null}
       </div>
-      <PasswordField autoComplete="new-password" disabled={isPending} error={errors.password} helper="Minimal 8 karakter." id="register-password" label="Kata sandi" name="password" />
-      <PasswordField autoComplete="new-password" disabled={isPending} error={errors.confirmPassword} id="register-confirmPassword" label="Konfirmasi kata sandi" name="confirmPassword" />
+      <PasswordField autoComplete="new-password" disabled={isPending} error={errors.password} helper="Minimal 8 karakter." id="register-password" label="Kata sandi" name="password" onChange={(event) => setPassword(event.target.value)} statusId="register-password-strength" value={password} />
+      <div className="auth-password-strength" id="register-password-strength" aria-label="Kekuatan kata sandi" aria-valuemax={4} aria-valuemin={0} aria-valuenow={passwordStrength} aria-valuetext={strengthLabel || "Belum diisi"} role="progressbar">
+        {password ? <>
+          <div className="auth-password-strength__track" aria-hidden="true">
+            {Array.from({ length: 4 }, (_, index) => <span data-active={index < passwordStrength} data-strength={passwordStrength} key={index} />)}
+          </div>
+          <p aria-live="polite"><strong>{strengthLabel}</strong><span>Gunakan huruf besar, angka, dan simbol agar lebih kuat.</span></p>
+        </> : null}
+      </div>
+      <PasswordField autoComplete="new-password" disabled={isPending} error={errors.confirmPassword} id="register-confirmPassword" invalid={Boolean(confirmPassword) && password !== confirmPassword} label="Konfirmasi kata sandi" name="confirmPassword" onChange={(event) => setConfirmPassword(event.target.value)} statusId="register-confirmPassword-status" value={confirmPassword} />
+      <p className="auth-password-match" data-match={Boolean(confirmPassword) && password === confirmPassword} id="register-confirmPassword-status" aria-live="polite">
+        {confirmPassword ? (password === confirmPassword ? "Kata sandi cocok" : "Kata sandi belum cocok") : ""}
+      </p>
       <div className="auth-consents">
         <div className="auth-checkbox-field">
           <input aria-describedby={errors.termsAccepted ? "register-termsAccepted-error" : undefined} aria-invalid={errors.termsAccepted ? true : undefined} disabled={isPending} id="register-termsAccepted" name="termsAccepted" required type="checkbox" />
@@ -131,7 +149,7 @@ export function RegistrationForm({
           </div>
         </div>
       </div>
-      <button className="auth-submit" disabled={isPending} type="submit">{isPending ? "Mendaftarkan..." : `Daftar sebagai ${roleLabel}`}</button>
+      <button className="auth-submit" disabled={isPending || hasInvalidPasswordFeedback} type="submit">{isPending ? "Mendaftarkan..." : `Daftar sebagai ${roleLabel}`}</button>
       <p className="auth-form__switch">Sudah punya akun? <Link href="/login">Masuk</Link></p>
     </form>
   );
