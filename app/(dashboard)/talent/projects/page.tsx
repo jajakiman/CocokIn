@@ -43,7 +43,7 @@ export default async function TalentMarketplacePage() {
 
   // Calculate CocokScore for each project
   const scoredProjects = publishedProjects.map((project) => {
-    const match = calculateCocokScore(talentProfile, project);
+    const match = calculateCocokScore(talentProfile, project as any);
     return { ...project, match };
   });
 
@@ -102,8 +102,8 @@ export default async function TalentMarketplacePage() {
                   {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(project.serviceValue))}
                 </div>
                 <Link 
-                  href={`/talent/marketplace/${project.id}`} 
-                  className="bg-[#001040] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#001040]/90 transition-colors"
+                  href={`/talent/projects/${project.id}`} 
+                  className="bg-[#001040] !text-white px-6 py-2 rounded-lg font-medium hover:bg-[#001040]/90 transition-colors"
                 >
                   Lihat Detail
                 </Link>

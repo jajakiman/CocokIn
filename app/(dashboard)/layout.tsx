@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { getSession } from "@/src/lib/session";
-import { DashboardNavbar } from "@/src/components/dashboard/dashboard-navbar";
+import { AppShell } from "@/src/design-system/app-shell";
 
 export default async function DashboardLayout({
   children,
@@ -11,15 +11,12 @@ export default async function DashboardLayout({
 
   // Determine the role for the navbar. Default to TALENT if not authenticated in this context,
   // though the individual pages will handle actual auth redirection.
-  const role = session?.role === "BUSINESS" ? "BUSINESS" : 
-               session?.role === "ADMIN" ? "ADMIN" : "TALENT";
+  const role = session?.role === "BUSINESS" ? "business" : 
+               session?.role === "ADMIN" ? "admin" : "talent";
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-      <DashboardNavbar role={role} />
-      <main className="flex-1 w-full">
-        {children}
-      </main>
-    </div>
+    <AppShell role={role as any}>
+      {children}
+    </AppShell>
   );
 }
