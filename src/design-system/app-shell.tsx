@@ -21,7 +21,7 @@ import {
   SignOut,
   List,
   CaretLeft,
-  CaretUpDown,
+  X,
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logout } from "@/src/adapters/auth/server-adapter";
@@ -60,7 +60,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const isNavActive = (href: string) => {
     if (href === `/${role}`) {
@@ -94,28 +94,16 @@ export function AppShell({ children, role, user }: AppShellProps) {
           isCollapsed ? "w-20 px-3" : "w-64 px-4"
         }`}
       >
-        {/* User Card Header (Image 1 Reference) */}
-        <div className="pt-4 pb-3 border-b border-[#D8E1EE]">
+        {/* Brand and collapse control */}
+        <div className="pt-4 pb-4 border-b border-[#D8E1EE]">
           <div className="flex items-center justify-between gap-2">
             {!isCollapsed ? (
-              <div className="flex items-center gap-3 overflow-hidden">
-                <div className="w-10 h-10 rounded-xl bg-[#001040] text-white font-extrabold flex items-center justify-center text-sm shrink-0 shadow-inner">
-                  {userInitial}
-                </div>
-                <div className="overflow-hidden text-left flex-1 min-w-0">
-                  <div className="font-bold text-sm text-[#001040] truncate leading-tight">
-                    {displayName}
-                  </div>
-                  <div className="text-[11px] text-[#53647A] truncate mt-0.5">
-                    {displayEmail}
-                  </div>
-                </div>
-                <CaretUpDown size={16} className="text-[#9AABC2] shrink-0" />
-              </div>
+              <Link className="flex items-center gap-2.5 overflow-hidden" href={`/${role}`}>
+                <CocokInBrand className="w-8 h-8 object-contain" decorative priority variant="mark" />
+                <strong className="text-lg text-[#001040]">CocokIn</strong>
+              </Link>
             ) : (
-              <div className="w-10 h-10 mx-auto rounded-xl bg-[#001040] text-white font-extrabold flex items-center justify-center text-sm shadow-inner">
-                {userInitial}
-              </div>
+              <CocokInBrand className="w-8 h-8 object-contain" decorative priority variant="mark" />
             )}
 
             <button
@@ -129,25 +117,6 @@ export function AppShell({ children, role, user }: AppShellProps) {
             </button>
           </div>
         </div>
-
-        {/* Quick Search Bar (Image 1 Reference) */}
-        {!isCollapsed && (
-          <div className="pt-4 pb-2">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                placeholder="Cari fitur..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#F1F5FB] border border-[#D8E1EE] text-xs text-[#001040] pl-8 pr-7 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#006FE6] focus:bg-white placeholder:text-[#9AABC2] transition-all"
-              />
-              <MagnifyingGlass size={15} className="absolute left-2.5 text-[#9AABC2] pointer-events-none" />
-              <span className="absolute right-2 px-1.5 py-0.5 rounded bg-white border border-[#D8E1EE] text-[10px] font-mono text-[#9AABC2] pointer-events-none">
-                /
-              </span>
-            </div>
-          </div>
-        )}
 
         {/* Navigation Links */}
         <nav
@@ -249,6 +218,30 @@ export function AppShell({ children, role, user }: AppShellProps) {
 
       {/* Main Content Area */}
       <main id="main-content" className="app-content min-h-screen bg-[#F7F9FC]">
+        <div className="flex justify-end mb-2 relative">
+          <button
+            aria-expanded={profileOpen}
+            aria-label="Buka menu profil"
+            className="w-10 h-10 rounded-full bg-white border-2 border-[#D8E1EE] text-[#001040] font-extrabold flex items-center justify-center shadow-sm hover:border-[#006FE6] transition-colors overflow-hidden"
+            onClick={() => setProfileOpen(!profileOpen)}
+            type="button"
+          >
+            {user?.id && userInitial}
+          </button>
+          {profileOpen ? (
+            <div className="absolute right-0 top-12 z-40 w-64 rounded-xl border border-[#D8E1EE] bg-white p-3 shadow-xl">
+              <div className="flex items-start justify-between gap-3 border-b border-[#D8E1EE] pb-3 mb-2">
+                <div className="min-w-0">
+                  <strong className="block truncate text-sm text-[#001040]">{displayName}</strong>
+                  <span className="block truncate text-xs text-[#53647A]">{displayEmail}</span>
+                </div>
+                <button aria-label="Tutup menu profil" onClick={() => setProfileOpen(false)} type="button"><X size={16} /></button>
+              </div>
+              <Link className="block rounded-lg px-3 py-2 text-sm font-semibold text-[#001040] hover:bg-[#F1F5FB]" href={role === "business" ? "/business/my-profile" : "/talent/profile"}>Pengaturan profil</Link>
+              <button className="w-full text-left rounded-lg px-3 py-2 text-sm font-semibold text-[#BE123C] hover:bg-[#FFF1F2]" onClick={() => { setProfileOpen(false); setShowLogoutModal(true); }} type="button">Keluar</button>
+            </div>
+          ) : null}
+        </div>
         {children}
       </main>
 

@@ -6,6 +6,7 @@ import { createSession, destroySession } from "@/src/lib/session";
 import type { AuthResult, AuthUiAdapter, RegistrationRequest, AuthUser } from "@/src/auth-ui/types";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { requestPasswordReset as requestPasswordResetAction } from "./password-reset-actions";
 
 const serverRegistrationSchema = z.object({
   role: z.enum(["TALENT", "BUSINESS"]),
@@ -49,7 +50,7 @@ export async function loginWithCredentials({ email, password }: Parameters<AuthU
 }
 
 export async function loginWithGoogle() {
-  return { ok: false, code: "PROVIDER_UNAVAILABLE", message: "Google login belum diimplementasikan." } as AuthResult;
+  return redirect("/api/auth/google");
 }
 
 export async function register(input: RegistrationRequest) {
@@ -111,7 +112,7 @@ export async function register(input: RegistrationRequest) {
 }
 
 export async function requestPasswordReset(email: string) {
-  return { ok: true, message: "Jika email terdaftar, instruksi akan dikirim." } as const;
+  return requestPasswordResetAction(email);
 }
 
 export async function logout() {

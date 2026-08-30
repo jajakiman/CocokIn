@@ -11,6 +11,7 @@ import type { AuthUiAdapter } from "@/src/auth-ui/types";
 export function ForgotPasswordForm({ adapter }: { adapter: AuthUiAdapter }) {
   const [error, setError] = useState<string>();
   const [failure, setFailure] = useState<string>();
+  const [success, setSuccess] = useState<string>();
   const [isPending, setIsPending] = useState(false);
   const [invalidAttempt, setInvalidAttempt] = useState(0);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -35,6 +36,7 @@ export function ForgotPasswordForm({ adapter }: { adapter: AuthUiAdapter }) {
     try {
       const resetResult = await adapter.requestPasswordReset(result.data.email);
       if (!resetResult.ok) setFailure(resetResult.message);
+      else setSuccess(resetResult.message);
     } finally {
       setIsPending(false);
     }
@@ -45,6 +47,7 @@ export function ForgotPasswordForm({ adapter }: { adapter: AuthUiAdapter }) {
       {failure ? (
         <div className="auth-alert" role="alert"><WarningCircle aria-hidden="true" size={20} /><p>{failure}</p></div>
       ) : null}
+      {success ? <div className="auth-success" role="status"><p>{success}</p></div> : null}
       {error ? (
         <div aria-label="Periksa kembali formulir" className="auth-error-summary" ref={summaryRef} role="alert" tabIndex={-1}>
           <strong>Periksa kembali formulir</strong>

@@ -1,6 +1,8 @@
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { cookies } from "next/headers";
 import type { AuthUser } from "@/src/auth-ui/types";
+import { createHash } from "node:crypto";
+import { prisma } from "@/src/adapters/database/prisma";
 
 function sessionKey() {
   const secret = process.env.SESSION_SECRET;
@@ -27,7 +29,9 @@ export async function decrypt(input: string): Promise<JWTPayload> {
 
 export async function createSession(user: AuthUser) {
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const session = await encrypt({ user, expires });
+  const persisted = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
+  const credentialFingerprint = createHash("sha256").update(persisted?.passwordHash ?? `oauth:${user.id}`).digest("hex");
+  const session = await encrypt({ user, expires, credentialFingerprint });
   
   (await cookies()).set("session", session, {
     expires,
@@ -43,7 +47,11 @@ export async function getSession(): Promise<AuthUser | null> {
   if (!sessionCookie) return null;
   try {
     const parsed = await decrypt(sessionCookie);
-    return parsed.user as AuthUser;
+    const user = parsed.user as AuthUser;
+    const persisted = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
+    if (!persisted) return null;
+    const expected = createHash("sha256").update(persisted.passwordHash ?? `oauth:${user.id}`).digest("hex");
+    return parsed.credentialFingerprint === expected ? user : null;
   } catch {
     return null;
   }
