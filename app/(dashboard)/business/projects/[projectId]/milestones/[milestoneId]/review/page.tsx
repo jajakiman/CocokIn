@@ -29,9 +29,9 @@ export default async function MilestoneReviewPage({
       criteria: true,
       submissions: {
         orderBy: { version: "desc" },
-        take: 1
-      },
-      review: true
+        take: 1,
+        include: { review: true }
+      }
     }
   });
 

@@ -28,9 +28,9 @@ export default async function TalentWorkspacePage({ params }: { params: Promise<
           criteria: true,
           submissions: {
             orderBy: { version: "desc" },
-            take: 1
-          },
-          review: true
+            take: 1,
+            include: { review: true }
+          }
         },
         orderBy: { deadline: "asc" }
       },
@@ -145,10 +145,10 @@ export default async function TalentWorkspacePage({ params }: { params: Promise<
                   {isPendingSubmission ? (
                     <div>
                       <h4 className="font-bold text-[#001040] mb-4">Pengumpulan Hasil Kerja</h4>
-                      {milestone.status === "REVISION_REQUESTED" && milestone.review && (
+                      {milestone.status === "REVISION_REQUESTED" && milestone.submissions[0]?.review && (
                         <div className="bg-[#FFF1F2] border border-[#FECDD3] p-4 rounded-lg mb-4 text-sm">
                           <strong className="text-[#E11D48] block mb-1">Catatan Revisi dari UMKM:</strong>
-                          <p className="text-[#9F1239]">{milestone.review.feedback}</p>
+                          <p className="text-[#9F1239]">{milestone.submissions[0].review.feedback}</p>
                         </div>
                       )}
                       <MilestoneSubmissionForm projectMilestoneId={milestone.id} />
