@@ -329,6 +329,13 @@ model BusinessAssessmentResult {
   businessProfileId String
   readinessScore    Int
 
+  // 5-Pillar Readiness Scores
+  financeScore      Int @default(0)
+  marketingScore    Int @default(0)
+  teamScore         Int @default(0)
+  operationsScore   Int @default(0)
+  outsourcingScore  Int @default(0)
+
   businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
   createdAt       DateTime        @default(now())
 }
