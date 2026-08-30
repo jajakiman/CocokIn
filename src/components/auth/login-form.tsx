@@ -4,6 +4,8 @@ import { GoogleLogo, WarningCircle } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 import { unavailableAuthAdapter } from "@/src/auth-ui/adapter";
 import { loginSchema } from "@/src/auth-ui/schemas";
 import type { AuthResult, AuthUiAdapter } from "@/src/auth-ui/types";
@@ -28,6 +30,7 @@ function validationErrors(form: HTMLFormElement): LoginErrors {
 }
 
 export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
+  const router = useRouter();
   const [errors, setErrors] = useState<LoginErrors>({});
   const [failure, setFailure] = useState<string>();
   const [pendingAction, setPendingAction] = useState<"credentials" | "google">();
@@ -40,7 +43,19 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
   }, [invalidAttempt]);
 
   async function applyResult(result: AuthResult) {
-    if (!result.ok) setFailure(result.message);
+    if (!result.ok) {
+      setFailure(result.message);
+    } else {
+      if (result.user.role === "BUSINESS") {
+        router.push("/business");
+      } else if (result.user.role === "TALENT") {
+        router.push("/talent");
+      } else if (result.user.role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+    }
   }
 
   async function submitCredentials(event: FormEvent<HTMLFormElement>) {

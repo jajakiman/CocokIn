@@ -4,6 +4,8 @@ import { WarningCircle } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
+import { useRouter } from "next/navigation";
+
 import { unavailableAuthAdapter } from "@/src/auth-ui/adapter";
 import { registrationSchema, toRegistrationRequest } from "@/src/auth-ui/schemas";
 import type { AuthUiAdapter, PublicRegistrationRole } from "@/src/auth-ui/types";
@@ -35,6 +37,7 @@ export function RegistrationForm({
   role: PublicRegistrationRole;
   adapter: AuthUiAdapter;
 }) {
+  const router = useRouter();
   const [errors, setErrors] = useState<RegistrationErrors>({});
   const [failure, setFailure] = useState<string>();
   const [isPending, setIsPending] = useState(false);
@@ -69,7 +72,15 @@ export function RegistrationForm({
     setIsPending(true);
     try {
       const authResult = await adapter.register(toRegistrationRequest(result.data));
-      if (!authResult.ok) setFailure(authResult.message);
+      if (!authResult.ok) {
+        setFailure(authResult.message);
+      } else {
+        if (authResult.user.role === "BUSINESS") {
+          router.push("/business");
+        } else if (authResult.user.role === "TALENT") {
+          router.push("/talent");
+        }
+      }
     } finally {
       setIsPending(false);
     }
