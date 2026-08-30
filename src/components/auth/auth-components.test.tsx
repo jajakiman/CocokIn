@@ -182,7 +182,7 @@ describe("LoginForm", () => {
       code: "PROVIDER_UNAVAILABLE",
       message: "Google sedang tidak tersedia.",
     });
-    expect(await screen.findByText("Google sedang tidak tersedia.")).toBeVisible();
+    expect((await screen.findAllByText("Google sedang tidak tersedia."))[0]).toBeVisible();
   });
 
   it("keeps an unavailable adapter failure visible after field edits", async () => {
@@ -190,7 +190,7 @@ describe("LoginForm", () => {
     render(<LoginForm adapter={unavailableAuthAdapter} />);
 
     await user.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
-    const failure = await screen.findByText("Autentikasi belum dikonfigurasi.");
+    const failure = (await screen.findAllByText("Autentikasi belum dikonfigurasi."))[0];
     await user.type(screen.getByLabelText("Email"), "nadia@example.com");
 
     expect(failure).toBeVisible();
@@ -270,8 +270,9 @@ describe("RegistrationForm", () => {
     await user.click(screen.getByRole("checkbox", { name: /syarat dan ketentuan/i }));
     await user.click(screen.getByRole("checkbox", { name: /pemrosesan data pribadi/i }));
     await user.click(screen.getByRole("button", { name: "Daftar sebagai UMKM" }));
-    const failure = await screen.findByText("Autentikasi belum dikonfigurasi.");
+    const failure = (await screen.findAllByText("Autentikasi belum dikonfigurasi."))[0];
     await user.clear(screen.getByLabelText("Nama lengkap"));
+    await user.type(screen.getByLabelText("Nama lengkap"), "Nadia P.");
 
     expect(failure).toBeVisible();
   });

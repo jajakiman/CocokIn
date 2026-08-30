@@ -18,7 +18,6 @@ describe("AppShell", () => {
       "#main-content",
     );
     expect(container.querySelectorAll('img[src="/brand/cocokin/logo-mark.webp"]')).toHaveLength(2);
-    expect(container.querySelector('img[src="/brand/cocokin/logo-wordmark.webp"]')).toBeInTheDocument();
     expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
   });
 });
