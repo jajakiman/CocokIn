@@ -1,0 +1,773 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum Role {
+  TALENT
+  BUSINESS
+  ADMIN
+}
+
+enum IdentityStatus {
+  UNVERIFIED
+  CONTACT_VERIFIED
+  KYC_PENDING
+  KYC_VERIFIED
+  KYC_REJECTED
+}
+
+enum BusinessVerificationStatus {
+  UNVERIFIED
+  BASIC_VERIFIED
+  VERIFIED_BUSINESS
+  REJECTED
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  TALENT_SELECTED
+  AGREEMENT_CONFIRMED
+  FUNDING_PENDING
+  FUNDED
+  IN_PROGRESS
+  STAGING_REVIEW
+  PRODUCTION_DEPLOYMENT
+  HANDOVER_PENDING
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  SUBMITTED
+  READY_FOR_REVIEW
+  APPROVED
+  PAYOUT_DUE
+  PAID
+  REVISION_REQUESTED
+  DISPUTED
+}
+
+enum FundingStatus {
+  AWAITING_PAYMENT
+  PROOF_SUBMITTED
+  RECONCILIATION_PENDING
+  FUNDED
+  AMOUNT_MISMATCH
+  UNMATCHED
+  EXPIRED
+  CANCELLED
+}
+
+enum PayoutStatus {
+  PAYOUT_DUE
+  PROCESSING
+  PROOF_UPLOADED
+  TALENT_CONFIRMED
+  PAID
+  FAILED
+  MISMATCH
+  DISPUTED
+}
+
+enum RefundStatus {
+  REFUND_REQUESTED
+  ELIGIBILITY_REVIEW
+  AMOUNT_CALCULATED
+  USER_CONFIRMED_BREAKDOWN
+  APPROVED
+  PROCESSING
+  PROOF_UPLOADED
+  UMKM_CONFIRMED
+  REFUNDED
+  REJECTED
+  PARTIALLY_REFUNDED
+  FAILED
+  RETRY_REQUIRED
+}
+
+enum ConversationStatus {
+  PENDING
+  ACTIVE
+  SUPPORT_ACTIVE
+  READ_ONLY
+  REOPEN_REQUESTED
+}
+
+enum WarrantyStatus {
+  NOT_STARTED
+  ACTIVE
+  EXPIRING
+  COMPLETED
+  DISPUTED
+}
+
+enum PaymentMode {
+  SIMULATED
+  REAL
+}
+
+enum EvidenceLevel {
+  SELF_DECLARED
+  ASSESSED
+  PROJECT_APPLIED
+  PROJECT_VERIFIED
+}
+
+// -----------------------------------------------------------------------------
+// IDENTITY & AUTH.JS (Auth.js v5 compatibility)
+// -----------------------------------------------------------------------------
+
+model User {
+  id             String         @id @default(cuid())
+  name           String?
+  email          String?        @unique
+  emailVerified  DateTime?
+  image          String?
+  passwordHash   String?
+  role           Role           @default(TALENT)
+  identityStatus IdentityStatus @default(UNVERIFIED)
+
+  accounts       Account[]
+  sessions       Session[]
+  consentRecords ConsentRecord[]
+
+  talentProfile   TalentProfile?
+  businessProfile BusinessProfile?
+
+  notifications Notification[]
+  reports       MessageReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model ConsentRecord {
+  id        String   @id @default(cuid())
+  userId    String
+  purpose   String // e.g., TERMS_ACCEPTANCE, PUBLIC_PORTFOLIO, etc.
+  status    String // PENDING | GRANTED | REVOKED | EXPIRED
+  source    String // e.g., SEEDED_DEMO
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------------------------------------------------------------
+// TALENT MODULE
+// -----------------------------------------------------------------------------
+
+model TalentProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bio                String?
+  university         String?
+  major              String?
+  workModePreference String? // Remote, Hybrid, Onsite
+  timeAvailability   String? // Full-time, Part-time, Weekend
+  careerTarget       String?
+
+  skills       TalentSkill[]
+  assessments  TalentAssessmentResult[]
+  applications ProjectApplication[]
+  portfolio    PortfolioEntry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Skill {
+  id       String @id @default(cuid())
+  name     String @unique
+  category String
+
+  talentSkills  TalentSkill[]
+  projectSkills ProjectSkill[]
+  careerReqs    CareerSkillRequirement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TalentSkill {
+  id              String        @id @default(cuid())
+  talentProfileId String
+  skillId         String
+  evidenceLevel   EvidenceLevel @default(SELF_DECLARED)
+
+  talentProfile TalentProfile @relation(fields: [talentProfileId], references: [id], onDelete: Cascade)
+  skill         Skill         @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([talentProfileId, skillId])
+}
+
+model Career {
+  id           String                   @id @default(cuid())
+  name         String                   @unique
+  description  String?
+  requirements CareerSkillRequirement[]
+}
+
+model CareerSkillRequirement {
+  id             String @id @default(cuid())
+  careerId       String
+  skillId        String
+  benchmarkScore Int
+
+  career Career @relation(fields: [careerId], references: [id], onDelete: Cascade)
+  skill  Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([careerId, skillId])
+}
+
+model TalentAssessmentResult {
+  id              String @id @default(cuid())
+  talentProfileId String
+  technicalScore  Int
+  softSkillScore  Int
+  compositeScore  Int
+
+  talentProfile TalentProfile @relation(fields: [talentProfileId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+}
+
+model PortfolioEntry {
+  id              String  @id @default(cuid())
+  talentProfileId String
+  projectId       String  @unique
+  title           String
+  businessName    String
+  problemSummary  String
+  solutionBuilt   String
+  isPublic        Boolean @default(false)
+
+  talentProfile TalentProfile @relation(fields: [talentProfileId], references: [id], onDelete: Cascade)
+  project       Project       @relation(fields: [projectId], references: [id], onDelete: Restrict)
+  createdAt     DateTime      @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// BUSINESS MODULE
+// -----------------------------------------------------------------------------
+
+model BusinessProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  businessName     String
+  industryCategory String?
+  location         String?
+  description      String?
+  scale            String?
+  contactPerson    String?
+
+  verificationStatus BusinessVerificationStatus @default(UNVERIFIED)
+
+  assessments BusinessAssessmentResult[]
+  projects    Project[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BusinessAssessmentResult {
+  id                String @id @default(cuid())
+  businessProfileId String
+  readinessScore    Int
+
+  businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+  createdAt       DateTime        @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// MARKETPLACE / PROJECT MODULE
+// -----------------------------------------------------------------------------
+
+model Project {
+  id                String          @id @default(cuid())
+  businessProfileId String
+  businessProfile   BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
+
+  title         String
+  scope         String
+  difficulty    String // Beginner, Intermediate, Advanced
+  estimatedDays Int
+  deadline      DateTime
+  serviceValue  BigInt // IDR stored as BigInt
+
+  status ProjectStatus @default(DRAFT)
+
+  skills         ProjectSkill[]
+  applications   ProjectApplication[]
+  milestones     ProjectMilestone[]
+  changeRequests ChangeRequest[]
+  auditEvents    AuditEvent[]
+
+  infrastructurePlan     InfrastructurePlan?
+  infrastructureHandover InfrastructureHandover?
+  warrantyAgreement      WarrantyAgreement?
+  maintenancePackage     MaintenancePackage?
+  supportTickets         SupportTicket[]
+  disputes               Dispute[]
+
+  escrowTransaction EscrowTransaction?
+  fundingReceipt    FundingReceipt?
+  portfolioEntry    PortfolioEntry?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectSkill {
+  id        String @id @default(cuid())
+  projectId String
+  skillId   String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skill   Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, skillId])
+}
+
+model ProjectApplication {
+  id              String  @id @default(cuid())
+  projectId       String
+  talentProfileId String
+  status          String // e.g., PENDING, ACCEPTED, REJECTED
+  motivation      String?
+
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  talentProfile TalentProfile  @relation(fields: [talentProfileId], references: [id], onDelete: Cascade)
+  matchSnapshot MatchSnapshot?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, talentProfileId])
+}
+
+model MatchSnapshot {
+  id                   String  @id @default(cuid())
+  projectApplicationId String  @unique
+  cocokScore           Int
+  skillMatchScore      Int
+  careerAlignmentScore Int
+  availabilityScore    Int
+  experienceScore      Int
+  preferenceScore      Int
+  explainableText      String? @db.Text
+
+  application ProjectApplication @relation(fields: [projectApplicationId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------------------------------------------------------------
+// DELIVERY & MILESTONES
+// -----------------------------------------------------------------------------
+
+model ProjectMilestone {
+  id        String @id @default(cuid())
+  projectId String
+
+  title     String
+  weightBps Int // Basis points (e.g., 5000 = 50%)
+  deadline  DateTime
+  status    MilestoneStatus @default(PENDING)
+
+  project     Project                        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  criteria    MilestoneAcceptanceCriterion[]
+  submissions MilestoneSubmission[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MilestoneAcceptanceCriterion {
+  id                 String @id @default(cuid())
+  projectMilestoneId String
+  description        String
+
+  milestone ProjectMilestone @relation(fields: [projectMilestoneId], references: [id], onDelete: Cascade)
+}
+
+model MilestoneSubmission {
+  id                 String  @id @default(cuid())
+  projectMilestoneId String
+  version            Int
+  stagingUrl         String
+  summary            String
+  instructions       String?
+
+  milestone ProjectMilestone     @relation(fields: [projectMilestoneId], references: [id], onDelete: Cascade)
+  evidence  SubmissionEvidence[]
+  review    MilestoneReview?
+
+  createdAt DateTime @default(now())
+
+  @@unique([projectMilestoneId, version])
+}
+
+model SubmissionEvidence {
+  id                    String @id @default(cuid())
+  milestoneSubmissionId String
+  fileUrl               String
+  fileType              String
+
+  submission MilestoneSubmission @relation(fields: [milestoneSubmissionId], references: [id], onDelete: Cascade)
+}
+
+model MilestoneReview {
+  id                    String  @id @default(cuid())
+  milestoneSubmissionId String  @unique
+  decision              String // APPROVED, REVISION_REQUESTED, CHANGE_REQUESTED, DISPUTED
+  feedback              String?
+
+  submission MilestoneSubmission @relation(fields: [milestoneSubmissionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime            @default(now())
+}
+
+model ChangeRequest {
+  id          String @id @default(cuid())
+  projectId   String
+  description String
+  status      String // PENDING, ACCEPTED, REJECTED
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// INFRASTRUCTURE & HANDOVER
+// -----------------------------------------------------------------------------
+
+model InfrastructurePlan {
+  id             String  @id @default(cuid())
+  projectId      String  @unique
+  recommendation String // STAGING_ONLY, MANAGED_HOSTING, SHARED_HOSTING, VPS, EXISTING_INFRASTRUCTURE
+  rationale      String?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model InfrastructureHandover {
+  id            String @id @default(cuid())
+  projectId     String @unique
+  status        String // PENDING, ACCEPTED, DISPUTED
+  productionUrl String
+  checklistData Json
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// TREASURY, LEDGER & PAYMENTS
+// -----------------------------------------------------------------------------
+
+model FundingReceipt {
+  id                String        @id @default(cuid())
+  projectId         String        @unique
+  status            FundingStatus @default(AWAITING_PAYMENT)
+  platformReference String?       @unique
+  externalReference String?       @unique
+  amountDue         BigInt
+  amountReceived    BigInt?
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EscrowTransaction {
+  id        String @id @default(cuid())
+  projectId String @unique
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Restrict)
+
+  ledgerEntries LedgerEntry[]
+  payouts       PayoutInstruction[]
+  refunds       RefundInstruction[]
+}
+
+model LedgerEntry {
+  id                  String @id @default(cuid())
+  escrowTransactionId String
+  accountType         String // Cash at Bank, Talent Payable, UMKM Refundable, CocokIn Fee Pending, etc.
+  amount              BigInt // Positive for debit, negative for credit
+  platformReference   String
+
+  escrowTransaction EscrowTransaction @relation(fields: [escrowTransactionId], references: [id], onDelete: Cascade)
+  createdAt         DateTime          @default(now())
+}
+
+model PayoutInstruction {
+  id                  String       @id @default(cuid())
+  escrowTransactionId String
+  milestoneId         String
+  status              PayoutStatus @default(PAYOUT_DUE)
+  amount              BigInt
+  platformReference   String?      @unique
+  externalReference   String?      @unique
+
+  escrowTransaction EscrowTransaction @relation(fields: [escrowTransactionId], references: [id], onDelete: Cascade)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model RefundInstruction {
+  id                  String       @id @default(cuid())
+  escrowTransactionId String
+  status              RefundStatus @default(REFUND_REQUESTED)
+  grossRefundable     BigInt
+  netRefund           BigInt
+  costBearer          String // UMKM, COCOKIN, TALENT
+  platformReference   String?      @unique
+  externalReference   String?      @unique
+
+  escrowTransaction EscrowTransaction @relation(fields: [escrowTransactionId], references: [id], onDelete: Cascade)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+// -----------------------------------------------------------------------------
+// SUPPORT, WARRANTY & DISPUTES
+// -----------------------------------------------------------------------------
+
+model WarrantyAgreement {
+  id        String         @id @default(cuid())
+  projectId String         @unique
+  status    WarrantyStatus @default(NOT_STARTED)
+  startDate DateTime?
+  endDate   DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model MaintenancePackage {
+  id          String   @id @default(cuid())
+  projectId   String   @unique
+  startDate   DateTime
+  endDate     DateTime
+  ticketQuota Int      @default(5)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model SupportTicket {
+  id          String @id @default(cuid())
+  projectId   String
+  severity    String // CRITICAL, MAJOR, MINOR
+  status      String // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  description String
+
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Dispute {
+  id        String @id @default(cuid())
+  projectId String
+  reason    String
+  status    String // OPEN, UNDER_REVIEW, RESOLVED
+
+  project  Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  evidence DisputeEvidence[]
+  decision DisputeDecision?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DisputeEvidence {
+  id          String @id @default(cuid())
+  disputeId   String
+  fileUrl     String
+  submitterId String // User ID of submitter
+
+  dispute   Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model DisputeDecision {
+  id         String  @id @default(cuid())
+  disputeId  String  @unique
+  resolution String // FULL_RELEASE, PARTIAL_RELEASE, REVISION, REFUND
+  notes      String?
+
+  dispute   Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// CHAT & CONVERSATION
+// -----------------------------------------------------------------------------
+
+model ProjectConversation {
+  id        String             @id @default(cuid())
+  projectId String             @unique
+  status    ConversationStatus @default(PENDING)
+
+  participants   ConversationParticipant[]
+  messages       ChatMessage[]
+  reopenRequests ConversationReopenRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ConversationParticipant {
+  id                    String @id @default(cuid())
+  projectConversationId String
+  userId                String
+
+  conversation ProjectConversation @relation(fields: [projectConversationId], references: [id], onDelete: Cascade)
+
+  @@unique([projectConversationId, userId])
+}
+
+model ChatMessage {
+  id                    String  @id @default(cuid())
+  projectConversationId String
+  senderId              String
+  sequenceNumber        Int
+  content               String?
+  isSystemMessage       Boolean @default(false)
+
+  conversation ProjectConversation @relation(fields: [projectConversationId], references: [id], onDelete: Cascade)
+  attachments  MessageAttachment[]
+  reactions    MessageReaction[]
+  receipts     MessageReceipt[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([projectConversationId, sequenceNumber])
+}
+
+model MessageAttachment {
+  id            String @id @default(cuid())
+  chatMessageId String
+  fileUrl       String
+  fileType      String
+
+  message ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade)
+}
+
+model MessageReaction {
+  id            String @id @default(cuid())
+  chatMessageId String
+  userId        String
+  emoji         String
+
+  message ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade)
+
+  @@unique([chatMessageId, userId, emoji])
+}
+
+model MessageReceipt {
+  id            String   @id @default(cuid())
+  chatMessageId String
+  userId        String
+  readAt        DateTime
+
+  message ChatMessage @relation(fields: [chatMessageId], references: [id], onDelete: Cascade)
+
+  @@unique([chatMessageId, userId])
+}
+
+model MessageReport {
+  id         String @id @default(cuid())
+  messageId  String
+  reporterId String
+  reason     String
+
+  reporter  User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model ConversationReopenRequest {
+  id                    String @id @default(cuid())
+  projectConversationId String
+  requesterId           String
+  status                String // PENDING, ACCEPTED, REJECTED
+
+  conversation ProjectConversation @relation(fields: [projectConversationId], references: [id], onDelete: Cascade)
+  createdAt    DateTime            @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// SYSTEM / AUDIT / NOTIFICATIONS
+// -----------------------------------------------------------------------------
+
+model Notification {
+  id      String  @id @default(cuid())
+  userId  String
+  type    String
+  content String
+  isRead  Boolean @default(false)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model AuditEvent {
+  id        String  @id @default(cuid())
+  projectId String?
+  action    String
+  actorId   String
+  payload   Json?
+
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+}
