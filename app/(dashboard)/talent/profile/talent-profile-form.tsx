@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { WarningCircle, CheckCircle } from "@phosphor-icons/react";
+import { CheckCircle } from "@phosphor-icons/react";
 import type { TalentProfile, User } from "@prisma/client";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/src/design-system/select";
 
 type TalentProfileFormProps = {
   user: User & { talentProfile: TalentProfile | null };
@@ -15,6 +22,8 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
   const [toast, setToast] = useState(false);
 
   const profile: Partial<TalentProfile> = user.talentProfile ?? {};
+  const [workMode, setWorkMode] = useState(profile.workModePreference || "REMOTE");
+  const [timeAvailability, setTimeAvailability] = useState(profile.timeAvailability || "PART_TIME");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,8 +35,8 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
       bio: formData.get("bio"),
       university: formData.get("university"),
       major: formData.get("major"),
-      workModePreference: formData.get("workModePreference"),
-      timeAvailability: formData.get("timeAvailability"),
+      workModePreference: workMode,
+      timeAvailability: timeAvailability,
       careerTarget: formData.get("careerTarget"),
     };
 
@@ -128,31 +137,31 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="workModePreference" className="block text-sm font-bold text-[#001040] mb-1">Preferensi Mode Kerja</label>
-              <select
-                id="workModePreference"
-                name="workModePreference"
-                defaultValue={profile.workModePreference || "REMOTE"}
-                className="w-full px-4 py-2 border border-[#D8E1EE] rounded-lg focus:outline-none focus:border-[#006FE6] bg-white"
-              >
-                <option value="REMOTE">Remote (Jarak Jauh)</option>
-                <option value="HYBRID">Hybrid</option>
-                <option value="ONSITE">Onsite (Di Lokasi)</option>
-              </select>
+              <label className="block text-sm font-bold text-[#001040] mb-1">Preferensi Mode Kerja</label>
+              <Select value={workMode} onValueChange={setWorkMode}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Mode Kerja" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="REMOTE">Remote (Jarak Jauh - Disarankan)</SelectItem>
+                  <SelectItem value="HYBRID">Hybrid (Fleksibel)</SelectItem>
+                  <SelectItem value="ONSITE">Onsite (Di Lokasi)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label htmlFor="timeAvailability" className="block text-sm font-bold text-[#001040] mb-1">Ketersediaan Waktu</label>
-              <select
-                id="timeAvailability"
-                name="timeAvailability"
-                defaultValue={profile.timeAvailability || "PART_TIME"}
-                className="w-full px-4 py-2 border border-[#D8E1EE] rounded-lg focus:outline-none focus:border-[#006FE6] bg-white"
-              >
-                <option value="FULL_TIME">Full Time</option>
-                <option value="PART_TIME">Part Time</option>
-                <option value="WEEKEND">Weekend Only</option>
-              </select>
+              <label className="block text-sm font-bold text-[#001040] mb-1">Ketersediaan Waktu</label>
+              <Select value={timeAvailability} onValueChange={setTimeAvailability}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Ketersediaan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="FULL_TIME">Full Time</SelectItem>
+                  <SelectItem value="PART_TIME">Part Time (Paruh Waktu)</SelectItem>
+                  <SelectItem value="WEEKEND">Weekend Only (Akhir Pekan)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

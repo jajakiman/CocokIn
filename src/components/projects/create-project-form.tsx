@@ -5,6 +5,13 @@ import { Plus, Trash, CheckCircle, XCircle } from "@phosphor-icons/react";
 import { createProjectAction, type ActionState } from "@/src/adapters/projects/project-actions";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/src/design-system/select";
 
 export function CreateProjectForm() {
   const router = useRouter();
@@ -15,6 +22,8 @@ export function CreateProjectForm() {
 
   const [skills, setSkills] = useState<string[]>([]);
   const [currentSkill, setCurrentSkill] = useState("");
+  const [difficulty, setDifficulty] = useState("BEGINNER");
+  const [infrastructureNeed, setInfrastructureNeed] = useState("MANAGED_HOSTING");
   
   const [milestones, setMilestones] = useState([
     { id: 1, title: "Milestone 1", weightBps: 10000, deadline: "", acceptanceCriteria: [""] }
@@ -69,6 +78,8 @@ export function CreateProjectForm() {
         {/* Hidden inputs to pass complex arrays to FormData */}
         <input type="hidden" name="skills" value={JSON.stringify(skills)} />
         <input type="hidden" name="milestones" value={JSON.stringify(milestones)} />
+        <input type="hidden" name="difficulty" value={difficulty} />
+        <input type="hidden" name="infrastructureNeed" value={infrastructureNeed} />
 
         <div className="space-y-4 border-b pb-6">
           <h2 className="text-xl font-bold text-[#001040]">Detail Proyek</h2>
@@ -86,21 +97,31 @@ export function CreateProjectForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[#53647A] mb-1">Tingkat Kesulitan</label>
-              <select name="difficulty" className="w-full border p-2 rounded-lg">
-                <option value="BEGINNER">Beginner (Pemula)</option>
-                <option value="INTERMEDIATE">Intermediate (Menengah)</option>
-                <option value="ADVANCED">Advanced (Ahli)</option>
-              </select>
+              <Select value={difficulty} onValueChange={setDifficulty}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Tingkat Kesulitan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BEGINNER">Beginner (Pemula)</SelectItem>
+                  <SelectItem value="INTERMEDIATE">Intermediate (Menengah)</SelectItem>
+                  <SelectItem value="ADVANCED">Advanced (Ahli)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <label className="block text-sm font-medium text-[#53647A] mb-1">Kebutuhan Infrastruktur</label>
-              <select name="infrastructureNeed" className="w-full border p-2 rounded-lg">
-                <option value="MANAGED_HOSTING">Managed Hosting (Direkomendasikan)</option>
-                <option value="STAGING_ONLY">Hanya Staging (Tidak rilis publik)</option>
-                <option value="SHARED_HOSTING">Shared Hosting (Sederhana)</option>
-                <option value="VPS">VPS (Khusus mahir)</option>
-                <option value="EXISTING_INFRASTRUCTURE">Sudah Punya Hosting Sendiri</option>
-              </select>
+              <Select value={infrastructureNeed} onValueChange={setInfrastructureNeed}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Infrastruktur" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MANAGED_HOSTING">Managed Hosting (Direkomendasikan)</SelectItem>
+                  <SelectItem value="STAGING_ONLY">Hanya Staging (Tidak rilis publik)</SelectItem>
+                  <SelectItem value="SHARED_HOSTING">Shared Hosting (Sederhana)</SelectItem>
+                  <SelectItem value="VPS">VPS (Khusus mahir)</SelectItem>
+                  <SelectItem value="EXISTING_INFRASTRUCTURE">Sudah Punya Hosting Sendiri</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

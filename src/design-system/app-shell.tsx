@@ -21,16 +21,19 @@ import {
   SignOut,
   List,
   CaretLeft,
+  CaretUpDown,
 } from "@phosphor-icons/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logout } from "@/src/adapters/auth/server-adapter";
 
 import { getRoleConfig, type AppRole } from "./role-config";
 import { CocokInBrand } from "./cocokin-brand";
+import type { AuthUser } from "@/src/auth-ui/types";
 
 type AppShellProps = {
   children: ReactNode;
   role: AppRole;
+  user?: AuthUser | null;
 };
 
 // Map icon string or name to Phosphor Icon component
@@ -51,12 +54,13 @@ function renderNavIcon(href: string, size = 20) {
   return <Storefront size={size} weight="duotone" />;
 }
 
-export function AppShell({ children, role }: AppShellProps) {
+export function AppShell({ children, role, user }: AppShellProps) {
   const config = getRoleConfig(role);
   const pathname = usePathname() ?? "/";
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const isNavActive = (href: string) => {
     if (href === `/${role}`) {
@@ -70,6 +74,10 @@ export function AppShell({ children, role }: AppShellProps) {
     await logout();
   };
 
+  const displayName = user?.displayName || (role === "talent" ? "Talent CocokIn" : role === "business" ? "Pemilik UMKM" : "Admin CocokIn");
+  const displayEmail = user?.email || (role === "talent" ? "talent@cocokin.id" : role === "business" ? "umkm@cocokin.id" : "admin@cocokin.id");
+  const userInitial = displayName[0]?.toUpperCase() || "C";
+
   return (
     <div
       className={`app-shell ${isCollapsed ? "app-shell--rail" : ""}`}
@@ -80,49 +88,80 @@ export function AppShell({ children, role }: AppShellProps) {
         Lewati ke konten utama
       </a>
 
-      {/* Persistent / Collapsible Sidebar for Desktop & Tablet */}
+      {/* ── Steady Sidebar for Desktop & Tablet (No Scroll Offset) ── */}
       <aside
         className={`app-sidebar transition-all duration-300 ${
           isCollapsed ? "w-20 px-3" : "w-64 px-4"
         }`}
       >
-        <div className="app-sidebar__brand-container flex items-center justify-between py-4 border-b border-[#D8E1EE]">
-          <Link className="flex items-center gap-3" href="/">
-            <CocokInBrand
-              className="w-9 h-9 object-contain shrink-0"
-              decorative
-              priority
-              variant="mark"
-            />
-            {!isCollapsed && (
-              <span className="font-extrabold text-xl text-[#001040] tracking-tight">
-                CocokIn
-              </span>
+        {/* User Card Header (Image 1 Reference) */}
+        <div className="pt-4 pb-3 border-b border-[#D8E1EE]">
+          <div className="flex items-center justify-between gap-2">
+            {!isCollapsed ? (
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-[#001040] text-white font-extrabold flex items-center justify-center text-sm shrink-0 shadow-inner">
+                  {userInitial}
+                </div>
+                <div className="overflow-hidden text-left flex-1 min-w-0">
+                  <div className="font-bold text-sm text-[#001040] truncate leading-tight">
+                    {displayName}
+                  </div>
+                  <div className="text-[11px] text-[#53647A] truncate mt-0.5">
+                    {displayEmail}
+                  </div>
+                </div>
+                <CaretUpDown size={16} className="text-[#9AABC2] shrink-0" />
+              </div>
+            ) : (
+              <div className="w-10 h-10 mx-auto rounded-xl bg-[#001040] text-white font-extrabold flex items-center justify-center text-sm shadow-inner">
+                {userInitial}
+              </div>
             )}
-          </Link>
-          <button
-            type="button"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 rounded-lg text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] transition-colors hidden md:flex items-center justify-center"
-            title={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
-            aria-label={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
-          >
-            {isCollapsed ? <List size={20} weight="bold" /> : <CaretLeft size={20} weight="bold" />}
-          </button>
+
+            <button
+              type="button"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-1.5 rounded-lg text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] transition-colors hidden md:flex items-center justify-center shrink-0"
+              title={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
+              aria-label={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
+            >
+              {isCollapsed ? <List size={20} weight="bold" /> : <CaretLeft size={20} weight="bold" />}
+            </button>
+          </div>
         </div>
 
+        {/* Quick Search Bar (Image 1 Reference) */}
+        {!isCollapsed && (
+          <div className="pt-4 pb-2">
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="Cari fitur..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-[#F1F5FB] border border-[#D8E1EE] text-xs text-[#001040] pl-8 pr-7 py-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#006FE6] focus:bg-white placeholder:text-[#9AABC2] transition-all"
+              />
+              <MagnifyingGlass size={15} className="absolute left-2.5 text-[#9AABC2] pointer-events-none" />
+              <span className="absolute right-2 px-1.5 py-0.5 rounded bg-white border border-[#D8E1EE] text-[10px] font-mono text-[#9AABC2] pointer-events-none">
+                /
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Links */}
         <nav
           aria-label="Navigasi utama"
-          className="app-sidebar__nav flex flex-col justify-between h-[calc(100vh-80px)] py-4"
+          className="app-sidebar__nav flex flex-col justify-between flex-1 py-3 overflow-y-auto"
         >
           <div className="space-y-1">
             {config.navigation.map((item) => {
               const active = isNavActive(item.href);
               return (
                 <Link
-                  className={`nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                  className={`nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     active
-                      ? "bg-[#EAF3FF] text-[#006FE6]"
+                      ? "bg-white text-[#001040] shadow-sm border border-[#D8E1EE]"
                       : "text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040]"
                   }`}
                   data-active={active}
@@ -131,8 +170,8 @@ export function AppShell({ children, role }: AppShellProps) {
                   title={isCollapsed ? item.label : undefined}
                   aria-current={active ? "page" : undefined}
                 >
-                  <span className="nav-link__icon shrink-0" aria-hidden="true">
-                    {renderNavIcon(item.href, 22)}
+                  <span className={`nav-link__icon shrink-0 ${active ? "text-[#006FE6]" : "text-[#53647A]"}`} aria-hidden="true">
+                    {renderNavIcon(item.href, 20)}
                   </span>
                   {!isCollapsed && (
                     <span className="nav-link__label truncate">{item.label}</span>
@@ -142,18 +181,39 @@ export function AppShell({ children, role }: AppShellProps) {
             })}
           </div>
 
-          {/* Logout Section */}
-          <div className="mt-auto border-t border-[#D8E1EE] pt-4 pb-2">
+          {/* Footer Sidebar: Logo CocokIn & Logout */}
+          <div className="mt-auto border-t border-[#D8E1EE] pt-4 pb-2 space-y-2">
+            {!isCollapsed ? (
+              <div className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-[#53647A] bg-[#F8FAFC] rounded-xl border border-[#D8E1EE]/60">
+                <CocokInBrand
+                  className="w-5 h-5 object-contain shrink-0"
+                  decorative
+                  priority
+                  variant="mark"
+                />
+                <span className="truncate text-[#001040]">CocokIn Ecosystem</span>
+              </div>
+            ) : (
+              <div className="flex justify-center py-1">
+                <CocokInBrand
+                  className="w-6 h-6 object-contain"
+                  decorative
+                  priority
+                  variant="mark"
+                />
+              </div>
+            )}
+
             <button
               type="button"
               onClick={() => setShowLogoutModal(true)}
-              className={`nav-link text-[#E11D48] hover:bg-[#FFF1F2] hover:text-[#BE123C] w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-colors ${
+              className={`nav-link text-[#E11D48] hover:bg-[#FFF1F2] hover:text-[#BE123C] w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold transition-colors ${
                 isCollapsed ? "justify-center" : ""
               }`}
               title={isCollapsed ? "Keluar" : undefined}
             >
               <span className="nav-link__icon shrink-0" aria-hidden="true">
-                <SignOut size={22} weight="bold" />
+                <SignOut size={20} weight="bold" />
               </span>
               {!isCollapsed && <span className="nav-link__label font-bold">Keluar</span>}
             </button>
