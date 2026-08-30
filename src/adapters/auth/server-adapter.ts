@@ -42,7 +42,9 @@ export async function loginWithCredentials({ email, password }: Parameters<AuthU
     await createSession(authUser);
     return { ok: true, user: authUser } as AuthResult;
   } catch (e) {
-    return { ok: false, code: "PROVIDER_UNAVAILABLE", message: "Terjadi kesalahan sistem." } as AuthResult;
+    console.error("[AUTH LOGIN ERROR]:", e);
+    const errorMessage = e instanceof Error ? e.message : "Terjadi kesalahan sistem.";
+    return { ok: false, code: "PROVIDER_UNAVAILABLE", message: `Terjadi kesalahan sistem: ${errorMessage}` } as AuthResult;
   }
 }
 
@@ -64,12 +66,30 @@ export async function register(input: RegistrationRequest) {
       const createdUser = await tx.user.create({
         data: { email: req.email, name: req.fullName, passwordHash, role: req.role }
       });
-      await tx.consentRecord.createMany({
-        data: [
-          { userId: createdUser.id, purpose: "TERMS_ACCEPTANCE", status: "GRANTED", source: "REGISTRATION" },
-          { userId: createdUser.id, purpose: "PRIVACY_PROCESSING", status: "GRANTED", source: "REGISTRATION" },
-        ],
-      });
+
+      // Buat profile default otomatis agar siap digunakan dashboard
+      if (req.role === "TALENT") {
+        await tx.talentProfile.create({
+          data: { userId: createdUser.id }
+        });
+      } else if (req.role === "BUSINESS") {
+        await tx.businessProfile.create({
+          data: { userId: createdUser.id, businessName: req.fullName }
+        });
+      }
+
+      // Simpan consent audit record jika tabel tersedia
+      try {
+        await tx.consentRecord.createMany({
+          data: [
+            { userId: createdUser.id, purpose: "TERMS_ACCEPTANCE", status: "GRANTED", source: "REGISTRATION" },
+            { userId: createdUser.id, purpose: "PRIVACY_PROCESSING", status: "GRANTED", source: "REGISTRATION" },
+          ],
+        });
+      } catch (consentErr) {
+        console.warn("[AUTH REGISTER] Consent record skipped:", consentErr);
+      }
+
       return createdUser;
     });
 
@@ -84,7 +104,9 @@ export async function register(input: RegistrationRequest) {
     await createSession(authUser);
     return { ok: true, user: authUser } as AuthResult;
   } catch (e) {
-    return { ok: false, code: "PROVIDER_UNAVAILABLE", message: "Pendaftaran gagal." } as AuthResult;
+    console.error("[AUTH REGISTER ERROR]:", e);
+    const errorMessage = e instanceof Error ? e.message : "Pendaftaran gagal.";
+    return { ok: false, code: "PROVIDER_UNAVAILABLE", message: `Pendaftaran gagal: ${errorMessage}` } as AuthResult;
   }
 }
 
