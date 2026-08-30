@@ -4,7 +4,7 @@ import { GoogleLogo, WarningCircle } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
-import { unavailableAuthAdapter } from "@/src/auth-ui/adapter";
+import { configuredAuthAdapter } from "@/src/auth-ui/configured-adapter";
 import { loginSchema } from "@/src/auth-ui/schemas";
 import type { AuthResult, AuthUiAdapter } from "@/src/auth-ui/types";
 
@@ -144,6 +144,6 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
   );
 }
 
-export function UnavailableLoginForm() {
-  return <LoginForm adapter={unavailableAuthAdapter} />;
+export function ConfiguredLoginForm() {
+  return <LoginForm adapter={configuredAuthAdapter} />;
 }

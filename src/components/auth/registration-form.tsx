@@ -4,7 +4,7 @@ import { WarningCircle } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
-import { unavailableAuthAdapter } from "@/src/auth-ui/adapter";
+import { configuredAuthAdapter } from "@/src/auth-ui/configured-adapter";
 import { registrationSchema, toRegistrationRequest } from "@/src/auth-ui/schemas";
 import type { AuthUiAdapter, PublicRegistrationRole } from "@/src/auth-ui/types";
 
@@ -129,6 +129,6 @@ export function RegistrationForm({
   );
 }
 
-export function UnavailableRegistrationForm({ role }: { role: PublicRegistrationRole }) {
-  return <RegistrationForm adapter={unavailableAuthAdapter} role={role} />;
+export function ConfiguredRegistrationForm({ role }: { role: PublicRegistrationRole }) {
+  return <RegistrationForm adapter={configuredAuthAdapter} role={role} />;
 }

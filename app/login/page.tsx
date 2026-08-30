@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
-import { UnavailableLoginForm } from "@/src/components/auth/login-form";
+import { ConfiguredLoginForm } from "@/src/components/auth/login-form";
 
 export const metadata: Metadata = {
   title: "Masuk",
@@ -16,7 +16,7 @@ export default function LoginPage() {
       contextTitle="Satu ruang untuk bertumbuh dan menyelesaikan kebutuhan digital"
       context={<p>Talent membangun bukti kerja terverifikasi. UMKM menjalankan proyek digital dengan hasil yang dapat ditinjau.</p>}
     >
-      <UnavailableLoginForm />
+      <ConfiguredLoginForm />
     </AuthShell>
   );
 }
