@@ -46,7 +46,7 @@ export const roleConfigs: Record<AppRole, RoleShellConfig> = {
       { label: "Proyek", href: "/business/projects" },
       { label: "Pelamar", href: "/business/applicants" },
       { label: "Pertumbuhan", href: "/business/growth" },
-      { label: "Profil Usaha", href: "/business/profile" },
+      { label: "Profil Usaha", href: "/business/my-profile" },
     ],
   },
   admin: {

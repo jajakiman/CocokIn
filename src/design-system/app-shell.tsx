@@ -18,7 +18,9 @@ import {
   Scales,
   Database,
   WarningCircle,
+  SignOut,
 } from "@phosphor-icons/react";
+import { logout } from "@/src/adapters/auth/server-adapter";
 
 import { getRoleConfig, type AppRole } from "./role-config";
 import { CocokInBrand } from "./cocokin-brand";
@@ -74,24 +76,38 @@ export function AppShell({ children, role }: AppShellProps) {
           <span className="role-pill">Mode {config.label}</span>
         </div>
 
-        <nav aria-label="Navigasi utama" className="app-sidebar__nav">
-          {config.navigation.map((item) => {
-            const active = isNavActive(item.href);
-            return (
-              <Link
-                className="nav-link"
-                data-active={active}
-                href={item.href}
-                key={item.href}
-                aria-current={active ? "page" : undefined}
-              >
+        <nav aria-label="Navigasi utama" className="app-sidebar__nav flex flex-col justify-between h-full">
+          <div>
+            {config.navigation.map((item) => {
+              const active = isNavActive(item.href);
+              return (
+                <Link
+                  className="nav-link"
+                  data-active={active}
+                  href={item.href}
+                  key={item.href}
+                  aria-current={active ? "page" : undefined}
+                >
+                  <span className="nav-link__icon" aria-hidden="true">
+                    {renderNavIcon(item.href, 20)}
+                  </span>
+                  <span className="nav-link__label">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+          
+          {/* Logout Section */}
+          <div className="mt-auto border-t border-[#D8E1EE] pt-4 pb-4">
+            <form action={logout}>
+              <button type="submit" className="nav-link text-[#E11D48] hover:bg-[#FFF1F2] hover:text-[#BE123C] w-full flex items-center gap-3">
                 <span className="nav-link__icon" aria-hidden="true">
-                  {renderNavIcon(item.href, 20)}
+                  <SignOut size={20} weight="bold" />
                 </span>
-                <span className="nav-link__label">{item.label}</span>
-              </Link>
-            );
-          })}
+                <span className="nav-link__label font-bold">Keluar</span>
+              </button>
+            </form>
+          </div>
         </nav>
       </aside>
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
-import { ConfiguredRegistrationForm } from "@/src/components/auth/registration-form";
+import { UnavailableRegistrationForm } from "@/src/components/auth/registration-form";
 
 export const metadata: Metadata = {
   title: "Daftar sebagai UMKM",
@@ -16,7 +16,7 @@ export default function BusinessRegistrationPage() {
       contextTitle="Selesaikan kebutuhan digital dengan lebih pasti"
       context={<p>Terjemahkan masalah bisnis menjadi proyek yang terarah, temukan Talent yang sesuai, dan tinjau hasilnya.</p>}
     >
-      <ConfiguredRegistrationForm role="BUSINESS" />
+      <UnavailableRegistrationForm role="BUSINESS" />
     </AuthShell>
   );
 }

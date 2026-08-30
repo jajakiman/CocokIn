@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
-import { ConfiguredLoginForm } from "@/src/components/auth/login-form";
+import { LoginForm } from "@/src/components/auth/login-form";
+import * as serverActions from "@/src/adapters/auth/server-adapter";
+import type { AuthUiAdapter } from "@/src/auth-ui/types";
+
+const serverAdapter: AuthUiAdapter = {
+  loginWithCredentials: serverActions.loginWithCredentials,
+  loginWithGoogle: serverActions.loginWithGoogle,
+  register: serverActions.register,
+  requestPasswordReset: serverActions.requestPasswordReset,
+  logout: serverActions.logout
+};
 
 export const metadata: Metadata = {
   title: "Masuk",
@@ -16,7 +26,7 @@ export default function LoginPage() {
       contextTitle="Satu ruang untuk bertumbuh dan menyelesaikan kebutuhan digital"
       context={<p>Talent membangun bukti kerja terverifikasi. UMKM menjalankan proyek digital dengan hasil yang dapat ditinjau.</p>}
     >
-      <ConfiguredLoginForm />
+      <LoginForm adapter={serverAdapter} />
     </AuthShell>
   );
 }

@@ -4,7 +4,7 @@ import { GoogleLogo, WarningCircle } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
-import { configuredAuthAdapter } from "@/src/auth-ui/configured-adapter";
+import { unavailableAuthAdapter } from "@/src/auth-ui/adapter";
 import { loginSchema } from "@/src/auth-ui/schemas";
 import type { AuthResult, AuthUiAdapter } from "@/src/auth-ui/types";
 
@@ -40,7 +40,19 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
   }, [invalidAttempt]);
 
   async function applyResult(result: AuthResult) {
-    if (!result.ok) setFailure(result.message);
+    if (!result.ok) {
+      setFailure(result.message);
+    } else {
+      if (result.user.role === "BUSINESS") {
+        window.location.assign("/business");
+      } else if (result.user.role === "TALENT") {
+        window.location.assign("/talent");
+      } else if (result.user.role === "ADMIN") {
+        window.location.assign("/admin");
+      } else {
+        window.location.assign("/");
+      }
+    }
   }
 
   async function submitCredentials(event: FormEvent<HTMLFormElement>) {
@@ -144,6 +156,6 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
   );
 }
 
-export function ConfiguredLoginForm() {
-  return <LoginForm adapter={configuredAuthAdapter} />;
+export function UnavailableLoginForm() {
+  return <LoginForm adapter={unavailableAuthAdapter} />;
 }

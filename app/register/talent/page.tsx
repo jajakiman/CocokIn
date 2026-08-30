@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { AuthShell } from "@/src/components/auth/auth-shell";
-import { ConfiguredRegistrationForm } from "@/src/components/auth/registration-form";
+import { UnavailableRegistrationForm } from "@/src/components/auth/registration-form";
 
 export const metadata: Metadata = {
   title: "Daftar sebagai Talent",
@@ -16,7 +16,7 @@ export default function TalentRegistrationPage() {
       contextTitle="Ubah potensi menjadi bukti"
       context={<p>Ukur kesiapan, pahami skill gap, dan terapkan kemampuan melalui micro-project yang relevan.</p>}
     >
-      <ConfiguredRegistrationForm role="TALENT" />
+      <UnavailableRegistrationForm role="TALENT" />
     </AuthShell>
   );
 }

@@ -4,7 +4,7 @@ import { WarningCircle } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
-import { configuredAuthAdapter } from "@/src/auth-ui/configured-adapter";
+import { unavailableAuthAdapter } from "@/src/auth-ui/adapter";
 import { registrationSchema, toRegistrationRequest } from "@/src/auth-ui/schemas";
 import type { AuthUiAdapter, PublicRegistrationRole } from "@/src/auth-ui/types";
 
@@ -69,7 +69,15 @@ export function RegistrationForm({
     setIsPending(true);
     try {
       const authResult = await adapter.register(toRegistrationRequest(result.data));
-      if (!authResult.ok) setFailure(authResult.message);
+      if (!authResult.ok) {
+        setFailure(authResult.message);
+      } else {
+        if (authResult.user.role === "BUSINESS") {
+          window.location.assign("/business");
+        } else if (authResult.user.role === "TALENT") {
+          window.location.assign("/talent");
+        }
+      }
     } finally {
       setIsPending(false);
     }
@@ -129,6 +137,6 @@ export function RegistrationForm({
   );
 }
 
-export function ConfiguredRegistrationForm({ role }: { role: PublicRegistrationRole }) {
-  return <RegistrationForm adapter={configuredAuthAdapter} role={role} />;
+export function UnavailableRegistrationForm({ role }: { role: PublicRegistrationRole }) {
+  return <RegistrationForm adapter={unavailableAuthAdapter} role={role} />;
 }
