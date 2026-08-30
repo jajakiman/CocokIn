@@ -20,15 +20,6 @@ type RegistrationField =
   | "privacyAccepted";
 type RegistrationErrors = Partial<Record<RegistrationField, string>>;
 
-const fieldLabels: Record<RegistrationField, string> = {
-  fullName: "Nama lengkap",
-  email: "Email",
-  password: "Kata sandi",
-  confirmPassword: "Konfirmasi kata sandi",
-  termsAccepted: "Syarat dan Ketentuan",
-  privacyAccepted: "Pemrosesan data pribadi",
-};
-
 export function RegistrationForm({
   role,
   adapter,
@@ -98,38 +89,62 @@ export function RegistrationForm({
     }
   }
 
-  const errorEntries = Object.entries(errors) as [RegistrationField, string][];
-
   return (
     <>
       <form className="auth-form" noValidate onSubmit={submit}>
         {failure ? (
           <div className="auth-alert" role="alert">
-            <WarningCircle aria-hidden="true" size={20} />
-            <p>{failure}</p>
-          </div>
-        ) : null}
-        {errorEntries.length > 0 ? (
-          <div aria-label="Periksa kembali formulir" className="auth-error-summary" ref={summaryRef} role="alert" tabIndex={-1}>
-            <strong>Periksa kembali formulir</strong>
-            <ul>
-              {errorEntries.map(([field, message]) => (
-                <li key={field}><a href={`#register-${field}`}>{fieldLabels[field]}: {message}</a></li>
-              ))}
-            </ul>
+            <WarningCircle aria-hidden="true" size={18} />
+            <p className="text-xs font-medium">{failure}</p>
           </div>
         ) : null}
         <div className="auth-field">
           <label htmlFor="register-fullName">Nama lengkap</label>
-          <input aria-describedby={errors.fullName ? "register-fullName-error" : undefined} aria-invalid={errors.fullName ? true : undefined} autoComplete="name" disabled={isPending} id="register-fullName" name="fullName" type="text" />
-          {errors.fullName ? <p className="auth-field__error" id="register-fullName-error">{errors.fullName}</p> : null}
+          <input
+            aria-describedby={errors.fullName ? "register-fullName-error" : undefined}
+            aria-invalid={errors.fullName ? true : undefined}
+            autoComplete="name"
+            disabled={isPending}
+            id="register-fullName"
+            name="fullName"
+            type="text"
+            onChange={() => {
+              if (errors.fullName) setErrors((prev) => ({ ...prev, fullName: undefined }));
+            }}
+          />
+          {errors.fullName ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-fullName-error">{errors.fullName}</p> : null}
         </div>
         <div className="auth-field">
           <label htmlFor="register-email">Email</label>
-          <input aria-describedby={errors.email ? "register-email-error" : undefined} aria-invalid={errors.email ? true : undefined} autoComplete="email" disabled={isPending} id="register-email" name="email" type="email" />
-          {errors.email ? <p className="auth-field__error" id="register-email-error">{errors.email}</p> : null}
+          <input
+            aria-describedby={errors.email ? "register-email-error" : undefined}
+            aria-invalid={errors.email ? true : undefined}
+            autoComplete="email"
+            disabled={isPending}
+            id="register-email"
+            name="email"
+            type="email"
+            onChange={() => {
+              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
+          />
+          {errors.email ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-email-error">{errors.email}</p> : null}
         </div>
-        <PasswordField autoComplete="new-password" disabled={isPending} error={errors.password} helper="Minimal 8 karakter." id="register-password" label="Kata sandi" name="password" onChange={(event) => setPassword(event.target.value)} statusId="register-password-strength" value={password} />
+        <PasswordField
+          autoComplete="new-password"
+          disabled={isPending}
+          error={errors.password}
+          helper="Minimal 8 karakter."
+          id="register-password"
+          label="Kata sandi"
+          name="password"
+          onChange={(event) => {
+            setPassword(event.target.value);
+            if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+          }}
+          statusId="register-password-strength"
+          value={password}
+        />
         <div className="auth-password-strength" id="register-password-strength" aria-label="Kekuatan kata sandi" aria-valuemax={4} aria-valuemin={0} aria-valuenow={passwordStrength} aria-valuetext={strengthLabel || "Belum diisi"} role="progressbar">
           {password ? <>
             <div className="auth-password-strength__track" aria-hidden="true">
@@ -138,23 +153,59 @@ export function RegistrationForm({
             <p aria-live="polite"><strong>{strengthLabel}</strong><span>Gunakan huruf besar, angka, dan simbol agar lebih kuat.</span></p>
           </> : null}
         </div>
-        <PasswordField autoComplete="new-password" disabled={isPending} error={errors.confirmPassword} id="register-confirmPassword" invalid={Boolean(confirmPassword) && password !== confirmPassword} label="Konfirmasi kata sandi" name="confirmPassword" onChange={(event) => setConfirmPassword(event.target.value)} statusId="register-confirmPassword-status" value={confirmPassword} />
-        <p className="auth-password-match" data-match={Boolean(confirmPassword) && password === confirmPassword} id="register-confirmPassword-status" aria-live="polite">
+        <PasswordField
+          autoComplete="new-password"
+          disabled={isPending}
+          error={errors.confirmPassword}
+          id="register-confirmPassword"
+          invalid={Boolean(confirmPassword) && password !== confirmPassword}
+          label="Konfirmasi kata sandi"
+          name="confirmPassword"
+          onChange={(event) => {
+            setConfirmPassword(event.target.value);
+            if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+          }}
+          statusId="register-confirmPassword-status"
+          value={confirmPassword}
+        />
+        <p className="auth-password-match text-xs font-medium" data-match={Boolean(confirmPassword) && password === confirmPassword} id="register-confirmPassword-status" aria-live="polite">
           {confirmPassword ? (password === confirmPassword ? "Kata sandi cocok" : "Kata sandi belum cocok") : ""}
         </p>
         <div className="auth-consents">
           <div className="auth-checkbox-field">
-            <input aria-describedby={errors.termsAccepted ? "register-termsAccepted-error" : undefined} aria-invalid={errors.termsAccepted ? true : undefined} disabled={isPending} id="register-termsAccepted" name="termsAccepted" required type="checkbox" />
+            <input
+              aria-describedby={errors.termsAccepted ? "register-termsAccepted-error" : undefined}
+              aria-invalid={errors.termsAccepted ? true : undefined}
+              disabled={isPending}
+              id="register-termsAccepted"
+              name="termsAccepted"
+              required
+              type="checkbox"
+              onChange={() => {
+                if (errors.termsAccepted) setErrors((prev) => ({ ...prev, termsAccepted: undefined }));
+              }}
+            />
             <div>
               <label htmlFor="register-termsAccepted">Saya menyetujui Syarat dan Ketentuan.</label>
-              {errors.termsAccepted ? <p className="auth-field__error" id="register-termsAccepted-error">{errors.termsAccepted}</p> : null}
+              {errors.termsAccepted ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-termsAccepted-error">{errors.termsAccepted}</p> : null}
             </div>
           </div>
           <div className="auth-checkbox-field">
-            <input aria-describedby={errors.privacyAccepted ? "register-privacyAccepted-error" : undefined} aria-invalid={errors.privacyAccepted ? true : undefined} disabled={isPending} id="register-privacyAccepted" name="privacyAccepted" required type="checkbox" />
+            <input
+              aria-describedby={errors.privacyAccepted ? "register-privacyAccepted-error" : undefined}
+              aria-invalid={errors.privacyAccepted ? true : undefined}
+              disabled={isPending}
+              id="register-privacyAccepted"
+              name="privacyAccepted"
+              required
+              type="checkbox"
+              onChange={() => {
+                if (errors.privacyAccepted) setErrors((prev) => ({ ...prev, privacyAccepted: undefined }));
+              }}
+            />
             <div>
               <label htmlFor="register-privacyAccepted">Saya menyetujui pemrosesan data pribadi untuk pembuatan akun.</label>
-              {errors.privacyAccepted ? <p className="auth-field__error" id="register-privacyAccepted-error">{errors.privacyAccepted}</p> : null}
+              {errors.privacyAccepted ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-privacyAccepted-error">{errors.privacyAccepted}</p> : null}
             </div>
           </div>
         </div>

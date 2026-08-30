@@ -96,31 +96,13 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
     }
   }
 
-  const errorEntries = Object.entries(errors) as [LoginField, string][];
-
   return (
     <>
       <form className="auth-form" noValidate onSubmit={submitCredentials}>
         {failure ? (
           <div className="auth-alert" role="alert">
-            <WarningCircle aria-hidden="true" size={20} />
-            <p>{failure}</p>
-          </div>
-        ) : null}
-        {errorEntries.length > 0 ? (
-          <div
-            aria-label="Periksa kembali formulir"
-            className="auth-error-summary"
-            ref={summaryRef}
-            role="alert"
-            tabIndex={-1}
-          >
-            <strong>Periksa kembali formulir</strong>
-            <ul>
-              {errorEntries.map(([field, message]) => (
-                <li key={field}><a href={`#login-${field}`}>{message}</a></li>
-              ))}
-            </ul>
+            <WarningCircle aria-hidden="true" size={18} />
+            <p className="text-xs font-medium">{failure}</p>
           </div>
         ) : null}
         <button
@@ -143,8 +125,11 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
             id="login-email"
             name="email"
             type="email"
+            onChange={() => {
+              if (errors.email) setErrors((prev) => ({ ...prev, email: undefined }));
+            }}
           />
-          {errors.email ? <p className="auth-field__error" id="login-email-error">{errors.email}</p> : null}
+          {errors.email ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="login-email-error">{errors.email}</p> : null}
         </div>
         <PasswordField
           autoComplete="current-password"
@@ -153,6 +138,9 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
           id="login-password"
           label="Kata sandi"
           name="password"
+          onChange={() => {
+            if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
+          }}
         />
         <div className="auth-form__aside-link">
           <Link href="/forgot-password">Lupa kata sandi?</Link>

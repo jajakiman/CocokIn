@@ -78,21 +78,13 @@ export function ForgotPasswordForm({ adapter }: { adapter: AuthUiAdapter }) {
       <form className="auth-form" noValidate onSubmit={submit}>
         {failure ? (
           <div className="auth-alert" role="alert">
-            <WarningCircle aria-hidden="true" size={20} />
-            <p>{failure}</p>
+            <WarningCircle aria-hidden="true" size={18} />
+            <p className="text-xs font-medium">{failure}</p>
           </div>
         ) : null}
         {success ? (
           <div className="auth-success" role="status">
-            <p>{success}</p>
-          </div>
-        ) : null}
-        {error ? (
-          <div aria-label="Periksa kembali formulir" className="auth-error-summary" ref={summaryRef} role="alert" tabIndex={-1}>
-            <strong>Periksa kembali formulir</strong>
-            <ul>
-              <li><a href="#forgot-email">Email: {error}</a></li>
-            </ul>
+            <p className="text-xs font-medium">{success}</p>
           </div>
         ) : null}
         <div className="auth-field">
@@ -105,8 +97,11 @@ export function ForgotPasswordForm({ adapter }: { adapter: AuthUiAdapter }) {
             id="forgot-email"
             name="email"
             type="email"
+            onChange={() => {
+              if (error) setError(undefined);
+            }}
           />
-          {error ? <p className="auth-field__error" id="forgot-email-error">{error}</p> : null}
+          {error ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="forgot-email-error">{error}</p> : null}
         </div>
         <button className="auth-submit" disabled={isPending} type="submit">
           {isPending ? "Memproses..." : "Kirim instruksi reset"}

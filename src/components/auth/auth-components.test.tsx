@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -52,7 +52,7 @@ describe("AuthShell", () => {
     );
   });
 
-  it("uses the official wordmark and plain-language protection message", () => {
+  it("uses the official wordmark in the auth shell", () => {
     const { container } = render(
       <AuthShell
         title="Masuk ke CocokIn"
@@ -70,8 +70,6 @@ describe("AuthShell", () => {
       "/brand/cocokin/logo-wordmark.webp",
     );
     expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
-    expect(screen.getByText(/Dana proyek terlindungi dan hasil kerja bergaransi 30 hari/i)).toBeInTheDocument();
-    expect(screen.queryByText(/100% Liability Reserve/i)).not.toBeInTheDocument();
   });
 });
 
@@ -135,30 +133,23 @@ describe("LoginForm", () => {
     );
   });
 
-  it("links inline errors and focuses a focusable summary after invalid submit", async () => {
+  it("links inline errors on invalid submit", async () => {
     const user = userEvent.setup();
     render(<LoginForm adapter={unavailableAuthAdapter} />);
 
     await user.click(screen.getByRole("button", { name: "Masuk" }));
 
-    const summary = screen.getByRole("alert", { name: "Periksa kembali formulir" });
     const email = screen.getByLabelText("Email");
     const password = screen.getByLabelText("Kata sandi");
     const emailError = document.getElementById("login-email-error");
     const passwordError = document.getElementById("login-password-error");
 
-    expect(summary).toHaveAttribute("tabindex", "-1");
-    expect(summary).toHaveFocus();
     expect(email).toHaveAttribute("aria-invalid", "true");
     expect(password).toHaveAttribute("aria-invalid", "true");
     expect(emailError).toHaveTextContent("Masukkan alamat email yang valid.");
     expect(passwordError).toHaveTextContent("Kata sandi wajib diisi.");
     expect(email).toHaveAttribute("aria-describedby", emailError?.id);
     expect(password.getAttribute("aria-describedby")).toContain(passwordError?.id);
-    expect(within(summary).getByRole("link", { name: /email/i })).toHaveAttribute(
-      "href",
-      `#${email.id}`,
-    );
   });
 
   it("disables every auth action while the adapter request is pending", async () => {
@@ -262,8 +253,6 @@ describe("RegistrationForm", () => {
     await user.type(screen.getByLabelText("Konfirmasi kata sandi"), "amansekali");
     await user.click(screen.getByRole("button", { name: "Daftar sebagai UMKM" }));
 
-    const summary = screen.getByRole("alert", { name: "Periksa kembali formulir" });
-    expect(summary).toHaveFocus();
     expect(screen.getByText("Anda harus menyetujui Syarat dan Ketentuan.")).toBeVisible();
     expect(screen.getByText("Anda harus menyetujui pemrosesan data pribadi.")).toBeVisible();
 
@@ -285,7 +274,7 @@ describe("ForgotPasswordForm", () => {
 
     expect(screen.getByLabelText("Email")).toHaveAttribute("autocomplete", "email");
     await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
-    expect(screen.getByRole("alert", { name: "Periksa kembali formulir" })).toHaveFocus();
+    expect(screen.getByText("Masukkan alamat email yang valid.")).toBeVisible();
 
     await user.type(screen.getByLabelText("Email"), "nadia@example.com");
     await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));

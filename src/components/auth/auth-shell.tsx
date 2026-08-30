@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ShieldCheck, Sparkle } from "@phosphor-icons/react/dist/ssr";
 import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 type AuthShellProps = {
@@ -36,20 +35,9 @@ export function AuthShell({
 
       <aside className="auth-shell__context" aria-hidden="true">
         <div className="auth-shell__context-inner">
-          <div className="auth-shell__context-pill">
-            <Sparkle size={14} weight="fill" />
-            <span>Kolaborasi yang Jelas & Terarah</span>
-          </div>
           <h2>{contextTitle}</h2>
           <div className="auth-shell__context-copy">
             {context}
-          </div>
-
-          <div className="auth-shell__protection">
-            <ShieldCheck aria-hidden="true" size={28} weight="duotone" />
-            <span>
-              Dana proyek terlindungi dan hasil kerja bergaransi 30 hari.
-            </span>
           </div>
         </div>
       </aside>
