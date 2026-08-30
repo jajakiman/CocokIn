@@ -93,36 +93,34 @@ export default async function TalentDashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-10">
-      {/* ── TOP GREETING & STATUS BAR (Braintrust Inspired) ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#D8E1EE]">
+      {/* ── TOP GREETING & STATUS BAR (Braintrust & CocokIn Refined) ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#D8E1EE]">
         <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#001040] tracking-tight">
-            Hi, {firstName}!
-          </h1>
-          <p className="text-sm text-[#53647A] mt-1">
-            Siap menyelesaikan proyek mikro baru atau melanjutkan bukti portofolio Anda?
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl md:text-4xl font-black text-[#001040] tracking-tight">
+              Hi, {firstName}!
+            </h1>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#ECFDF5] text-[#059669] border border-[#A7F3D0]">
+              <span className="w-2 h-2 rounded-full bg-[#059669]" /> Siap Kerja
+            </span>
+          </div>
+          <p className="text-sm text-[#53647A] mt-1.5 leading-relaxed">
+            Temukan peluang proyek mikro yang cocok dengan keahlianmu dan bangun bukti portofolio nyata.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="bg-white border border-[#D8E1EE] px-4 py-2 rounded-xl flex items-center gap-2.5 shadow-sm">
-            <Sparkle size={18} weight="fill" className="text-[#FF8010]" />
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="bg-white border border-[#D8E1EE] px-4 py-2 rounded-xl flex items-center gap-3 shadow-2xs">
+            <Sparkle size={20} weight="fill" className="text-[#FF8010]" />
             <div className="text-left">
-              <div className="text-[10px] font-bold text-[#53647A] uppercase tracking-wider">
+              <div className="text-[10px] font-extrabold text-[#53647A] uppercase tracking-wider">
                 Kesiapan Karier
               </div>
-              <div className="text-sm font-extrabold text-[#001040]">
+              <div className="text-sm font-black text-[#001040]">
                 {latestAssessment ? `${latestAssessment.compositeScore}% Siap Kerja` : "Belum Asesmen"}
               </div>
             </div>
           </div>
-
-          <Link
-            href="/talent/profile"
-            className="bg-[#001040] hover:bg-[#001040]/90 text-white font-bold text-sm px-5 py-2.5 rounded-xl transition-colors shadow-sm shrink-0"
-          >
-            Edit Profil
-          </Link>
         </div>
       </div>
 
@@ -295,7 +293,7 @@ export default async function TalentDashboardPage() {
               return (
                 <div
                   key={project.id}
-                  className="bg-white border border-[#D8E1EE] rounded-2xl p-6 hover:shadow-lg hover:border-[#006FE6]/60 transition-all flex flex-col justify-between group"
+                  className="bg-white border border-[#D8E1EE] rounded-2xl p-6 shadow-2xs hover:shadow-md hover:border-[#006FE6]/60 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between group"
                 >
                   {/* Card Top: Avatar, Role Tag, Share/Save */}
                   <div>

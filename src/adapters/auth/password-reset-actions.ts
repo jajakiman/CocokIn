@@ -29,14 +29,19 @@ export async function requestPasswordReset(email: string) {
           data: { identifier: parsed.data, token, expires: new Date(Date.now() + 60 * 60 * 1000) },
         }),
       ]);
-      const appUrl = process.env.APP_URL;
-      if (!appUrl) throw new Error("APP_URL is required for password reset");
+      let appUrl = process.env.APP_URL;
+      if (!appUrl) {
+        appUrl = "https://cocok-in-git-dev-zakyryan0-4528s-projects.vercel.app";
+      }
+      if (!appUrl.startsWith("http://") && !appUrl.startsWith("https://")) {
+        appUrl = `https://${appUrl}`;
+      }
       const resetUrl = new URL("/reset-password", appUrl);
       resetUrl.searchParams.set("token", rawToken);
       try {
         await sendPasswordResetEmail({ email: parsed.data, resetUrl: resetUrl.toString() });
       } catch (error) {
-        console.error("[PASSWORD RESET DELIVERY ERROR]", error);
+        console.error("[PASSWORD RESET DELIVERY ERROR]:", error);
       }
     }
     return { ok: true, message: "Jika email terdaftar, instruksi reset telah dikirim." };

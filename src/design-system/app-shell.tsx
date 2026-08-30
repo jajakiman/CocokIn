@@ -95,25 +95,29 @@ export function AppShell({ children, role, user }: AppShellProps) {
         }`}
       >
         {/* Brand and collapse control */}
-        <div className="pt-4 pb-4 border-b border-[#D8E1EE]">
+        <div className="py-4 border-b border-[#D8E1EE]">
           <div className="flex items-center justify-between gap-2">
             {!isCollapsed ? (
-              <Link className="flex items-center gap-2.5 overflow-hidden" href={`/${role}`}>
-                <CocokInBrand className="w-8 h-8 object-contain" decorative priority variant="mark" />
-                <strong className="text-lg text-[#001040]">CocokIn</strong>
+              <Link className="flex items-center gap-2.5 overflow-hidden pl-1" href={`/${role}`}>
+                <CocokInBrand className="w-7 h-7 object-contain" decorative priority variant="mark" />
+                <span className="font-black text-lg text-[#001040] tracking-tight">CocokIn</span>
               </Link>
             ) : (
-              <CocokInBrand className="w-8 h-8 object-contain" decorative priority variant="mark" />
+              <div className="w-full flex justify-center">
+                <CocokInBrand className="w-7 h-7 object-contain" decorative priority variant="mark" />
+              </div>
             )}
 
             <button
               type="button"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1.5 rounded-lg text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] transition-colors hidden md:flex items-center justify-center shrink-0"
-              title={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
-              aria-label={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
+              className={`w-7 h-7 rounded-lg border border-[#D8E1EE] bg-white text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] hover:border-[#9AABC2] transition-all hidden md:flex items-center justify-center shrink-0 shadow-2xs ${
+                isCollapsed ? "mx-auto mt-2" : ""
+              }`}
+              title={isCollapsed ? "Buka Sidebar" : "Sembunyikan Sidebar"}
+              aria-label={isCollapsed ? "Buka Sidebar" : "Sembunyikan Sidebar"}
             >
-              {isCollapsed ? <List size={20} weight="bold" /> : <CaretLeft size={20} weight="bold" />}
+              {isCollapsed ? <List size={14} weight="bold" /> : <CaretLeft size={14} weight="bold" />}
             </button>
           </div>
         </div>
