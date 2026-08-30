@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { pusherClient } from "@/src/adapters/realtime/pusher-client";
-import { PaperPlaneRight, User, Circle } from "@phosphor-icons/react";
+import { createPusherClient, parsePusherBrowserConfig } from "@/src/adapters/realtime/pusher-client";
+import { PaperPlaneRight } from "@phosphor-icons/react";
 
 type Message = {
   id: string;
@@ -28,19 +28,29 @@ export function ChatInterface({
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let cancelled = false;
+    let pusherClient: ReturnType<typeof createPusherClient> | undefined;
     const channelName = `presence-${conversationId}`;
-    const channel = pusherClient.subscribe(channelName);
-
-    channel.bind("new-message", (data: Message) => {
-      setMessages((prev) => {
-        // Prevent duplicates in strict mode
-        if (prev.find((m) => m.id === data.id)) return prev;
-        return [...prev, data];
+    const connect = async () => {
+      const response = await fetch("/api/realtime/config");
+      if (!response.ok) return;
+      const config = parsePusherBrowserConfig(await response.json());
+      if (cancelled) return;
+      pusherClient = createPusherClient(config);
+      const channel = pusherClient.subscribe(channelName);
+      channel.bind("new-message", (data: Message) => {
+        setMessages((prev) => {
+          if (prev.find((message) => message.id === data.id)) return prev;
+          return [...prev, data];
+        });
       });
-    });
+    };
+    void connect().catch(() => undefined);
 
     return () => {
-      pusherClient.unsubscribe(channelName);
+      cancelled = true;
+      pusherClient?.unsubscribe(channelName);
+      pusherClient?.disconnect();
     };
   }, [conversationId]);
 
