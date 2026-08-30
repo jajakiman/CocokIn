@@ -39,7 +39,7 @@ export function AcceptTalentForm({ applicationId }: { applicationId: string }) {
       <button 
         disabled={isPending || (state.ok && state.message !== "")} 
         type="submit" 
-        className="w-full bg-[#006FE6] hover:bg-[#006FE6]/90 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 text-sm"
+        className="w-full bg-[#006FE6] hover:bg-[#006FE6]/90 !text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50 text-sm"
       >
         {isPending ? "Memproses..." : "Pilih Talent Ini"}
       </button>

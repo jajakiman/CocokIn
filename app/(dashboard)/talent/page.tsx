@@ -107,7 +107,7 @@ export default async function TalentDashboardPage() {
 
                     <Link 
                       href={`/talent/projects/${app.project.id}/workspace`}
-                      className="inline-flex items-center justify-center w-full md:w-auto bg-[#001040] hover:bg-[#001040]/90 text-white font-bold py-3 px-6 rounded-xl transition-colors gap-2"
+                      className="inline-flex items-center justify-center w-full md:w-auto bg-[#001040] hover:bg-[#001040]/90 !text-white font-bold py-3 px-6 rounded-xl transition-colors gap-2"
                     >
                       Buka Workspace Proyek <ArrowRight weight="bold" />
                     </Link>

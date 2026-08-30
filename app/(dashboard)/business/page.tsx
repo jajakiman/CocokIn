@@ -104,7 +104,7 @@ export default async function BusinessDashboardPage() {
                   <h3 className="font-semibold text-[#001040]">{project.title}</h3>
                   <p className="text-sm text-[#53647A] mt-1">{project.status}</p>
                 </div>
-                <Link href={`/projects/${project.id}`} className="text-[#0080FF] font-medium text-sm hover:underline">
+                <Link href={`/business/projects/${project.id}`} className="text-[#0080FF] font-medium text-sm hover:underline">
                   Kelola
                 </Link>
               </div>

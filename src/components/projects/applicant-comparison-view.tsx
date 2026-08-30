@@ -107,7 +107,7 @@ export function ApplicantComparisonView({
                   ) : !isSelected ? (
                     <Link 
                       href={`/business/projects/${app.projectId}/agreement/${app.id}`}
-                      className="block w-full bg-[#001040] hover:bg-[#001040]/90 text-white text-center font-bold py-2 rounded-lg transition-colors"
+                      className="block w-full bg-[#001040] hover:bg-[#001040]/90 !text-white text-center font-bold py-2 rounded-lg transition-colors"
                     >
                       Pilih Talent Ini
                     </Link>
@@ -234,7 +234,7 @@ export function ApplicantComparisonView({
                 ) : !isSelected ? (
                   <Link 
                     href={`/business/projects/${selectedApp.projectId}/agreement/${selectedApp.id}`}
-                    className="block w-full bg-[#001040] hover:bg-[#001040]/90 text-white text-center font-bold py-3 rounded-xl transition-colors"
+                    className="block w-full bg-[#001040] hover:bg-[#001040]/90 !text-white text-center font-bold py-3 rounded-xl transition-colors"
                   >
                     Pilih Talent Ini
                   </Link>

@@ -84,7 +84,7 @@ export default async function TalentWorkspacePage() {
                   </div>
                   <Link 
                     href={`/talent/projects/${app.project.id}/workspace`}
-                    className="mt-4 flex items-center justify-center w-full bg-[#001040] hover:bg-[#001040]/90 text-white font-bold py-3 px-4 rounded-xl transition-colors gap-2"
+                    className="mt-4 flex items-center justify-center w-full bg-[#001040] hover:bg-[#001040]/90 !text-white font-bold py-3 px-4 rounded-xl transition-colors gap-2"
                   >
                     Buka Workspace <ArrowRight weight="bold" />
                   </Link>
