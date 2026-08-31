@@ -118,7 +118,7 @@ describe("LoginForm", () => {
     render(<LoginForm adapter={unavailableAuthAdapter} />);
 
     expect(screen.getByRole("button", { name: "Masuk dengan Google" })).toBeVisible();
-    expect(screen.getByLabelText("Email")).toHaveAttribute("autocomplete", "email");
+    expect(screen.getByLabelText(/^Email/)).toHaveAttribute("autocomplete", "email");
     expect(screen.getByLabelText("Kata sandi")).toHaveAttribute(
       "autocomplete",
       "current-password",
@@ -182,7 +182,7 @@ describe("LoginForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
     const failure = (await screen.findAllByText("Autentikasi belum dikonfigurasi."))[0];
-    await user.type(screen.getByLabelText("Email"), "nadia@example.com");
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
 
     expect(failure).toBeVisible();
   });
@@ -280,16 +280,16 @@ describe("ForgotPasswordForm", () => {
     const user = userEvent.setup();
     render(<ForgotPasswordForm adapter={unavailableAuthAdapter} />);
 
-    expect(screen.getByLabelText("Email")).toHaveAttribute("autocomplete", "email");
+    expect(screen.getByLabelText(/^Email/)).toHaveAttribute("autocomplete", "email");
     await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
     expect(screen.getByText("Masukkan alamat email yang valid.")).toBeVisible();
 
-    await user.type(screen.getByLabelText("Email"), "nadia@example.com");
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
     await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
     const failure = await screen.findByText(
       "Layanan reset kata sandi belum dikonfigurasi.",
     );
-    await user.type(screen.getByLabelText("Email"), ".id");
+    await user.type(screen.getByLabelText(/^Email/), ".id");
 
     expect(failure).toBeVisible();
     expect(screen.queryByText(/email (telah|sudah) dikirim/i)).not.toBeInTheDocument();
@@ -297,5 +297,23 @@ describe("ForgotPasswordForm", () => {
       "href",
       "/login",
     );
+  });
+
+  it("shows an inline cooldown after a successful reset request", async () => {
+    const user = userEvent.setup();
+    render(
+      <ForgotPasswordForm
+        adapter={adapterWith({
+          requestPasswordReset: async () => ({ ok: true, message: "Jika email terdaftar, permintaan reset telah diterima." }),
+        })}
+      />,
+    );
+
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
+    await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent("Permintaan reset diterima");
+    expect(screen.getByRole("button", { name: "Tunggu 01:00" })).toBeDisabled();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });

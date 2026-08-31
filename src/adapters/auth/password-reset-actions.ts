@@ -2,10 +2,11 @@
 
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
+import { after } from "next/server";
 import { z } from "zod";
 
 import { prisma } from "@/src/adapters/database/prisma";
-import { sendPasswordResetEmail } from "@/src/adapters/email/resend";
+import { sendPasswordResetEmail } from "@/src/adapters/email/smtp";
 import { hashResetToken, isResetTokenExpired } from "@/src/modules/identity/password-reset";
 
 const resetSchema = z.object({
@@ -19,35 +20,40 @@ export async function requestPasswordReset(email: string) {
   if (!parsed.success) return { ok: false, message: "Masukkan alamat email yang valid." };
 
   try {
-    const user = await prisma.user.findUnique({ where: { email: parsed.data } });
-    if (user) {
-      const rawToken = randomBytes(32).toString("base64url");
-      const token = hashResetToken(rawToken);
-      await prisma.$transaction([
-        prisma.verificationToken.deleteMany({ where: { identifier: parsed.data } }),
-        prisma.verificationToken.create({
-          data: { identifier: parsed.data, token, expires: new Date(Date.now() + 60 * 60 * 1000) },
-        }),
-      ]);
-      let appUrl = process.env.APP_URL;
-      if (!appUrl) {
-        appUrl = "https://cocok-in-git-dev-zakyryan0-4528s-projects.vercel.app";
-      }
-      if (!appUrl.startsWith("http://") && !appUrl.startsWith("https://")) {
-        appUrl = `https://${appUrl}`;
-      }
-      const resetUrl = new URL("/reset-password", appUrl);
-      resetUrl.searchParams.set("token", rawToken);
+    const requestedEmail = parsed.data.toLowerCase();
+    after(async () => {
       try {
-        await sendPasswordResetEmail({ email: parsed.data, resetUrl: resetUrl.toString() });
+        const user = await prisma.user.findFirst({ where: { email: { equals: requestedEmail, mode: "insensitive" } } });
+        if (!user?.email) return;
+
+        const rawToken = randomBytes(32).toString("base64url");
+        const token = hashResetToken(rawToken);
+        const resetAllowed = await prisma.$transaction(async (tx) => {
+          await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${requestedEmail}))`;
+          const existingToken = await tx.verificationToken.findFirst({ where: { identifier: user.email! } });
+          if (existingToken && existingToken.expires.getTime() > Date.now() + 59 * 60 * 1000) return false;
+          await tx.verificationToken.deleteMany({ where: { identifier: user.email! } });
+          await tx.verificationToken.create({
+            data: { identifier: user.email!, token, expires: new Date(Date.now() + 60 * 60 * 1000) },
+          });
+          return true;
+        });
+        if (!resetAllowed) return;
+
+        let appUrl = process.env.APP_URL;
+        if (!appUrl) throw new Error("APP_URL is required for password reset");
+        if (!appUrl.startsWith("http://") && !appUrl.startsWith("https://")) appUrl = `https://${appUrl}`;
+        const resetUrl = new URL("/reset-password", appUrl);
+        resetUrl.searchParams.set("token", rawToken);
+        await sendPasswordResetEmail({ email: user.email, resetUrl: resetUrl.toString() });
       } catch (error) {
-        console.error("[PASSWORD RESET DELIVERY ERROR]:", error);
+        console.error("[PASSWORD RESET BACKGROUND ERROR]:", error);
       }
-    }
-    return { ok: true, message: "Jika email terdaftar, instruksi reset telah dikirim." };
+    });
+    return { ok: true, message: "Jika email terdaftar, permintaan reset telah diterima." };
   } catch (error) {
     console.error("[PASSWORD RESET REQUEST ERROR]", error);
-    return { ok: true, message: "Jika email terdaftar, instruksi reset telah dikirim." };
+    return { ok: true, message: "Jika email terdaftar, permintaan reset telah diterima." };
   }
 }
 
