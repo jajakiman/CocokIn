@@ -2,6 +2,7 @@
 
 import { prisma } from "@/src/adapters/database/prisma";
 import { getSession } from "@/src/lib/session";
+import { hasTalentFeatureAccess } from "@/src/modules/talent/feature-access";
 import { createProjectSchema, type CreateProjectInput } from "@/src/domain/projects/schemas";
 import { revalidatePath } from "next/cache";
 
@@ -81,6 +82,7 @@ export async function applyToProjectAction(
   if (!session || session.role !== "TALENT") {
     return { ok: false, message: "Hanya Talent terautentikasi yang dapat melamar proyek." };
   }
+  if (!(await hasTalentFeatureAccess(session.id))) return { ok: false, message: "Selesaikan verifikasi email dan onboarding Talent terlebih dahulu." };
 
   const projectId = String(formData.get("projectId"));
   const motivation = String(formData.get("motivation") || "");

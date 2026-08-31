@@ -1,6 +1,7 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { prisma } from "@/src/adapters/database/prisma";
 import { createSession, destroySession } from "@/src/lib/session";
 import type { AuthResult, AuthUiAdapter, RegistrationRequest, AuthUser } from "@/src/auth-ui/types";
@@ -8,6 +9,9 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requestPasswordReset as requestPasswordResetAction } from "./password-reset-actions";
 import { registrationConsentRecords } from "@/src/modules/identity/registration-consent";
+import { hashEmailVerificationToken, verificationIdentifier } from "@/src/modules/identity/email-verification";
+import { scheduleVerificationEmail } from "@/src/adapters/email/verification-delivery";
+import { cookies } from "next/headers";
 
 const serverRegistrationSchema = z.object({
   role: z.enum(["TALENT", "BUSINESS"]),
@@ -23,7 +27,8 @@ export async function parseRegistrationRequest(input: unknown) {
 
 export async function loginWithCredentials({ email, password }: Parameters<AuthUiAdapter['loginWithCredentials']>[0]) {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (!user || !user.passwordHash) {
       return { ok: false, code: "INVALID_CREDENTIALS", message: "Email atau kata sandi salah." } as AuthResult;
     }
@@ -31,6 +36,10 @@ export async function loginWithCredentials({ email, password }: Parameters<AuthU
     const isValid = await bcrypt.compare(password, user.passwordHash);
     if (!isValid) {
       return { ok: false, code: "INVALID_CREDENTIALS", message: "Email atau kata sandi salah." } as AuthResult;
+    }
+    if (!user.emailVerified) {
+      (await cookies()).set("pending_verification", user.email!, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 24 * 60 * 60, path: "/" });
+      return redirect("/verify-email");
     }
 
     const authUser: AuthUser = {
@@ -56,16 +65,18 @@ export async function loginWithGoogle() {
 export async function register(input: RegistrationRequest) {
   try {
     const req = await parseRegistrationRequest(input);
-    const existingUser = await prisma.user.findUnique({ where: { email: req.email } });
+    const normalizedEmail = req.email.trim().toLowerCase();
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existingUser) {
       return { ok: false, code: "INVALID_CREDENTIALS", message: "Email sudah terdaftar." } as AuthResult;
     }
 
     const passwordHash = await bcrypt.hash(req.password, 10);
     
+    const rawVerificationToken = randomBytes(32).toString("base64url");
     const user = await prisma.$transaction(async (tx) => {
       const createdUser = await tx.user.create({
-        data: { email: req.email, name: req.fullName, passwordHash, role: req.role }
+        data: { email: normalizedEmail, name: req.fullName, passwordHash, role: req.role }
       });
 
       // Buat profile default otomatis agar siap digunakan dashboard
@@ -82,6 +93,13 @@ export async function register(input: RegistrationRequest) {
       await tx.consentRecord.createMany({
         data: registrationConsentRecords(createdUser.id),
       });
+      await tx.verificationToken.create({
+        data: {
+          identifier: verificationIdentifier(createdUser.email!),
+          token: hashEmailVerificationToken(rawVerificationToken),
+          expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        },
+      });
 
       return createdUser;
     });
@@ -93,8 +111,8 @@ export async function register(input: RegistrationRequest) {
       role: user.role,
     };
 
-    // Auto login after registration
-    await createSession(authUser);
+    (await cookies()).set("pending_verification", user.email!, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 24 * 60 * 60, path: "/" });
+    scheduleVerificationEmail(user.email!, rawVerificationToken);
     return { ok: true, user: authUser } as AuthResult;
   } catch (e) {
     console.error("[AUTH REGISTER ERROR]:", e);

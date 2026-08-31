@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/adapters/database/prisma";
 import { getSession } from "@/src/lib/session";
+import { hasTalentFeatureAccess } from "@/src/modules/talent/feature-access";
 
 export async function POST(req: Request) {
   try {
@@ -8,6 +9,7 @@ export async function POST(req: Request) {
     if (!session || session.role !== "TALENT") {
       return new NextResponse("Unauthorized", { status: 401 });
     }
+    if (!(await hasTalentFeatureAccess(session.id))) return new NextResponse("Onboarding required", { status: 403 });
 
     const body = await req.json();
     const { name, bio, university, major, workModePreference, timeAvailability, careerTarget } = body;

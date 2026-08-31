@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { pusherServer } from "@/src/adapters/realtime/pusher";
 import { getSession } from "@/src/lib/session"; // Note: Assumes standard auth setup, replace as needed.
 import { prisma } from "@/src/adapters/database/prisma";
+import { hasTalentFeatureAccess } from "@/src/modules/talent/feature-access";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,6 +11,9 @@ export async function POST(req: NextRequest) {
     const channel = data.get("channel_name") as string;
     const session = await getSession();
     if (!session) return new NextResponse("Unauthorized", { status: 401 });
+    if (session.role === "TALENT" && !(await hasTalentFeatureAccess(session.id))) {
+      return new NextResponse("Onboarding required", { status: 403 });
+    }
 
     const match = channel.match(/^presence-(.+)$/);
     if (!socketId || !match) return new NextResponse("Bad Request", { status: 400 });

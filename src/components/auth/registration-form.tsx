@@ -71,10 +71,10 @@ export function RegistrationForm({
         setFailure(authResult.message);
         setModalState({ ok: false, message: authResult.message });
       } else {
-        const destination = authResult.user.role === "BUSINESS" ? "/business/profile" : "/talent/profile";
+        const destination = "/verify-email";
         setModalState({
           ok: true,
-          message: `Selamat datang di CocokIn, ${authResult.user.displayName}! Akun ${roleLabel} Anda berhasil dibuat. Mengalihkan ke langkah selanjutnya...`,
+          message: `Akun ${roleLabel} ${authResult.user.displayName} berhasil dibuat. Verifikasi alamat email Anda untuk melanjutkan.`,
           destination,
         });
 

@@ -219,6 +219,9 @@ model TalentProfile {
   workModePreference String? // Remote, Hybrid, Onsite
   timeAvailability   String? // Full-time, Part-time, Weekend
   careerTarget       String?
+  portfolioUrl        String?
+  hasNoPortfolio      Boolean   @default(false)
+  onboardingCompletedAt DateTime?
 
   skills       TalentSkill[]
   assessments  TalentAssessmentResult[]

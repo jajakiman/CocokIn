@@ -3,6 +3,7 @@
 import { prisma } from "@/src/adapters/database/prisma";
 import { getSession } from "@/src/lib/session";
 import { revalidatePath } from "next/cache";
+import { hasTalentFeatureAccess } from "@/src/modules/talent/feature-access";
 
 import { submitMilestoneStaging, reviewMilestone, type ReviewDecision } from "@/src/modules/delivery/delivery.service";
 
@@ -21,6 +22,7 @@ export async function submitMilestoneAction(
   if (!session || session.role !== "TALENT") {
     return { ok: false, message: "Hanya Talent terautentikasi yang dapat mengumpulkan milestone." };
   }
+  if (!(await hasTalentFeatureAccess(session.id))) return { ok: false, message: "Selesaikan verifikasi email dan onboarding Talent terlebih dahulu." };
 
   const projectMilestoneId = String(formData.get("projectMilestoneId"));
   const stagingUrl = String(formData.get("stagingUrl"));

@@ -3,11 +3,15 @@ import { pusherServer } from "@/src/adapters/realtime/pusher";
 import { saveMessage } from "@/src/modules/chat/chat.service";
 import { getSession } from "@/src/lib/session";
 import { prisma } from "@/src/adapters/database/prisma";
+import { hasTalentFeatureAccess } from "@/src/modules/talent/feature-access";
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
     if (!session) return new NextResponse("Unauthorized", { status: 401 });
+    if (session.role === "TALENT" && !(await hasTalentFeatureAccess(session.id))) {
+      return new NextResponse("Onboarding required", { status: 403 });
+    }
     const { conversationId, content } = await req.json();
     if (typeof conversationId !== "string" || typeof content !== "string" || !content.trim() || content.length > 10_000) {
       return new NextResponse("Bad Request", { status: 400 });

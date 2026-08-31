@@ -7,10 +7,12 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
   // Seed Talent User
   const talentUser = await prisma.user.upsert({
     where: { email: "talent@cocokin.id" },
-    update: {},
+    update: { emailVerified: new Date(), identityStatus: "CONTACT_VERIFIED" },
     create: {
       email: "talent@cocokin.id",
       name: "Budi Santoso",
+      emailVerified: new Date(),
+      identityStatus: "CONTACT_VERIFIED",
       role: "TALENT",
       passwordHash,
     },
@@ -19,12 +21,23 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
   // Seed Talent Profile
   const talentProfile = await prisma.talentProfile.upsert({
     where: { userId: talentUser.id },
-    update: {},
+    update: {
+      university: "Universitas Indonesia",
+      major: "Sistem Informasi",
+      careerTarget: "Frontend Developer",
+      hasNoPortfolio: true,
+      onboardingCompletedAt: new Date(),
+      workModePreference: "REMOTE",
+    },
     create: {
       userId: talentUser.id,
       bio: "Mahasiswa Sistem Informasi tingkat akhir dengan pengalaman fullstack web development. Senang membantu UMKM go digital.",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
+      careerTarget: "Frontend Developer",
+      hasNoPortfolio: true,
+      onboardingCompletedAt: new Date(),
+      workModePreference: "REMOTE",
     },
   });
 
@@ -63,10 +76,12 @@ async function main() {
   // Seed Business User
   const umkmUser = await prisma.user.upsert({
     where: { email: "umkm@cocokin.id" },
-    update: {},
+    update: { emailVerified: new Date(), identityStatus: "CONTACT_VERIFIED" },
     create: {
       email: "umkm@cocokin.id",
       name: "UMKM Demo",
+      emailVerified: new Date(),
+      identityStatus: "CONTACT_VERIFIED",
       role: "BUSINESS",
       passwordHash,
     },
