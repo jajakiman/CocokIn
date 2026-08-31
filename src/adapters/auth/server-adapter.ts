@@ -7,6 +7,7 @@ import type { AuthResult, AuthUiAdapter, RegistrationRequest, AuthUser } from "@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requestPasswordReset as requestPasswordResetAction } from "./password-reset-actions";
+import { registrationConsentRecords } from "@/src/modules/identity/registration-consent";
 
 const serverRegistrationSchema = z.object({
   role: z.enum(["TALENT", "BUSINESS"]),
@@ -14,7 +15,6 @@ const serverRegistrationSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   termsAccepted: z.literal(true),
-  privacyAccepted: z.literal(true),
 });
 
 export async function parseRegistrationRequest(input: unknown) {
@@ -79,17 +79,9 @@ export async function register(input: RegistrationRequest) {
         });
       }
 
-      // Simpan consent audit record jika tabel tersedia
-      try {
-        await tx.consentRecord.createMany({
-          data: [
-            { userId: createdUser.id, purpose: "TERMS_ACCEPTANCE", status: "GRANTED", source: "REGISTRATION" },
-            { userId: createdUser.id, purpose: "PRIVACY_PROCESSING", status: "GRANTED", source: "REGISTRATION" },
-          ],
-        });
-      } catch (consentErr) {
-        console.warn("[AUTH REGISTER] Consent record skipped:", consentErr);
-      }
+      await tx.consentRecord.createMany({
+        data: registrationConsentRecords(createdUser.id),
+      });
 
       return createdUser;
     });

@@ -15,6 +15,7 @@ type PasswordFieldProps = {
   onChange?: ChangeEventHandler<HTMLInputElement>;
   statusId?: string;
   invalid?: boolean;
+  required?: boolean;
 };
 
 export function PasswordField({
@@ -29,6 +30,7 @@ export function PasswordField({
   onChange,
   statusId,
   invalid,
+  required = false,
 }: PasswordFieldProps) {
   const generatedId = useId();
   const [isVisible, setIsVisible] = useState(false);
@@ -39,7 +41,9 @@ export function PasswordField({
 
   return (
     <div className="auth-field">
-      <label htmlFor={inputId}>{label}</label>
+      <label htmlFor={inputId}>
+        {label}{required ? <> <span className="text-[#E11D48]" aria-hidden="true">*</span></> : null}
+      </label>
       <div className="auth-password">
         <input
           aria-describedby={describedBy}
@@ -48,6 +52,7 @@ export function PasswordField({
           disabled={disabled}
           id={inputId}
           name={name}
+          required={required}
           onChange={onChange}
           type={isVisible ? "text" : "password"}
           value={value}

@@ -16,8 +16,7 @@ type RegistrationField =
   | "email"
   | "password"
   | "confirmPassword"
-  | "termsAccepted"
-  | "privacyAccepted";
+  | "termsAccepted";
 type RegistrationErrors = Partial<Record<RegistrationField, string>>;
 
 export function RegistrationForm({
@@ -56,7 +55,6 @@ export function RegistrationForm({
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
       termsAccepted: data.has("termsAccepted"),
-      privacyAccepted: data.has("privacyAccepted"),
     });
 
     if (!result.success) {
@@ -99,7 +97,7 @@ export function RegistrationForm({
           </div>
         ) : null}
         <div className="auth-field">
-          <label htmlFor="register-fullName">Nama lengkap</label>
+          <label htmlFor="register-fullName">Nama lengkap <span className="text-[#E11D48]" aria-hidden="true">*</span></label>
           <input
             aria-describedby={errors.fullName ? "register-fullName-error" : undefined}
             aria-invalid={errors.fullName ? true : undefined}
@@ -115,7 +113,7 @@ export function RegistrationForm({
           {errors.fullName ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-fullName-error">{errors.fullName}</p> : null}
         </div>
         <div className="auth-field">
-          <label htmlFor="register-email">Email</label>
+          <label htmlFor="register-email">Email <span className="text-[#E11D48]" aria-hidden="true">*</span></label>
           <input
             aria-describedby={errors.email ? "register-email-error" : undefined}
             aria-invalid={errors.email ? true : undefined}
@@ -138,6 +136,7 @@ export function RegistrationForm({
           id="register-password"
           label="Kata sandi"
           name="password"
+          required
           onChange={(event) => {
             setPassword(event.target.value);
             if (errors.password) setErrors((prev) => ({ ...prev, password: undefined }));
@@ -161,6 +160,7 @@ export function RegistrationForm({
           invalid={Boolean(confirmPassword) && password !== confirmPassword}
           label="Konfirmasi kata sandi"
           name="confirmPassword"
+          required
           onChange={(event) => {
             setConfirmPassword(event.target.value);
             if (errors.confirmPassword) setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
@@ -186,26 +186,18 @@ export function RegistrationForm({
               }}
             />
             <div>
-              <label htmlFor="register-termsAccepted">Saya menyetujui Syarat dan Ketentuan.</label>
+              <label htmlFor="register-termsAccepted" className="font-normal leading-relaxed">
+                Saya telah membaca dan menyetujui{" "}
+                <Link href="/terms" target="_blank" rel="noreferrer" className="text-[#006FE6] font-bold hover:underline">
+                  Syarat dan Ketentuan Layanan
+                </Link>{" "}
+                serta{" "}
+                <Link href="/privacy" target="_blank" rel="noreferrer" className="text-[#006FE6] font-bold hover:underline">
+                  Kebijakan Privasi
+                </Link>{" "}
+                CocokIn. <span className="text-[#E11D48]" aria-hidden="true">*</span>
+              </label>
               {errors.termsAccepted ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-termsAccepted-error">{errors.termsAccepted}</p> : null}
-            </div>
-          </div>
-          <div className="auth-checkbox-field">
-            <input
-              aria-describedby={errors.privacyAccepted ? "register-privacyAccepted-error" : undefined}
-              aria-invalid={errors.privacyAccepted ? true : undefined}
-              disabled={isPending}
-              id="register-privacyAccepted"
-              name="privacyAccepted"
-              required
-              type="checkbox"
-              onChange={() => {
-                if (errors.privacyAccepted) setErrors((prev) => ({ ...prev, privacyAccepted: undefined }));
-              }}
-            />
-            <div>
-              <label htmlFor="register-privacyAccepted">Saya menyetujui pemrosesan data pribadi untuk pembuatan akun.</label>
-              {errors.privacyAccepted ? <p className="auth-field__error text-xs text-[#E11D48] font-medium mt-1" id="register-privacyAccepted-error">{errors.privacyAccepted}</p> : null}
             </div>
           </div>
         </div>

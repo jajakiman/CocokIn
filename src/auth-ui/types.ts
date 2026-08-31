@@ -28,7 +28,6 @@ export type RegistrationRequest = {
   email: string;
   password: string;
   termsAccepted: boolean;
-  privacyAccepted: boolean;
 };
 
 export type AuthUiAdapter = {

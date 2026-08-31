@@ -205,12 +205,23 @@ describe("RoleChoice", () => {
 });
 
 describe("RegistrationForm", () => {
+  it("uses one required consent for separate terms and privacy links", () => {
+    render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    expect(checkboxes).toHaveLength(1);
+    expect(checkboxes[0]).toBeRequired();
+    expect(screen.getByRole("link", { name: "Syarat dan Ketentuan Layanan" })).toHaveAttribute("href", "/terms");
+    expect(screen.getByRole("link", { name: "Kebijakan Privasi" })).toHaveAttribute("href", "/privacy");
+    expect(screen.queryByLabelText(/pemrosesan data pribadi untuk pembuatan akun/i)).not.toBeInTheDocument();
+  });
+
   it("shows live password strength and confirmation feedback", async () => {
     const user = userEvent.setup();
     render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
 
-    const password = screen.getByLabelText("Kata sandi");
-    const confirmation = screen.getByLabelText("Konfirmasi kata sandi");
+    const password = screen.getByLabelText(/^Kata sandi/);
+    const confirmation = screen.getByLabelText(/^Konfirmasi kata sandi/);
 
     await user.type(password, "aman1234");
     expect(screen.getByRole("progressbar", { name: "Kekuatan kata sandi" })).toHaveAttribute("aria-valuenow", "3");
@@ -226,42 +237,39 @@ describe("RegistrationForm", () => {
     expect(screen.getByRole("button", { name: "Daftar sebagai Talent" })).toBeEnabled();
   });
 
-  it("keeps required Terms and Privacy consent separate with no optional consent", () => {
+  it("keeps legal consent required with no optional consent", () => {
     render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
 
     expect(screen.getByRole("checkbox", { name: /syarat dan ketentuan/i })).toBeRequired();
-    expect(screen.getByRole("checkbox", { name: /pemrosesan data pribadi/i })).toBeRequired();
-    expect(screen.getAllByRole("checkbox")).toHaveLength(2);
+    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
     expect(screen.queryByText(/marketing|publikasi|riset|demo/i)).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Kata sandi")).toHaveAttribute(
+    expect(screen.getByLabelText(/^Kata sandi/)).toHaveAttribute(
       "autocomplete",
       "new-password",
     );
-    expect(screen.getByLabelText("Konfirmasi kata sandi")).toHaveAttribute(
+    expect(screen.getByLabelText(/^Konfirmasi kata sandi/)).toHaveAttribute(
       "autocomplete",
       "new-password",
     );
   });
 
-  it("validates consent separately and keeps registration unavailability persistent", async () => {
+  it("validates legal consent and keeps registration unavailability persistent", async () => {
     const user = userEvent.setup();
     render(<RegistrationForm role="BUSINESS" adapter={unavailableAuthAdapter} />);
 
-    await user.type(screen.getByLabelText("Nama lengkap"), "Nadia Pratama");
-    await user.type(screen.getByLabelText("Email"), "nadia@example.com");
-    await user.type(screen.getByLabelText("Kata sandi"), "amansekali");
-    await user.type(screen.getByLabelText("Konfirmasi kata sandi"), "amansekali");
+    await user.type(screen.getByLabelText(/^Nama lengkap/), "Nadia Pratama");
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
+    await user.type(screen.getByLabelText(/^Kata sandi/), "amansekali");
+    await user.type(screen.getByLabelText(/^Konfirmasi kata sandi/), "amansekali");
     await user.click(screen.getByRole("button", { name: "Daftar sebagai UMKM" }));
 
     expect(screen.getByText("Anda harus menyetujui Syarat dan Ketentuan.")).toBeVisible();
-    expect(screen.getByText("Anda harus menyetujui pemrosesan data pribadi.")).toBeVisible();
 
     await user.click(screen.getByRole("checkbox", { name: /syarat dan ketentuan/i }));
-    await user.click(screen.getByRole("checkbox", { name: /pemrosesan data pribadi/i }));
     await user.click(screen.getByRole("button", { name: "Daftar sebagai UMKM" }));
     const failure = (await screen.findAllByText("Autentikasi belum dikonfigurasi."))[0];
-    await user.clear(screen.getByLabelText("Nama lengkap"));
-    await user.type(screen.getByLabelText("Nama lengkap"), "Nadia P.");
+    await user.clear(screen.getByLabelText(/^Nama lengkap/));
+    await user.type(screen.getByLabelText(/^Nama lengkap/), "Nadia P.");
 
     expect(failure).toBeVisible();
   });
