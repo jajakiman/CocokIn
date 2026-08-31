@@ -35,7 +35,7 @@ export type AuthUiAdapter = {
     email: string;
     password: string;
   }): Promise<AuthResult>;
-  loginWithGoogle(): Promise<AuthResult>;
+  loginWithGoogle(role?: PublicRegistrationRole): Promise<AuthResult>;
   register(input: RegistrationRequest): Promise<AuthResult>;
   requestPasswordReset(
     email: string,

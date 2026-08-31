@@ -50,6 +50,9 @@ export async function GET(request: Request) {
     const profile = await profileResponse.json() as GoogleProfile;
     if (!profile.email || !profile.email_verified || !profile.sub) throw new Error("Google email is not verified");
 
+    const requestedRoleCookie = (await cookies()).get("oauth_role")?.value;
+    const requestedRole = requestedRoleCookie === "BUSINESS" ? "BUSINESS" : "TALENT";
+
     const user = await prisma.$transaction(async (tx) => {
       const linkedAccount = await tx.account.findUnique({
         where: { provider_providerAccountId: { provider: "google", providerAccountId: profile.sub } },
@@ -61,21 +64,28 @@ export async function GET(request: Request) {
       if (emailCollision) throw new Error("Google account must be linked from account settings");
 
       const saved = await tx.user.create({
-            data: {
-              email: profile.email,
-              emailVerified: new Date(),
-              image: profile.picture,
-              name: profile.name ?? profile.email.split("@")[0],
-              role: "TALENT",
-              identityStatus: "CONTACT_VERIFIED",
-            },
-          });
+        data: {
+          email: profile.email,
+          emailVerified: new Date(),
+          image: profile.picture,
+          name: profile.name ?? profile.email.split("@")[0],
+          role: requestedRole,
+          identityStatus: "CONTACT_VERIFIED",
+        },
+      });
 
       await tx.account.create({
         data: { userId: saved.id, type: "oauth", provider: "google", providerAccountId: profile.sub },
       });
+
       if (saved.role === "TALENT") {
         await tx.talentProfile.upsert({ where: { userId: saved.id }, update: {}, create: { userId: saved.id } });
+      } else if (saved.role === "BUSINESS") {
+        await tx.businessProfile.upsert({
+          where: { userId: saved.id },
+          update: {},
+          create: { userId: saved.id, businessName: saved.name || "UMKM Partner" },
+        });
       }
       return saved;
     });
@@ -87,10 +97,13 @@ export async function GET(request: Request) {
       role: user.role,
     });
     (await cookies()).delete("oauth_state");
-    return NextResponse.redirect(new URL(user.role === "BUSINESS" ? "/business" : user.role === "ADMIN" ? "/admin" : "/talent", origin));
+    (await cookies()).delete("oauth_role");
+    const destination = user.role === "BUSINESS" ? "/business" : user.role === "ADMIN" ? "/admin" : "/talent/onboarding";
+    return NextResponse.redirect(new URL(destination, origin));
   } catch (error) {
     console.error("[GOOGLE OAUTH ERROR]", error);
     (await cookies()).delete("oauth_state");
+    (await cookies()).delete("oauth_role");
     return NextResponse.redirect(new URL("/login?error=google", origin));
   }
 }

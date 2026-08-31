@@ -205,6 +205,18 @@ describe("RoleChoice", () => {
 });
 
 describe("RegistrationForm", () => {
+  it("provides Google and credential registration with correct role label and links", () => {
+    render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
+
+    expect(screen.getByRole("button", { name: "Daftar sebagai Talent dengan Google" })).toBeVisible();
+    expect(screen.getByLabelText(/^Nama lengkap/)).toHaveAttribute("autocomplete", "name");
+    expect(screen.getByLabelText(/^Email/)).toHaveAttribute("autocomplete", "email");
+    expect(screen.getByRole("link", { name: "Masuk" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
+  });
+
   it("uses one required consent for separate terms and privacy links", () => {
     render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
 

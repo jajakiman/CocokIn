@@ -126,6 +126,38 @@ h3 {
   top: 1rem;
 }
 
+/* ── Onboarding Form Input Primitives ───────────────────── */
+
+.onboarding-input {
+  width: 100%;
+  height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  transition: all 150ms ease;
+  box-shadow: var(--shadow-card);
+}
+
+.onboarding-input:placeholder-shown {
+  color: #9AABC2;
+}
+
+.onboarding-input:focus {
+  outline: none;
+  border-color: var(--interactive);
+  box-shadow: 0 0 0 2px rgba(0, 111, 230, 0.2);
+}
+
+.onboarding-input:disabled {
+  background-color: #F8FAFC;
+  color: #9AABC2;
+  cursor: not-allowed;
+  border-color: #E2E8F0;
+}
+
 /* ── App Shell & Adaptive Layout (Steady, No-Offset, Desktop Grid) ────────── */
 
 .app-shell {

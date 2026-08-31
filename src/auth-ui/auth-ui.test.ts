@@ -50,7 +50,7 @@ describe("auth presentation types", () => {
       (input: { email: string; password: string }) => Promise<AuthResult>
     >();
     expectTypeOf<AuthUiAdapter["loginWithGoogle"]>().toEqualTypeOf<
-      () => Promise<AuthResult>
+      (role?: PublicRegistrationRole) => Promise<AuthResult>
     >();
     expectTypeOf<AuthUiAdapter["register"]>().toEqualTypeOf<
       (input: RegistrationRequest) => Promise<AuthResult>

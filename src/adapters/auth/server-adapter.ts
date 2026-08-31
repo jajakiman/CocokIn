@@ -58,8 +58,9 @@ export async function loginWithCredentials({ email, password }: Parameters<AuthU
   }
 }
 
-export async function loginWithGoogle() {
-  return redirect("/api/auth/google");
+export async function loginWithGoogle(role?: "TALENT" | "BUSINESS") {
+  const url = role ? `/api/auth/google?role=${role.toLowerCase()}` : "/api/auth/google";
+  return redirect(url);
 }
 
 export async function register(input: RegistrationRequest) {

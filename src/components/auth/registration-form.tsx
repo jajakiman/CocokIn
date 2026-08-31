@@ -1,6 +1,6 @@
 "use client";
 
-import { WarningCircle, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { WarningCircle, CheckCircle, XCircle, GoogleLogo } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +29,7 @@ export function RegistrationForm({
   const [errors, setErrors] = useState<RegistrationErrors>({});
   const [failure, setFailure] = useState<string>();
   const [isPending, setIsPending] = useState(false);
+  const [pendingGoogle, setPendingGoogle] = useState(false);
   const [invalidAttempt, setInvalidAttempt] = useState(0);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -44,6 +45,18 @@ export function RegistrationForm({
   useEffect(() => {
     if (invalidAttempt > 0) summaryRef.current?.focus();
   }, [invalidAttempt]);
+
+  async function submitGoogle() {
+    setPendingGoogle(true);
+    try {
+      const result = await adapter.loginWithGoogle(role);
+      if (result && !result.ok) {
+        setFailure(result.message);
+      }
+    } finally {
+      setPendingGoogle(false);
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -96,6 +109,19 @@ export function RegistrationForm({
             <p className="text-xs font-medium">{failure}</p>
           </div>
         ) : null}
+
+        <button
+          className="auth-google-button"
+          disabled={isPending || pendingGoogle}
+          onClick={submitGoogle}
+          type="button"
+        >
+          <GoogleLogo aria-hidden="true" size={20} weight="bold" />
+          {pendingGoogle ? "Menghubungkan Google..." : `Daftar sebagai ${roleLabel} dengan Google`}
+        </button>
+
+        <div className="auth-divider"><span>atau gunakan email</span></div>
+
         <div className="auth-field">
           <label htmlFor="register-fullName">Nama lengkap <span className="text-[#E11D48]" aria-hidden="true">*</span></label>
           <input

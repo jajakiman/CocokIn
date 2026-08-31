@@ -142,8 +142,10 @@ export function TalentOnboardingWizard({ initialName }: { initialName: string })
 
 function RequiredField({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-1.5">
-      <label className="text-sm font-bold text-[#001040]" htmlFor={htmlFor}>{label} <span className="text-[#E11D48]">*</span></label>
+    <div className="flex flex-col space-y-1.5 w-full">
+      <label className="text-sm font-bold text-[#001040] block" htmlFor={htmlFor}>
+        {label} <span className="text-[#E11D48] ml-0.5" aria-hidden="true">*</span>
+      </label>
       {children}
     </div>
   );
