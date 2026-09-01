@@ -8,6 +8,7 @@ type AuthShellProps = {
   description: string;
   contextTitle: string;
   context: ReactNode;
+  hideHeading?: boolean;
 };
 
 export function AuthShell({
@@ -16,6 +17,7 @@ export function AuthShell({
   description,
   contextTitle,
   context,
+  hideHeading = false,
 }: AuthShellProps) {
   return (
     <div className="auth-shell">
@@ -25,10 +27,12 @@ export function AuthShell({
         </Link>
 
         <main id="main-content" tabIndex={-1} className="auth-shell__form-inner">
-          <header className="auth-shell__heading">
-            <h1>{title}</h1>
-            <p>{description}</p>
-          </header>
+          {!hideHeading ? (
+            <header className="auth-shell__heading">
+              <h1>{title}</h1>
+              <p>{description}</p>
+            </header>
+          ) : null}
           {children}
         </main>
       </div>
