@@ -6,7 +6,7 @@ import { after } from "next/server";
 import { z } from "zod";
 
 import { prisma } from "@/src/adapters/database/prisma";
-import { sendPasswordResetEmail } from "@/src/adapters/email/smtp";
+import { sendPasswordResetEmail } from "@/src/adapters/email/brevo";
 import { hashResetToken, isResetTokenExpired } from "@/src/modules/identity/password-reset";
 
 const resetSchema = z.object({

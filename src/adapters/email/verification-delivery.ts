@@ -1,6 +1,6 @@
 import { after } from "next/server";
 
-import { sendEmailVerificationEmail } from "./smtp";
+import { sendEmailVerificationEmail } from "./brevo";
 
 export function scheduleVerificationEmail(email: string, rawToken: string) {
   after(async () => {
