@@ -17,40 +17,45 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: parsed.success ? "Nama depan dan nama belakang wajib diisi." : parsed.error.issues[0]?.message }, { status: 400 });
   }
 
-  await prisma.$transaction(async (tx) => {
-    const profile = await tx.talentProfile.upsert({
-      where: { userId: session.id },
-      update: {
-        university: parsed.data.university,
-        major: parsed.data.major,
-        careerTarget: parsed.data.careerTarget,
-        portfolioUrl: parsed.data.portfolioUrl || null,
-        hasNoPortfolio: parsed.data.hasNoPortfolio,
-        workModePreference: "REMOTE",
-        onboardingCompletedAt: new Date(),
-      },
-      create: {
-        userId: session.id,
-        university: parsed.data.university,
-        major: parsed.data.major,
-        careerTarget: parsed.data.careerTarget,
-        portfolioUrl: parsed.data.portfolioUrl || null,
-        hasNoPortfolio: parsed.data.hasNoPortfolio,
-        workModePreference: "REMOTE",
-        onboardingCompletedAt: new Date(),
-      },
-    });
-    await tx.user.update({ where: { id: session.id }, data: { name: `${body.firstName.trim()} ${body.lastName.trim()}` } });
-
-    for (const skillName of parsed.data.skills) {
-      const skill = await tx.skill.upsert({ where: { name: skillName }, update: {}, create: { name: skillName, category: "UNCATEGORIZED" } });
-      await tx.talentSkill.upsert({
-        where: { talentProfileId_skillId: { talentProfileId: profile.id, skillId: skill.id } },
-        update: {},
-        create: { talentProfileId: profile.id, skillId: skill.id, evidenceLevel: "SELF_DECLARED" },
+  try {
+    await prisma.$transaction(async (tx) => {
+      const profile = await tx.talentProfile.upsert({
+        where: { userId: session.id },
+        update: {
+          university: parsed.data.university,
+          major: parsed.data.major,
+          careerTarget: parsed.data.careerTarget,
+          portfolioUrl: parsed.data.portfolioUrl || null,
+          hasNoPortfolio: parsed.data.hasNoPortfolio,
+          workModePreference: "REMOTE",
+          onboardingCompletedAt: new Date(),
+        },
+        create: {
+          userId: session.id,
+          university: parsed.data.university,
+          major: parsed.data.major,
+          careerTarget: parsed.data.careerTarget,
+          portfolioUrl: parsed.data.portfolioUrl || null,
+          hasNoPortfolio: parsed.data.hasNoPortfolio,
+          workModePreference: "REMOTE",
+          onboardingCompletedAt: new Date(),
+        },
       });
-    }
-  });
+      await tx.user.update({ where: { id: session.id }, data: { name: `${body.firstName.trim()} ${body.lastName.trim()}` } });
 
-  return NextResponse.json({ ok: true });
+      for (const skillName of parsed.data.skills) {
+        const skill = await tx.skill.upsert({ where: { name: skillName }, update: {}, create: { name: skillName, category: "UNCATEGORIZED" } });
+        await tx.talentSkill.upsert({
+          where: { talentProfileId_skillId: { talentProfileId: profile.id, skillId: skill.id } },
+          update: {},
+          create: { talentProfileId: profile.id, skillId: skill.id, evidenceLevel: "SELF_DECLARED" },
+        });
+      }
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error("[ONBOARDING ERROR]", error);
+    return NextResponse.json({ message: "Gagal menyimpan profil onboarding. Silakan coba lagi." }, { status: 500 });
+  }
 }

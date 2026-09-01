@@ -2,7 +2,6 @@
 
 import { ArrowRight } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/design-system/select";
 import { onboardingSkills } from "@/src/modules/talent/onboarding";
@@ -10,10 +9,11 @@ import { onboardingSkills } from "@/src/modules/talent/onboarding";
 const suggestedSkills = [...onboardingSkills];
 
 export function TalentOnboardingWizard({ initialName }: { initialName: string }) {
-  const router = useRouter();
   const names = initialName.trim().split(/\s+/);
   const [firstName, setFirstName] = useState(names[0] ?? "");
   const [lastName, setLastName] = useState(names.slice(1).join(" "));
+  const [university, setUniversity] = useState("");
+  const [major, setMajor] = useState("");
   const [careerTarget, setCareerTarget] = useState("");
   const [portfolioUrl, setPortfolioUrl] = useState("");
   const [hasNoPortfolio, setHasNoPortfolio] = useState(false);
@@ -30,31 +30,42 @@ export function TalentOnboardingWizard({ initialName }: { initialName: string })
       className="space-y-6"
       onSubmit={async (event) => {
         event.preventDefault();
-        setPending(true);
         setError(undefined);
-        const data = new FormData(event.currentTarget);
-        const response = await fetch("/api/talent/onboarding", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            firstName,
-            lastName,
-            university: data.get("university"),
-            major: data.get("major"),
-            careerTarget,
-            portfolioUrl,
-            hasNoPortfolio,
-            skills,
-          }),
-        });
-        if (!response.ok) {
-          const result = await response.json().catch(() => ({ message: "Data onboarding tidak dapat disimpan." }));
-          setError(result.message);
+
+        if (!firstName.trim() || !lastName.trim()) { setError("Nama depan dan nama belakang wajib diisi."); return; }
+        if (!university.trim()) { setError("Universitas atau institusi wajib diisi."); return; }
+        if (!major.trim()) { setError("Jurusan atau bidang studi wajib diisi."); return; }
+        if (!careerTarget) { setError("Target karier wajib dipilih."); return; }
+        if (!hasNoPortfolio && !portfolioUrl.trim()) { setError("Tambahkan tautan portofolio atau pilih belum memiliki portofolio."); return; }
+        if (skills.length === 0) { setError("Pilih minimal satu keahlian."); return; }
+
+        setPending(true);
+        try {
+          const response = await fetch("/api/talent/onboarding", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              firstName,
+              lastName,
+              university,
+              major,
+              careerTarget,
+              portfolioUrl,
+              hasNoPortfolio,
+              skills,
+            }),
+          });
+          if (!response.ok) {
+            const result = await response.json().catch(() => ({ message: "Data onboarding tidak dapat disimpan." }));
+            setError(result.message);
+            setPending(false);
+            return;
+          }
+          window.location.assign("/talent");
+        } catch {
+          setError("Terjadi kesalahan jaringan. Silakan coba lagi.");
           setPending(false);
-          return;
         }
-        router.push("/talent");
-        router.refresh();
       }}
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -67,11 +78,11 @@ export function TalentOnboardingWizard({ initialName }: { initialName: string })
       </div>
 
       <RequiredField label="Universitas atau institusi" htmlFor="university">
-        <input className="onboarding-input" id="university" name="university" placeholder="Contoh: Universitas Indonesia" required />
+        <input className="onboarding-input" id="university" name="university" onChange={(event) => setUniversity(event.target.value)} placeholder="Contoh: Universitas Indonesia" required value={university} />
       </RequiredField>
 
       <RequiredField label="Jurusan atau bidang studi" htmlFor="major">
-        <input className="onboarding-input" id="major" name="major" placeholder="Contoh: Sistem Informasi" required />
+        <input className="onboarding-input" id="major" name="major" onChange={(event) => setMajor(event.target.value)} placeholder="Contoh: Sistem Informasi" required value={major} />
       </RequiredField>
 
       <RequiredField label="Target karier" htmlFor="careerTarget">
