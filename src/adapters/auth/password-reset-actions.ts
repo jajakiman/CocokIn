@@ -71,7 +71,7 @@ export async function resetPassword(input: { token: string; password: string; co
         where: { token: tokenHash, expires: { gt: new Date() } },
       });
       if (consumed.count !== 1) throw new Error("Reset token was already consumed");
-      await tx.user.update({ where: { email: record.identifier }, data: { passwordHash } });
+      await tx.user.update({ where: { email: record.identifier }, data: { passwordHash, emailVerified: new Date(), identityStatus: "CONTACT_VERIFIED" } });
       await tx.verificationToken.deleteMany({ where: { identifier: record.identifier } });
     }, { isolationLevel: "Serializable" });
     return { ok: true, message: "Kata sandi berhasil diperbarui. Silakan masuk kembali." };

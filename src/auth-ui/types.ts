@@ -18,8 +18,10 @@ export type AuthResult =
         | "ACCOUNT_SUSPENDED"
         | "ROLE_REVOKED"
         | "AUTH_NOT_CONFIGURED"
-        | "PROVIDER_UNAVAILABLE";
+        | "PROVIDER_UNAVAILABLE"
+        | "EMAIL_NOT_VERIFIED";
       message: string;
+      requiresVerification?: boolean;
     };
 
 export type RegistrationRequest = {

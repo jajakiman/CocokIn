@@ -42,6 +42,7 @@ describe("auth presentation types", () => {
       | "ROLE_REVOKED"
       | "AUTH_NOT_CONFIGURED"
       | "PROVIDER_UNAVAILABLE"
+      | "EMAIL_NOT_VERIFIED"
     >();
   });
 

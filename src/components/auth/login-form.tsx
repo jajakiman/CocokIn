@@ -1,6 +1,6 @@
 "use client";
 
-import { GoogleLogo, WarningCircle, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { GoogleLogo, WarningCircle, CheckCircle, XCircle, EnvelopeSimple } from "@phosphor-icons/react";
 import Link from "next/link";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,6 +43,13 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
 
   async function applyResult(result: AuthResult) {
     if (!result.ok) {
+      if ("requiresVerification" in result && result.requiresVerification) {
+        setModalState({ ok: false, message: result.message, destination: "/verify-email" });
+        setTimeout(() => {
+          window.location.assign("/verify-email");
+        }, 1200);
+        return;
+      }
       setFailure(result.message);
       setModalState({ ok: false, message: result.message });
     } else {
@@ -176,6 +183,15 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
                 >
                   <CheckCircle size={48} weight="fill" />
                 </motion.div>
+              ) : modalState.destination === "/verify-email" ? (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.15, type: "spring", damping: 12, stiffness: 200 }}
+                  className="w-20 h-20 bg-[#EAF3FF] text-[#006FE6] rounded-full flex items-center justify-center mb-5 shadow-inner"
+                >
+                  <EnvelopeSimple size={48} weight="fill" />
+                </motion.div>
               ) : (
                 <motion.div
                   initial={{ scale: 0 }}
@@ -188,13 +204,13 @@ export function LoginForm({ adapter }: { adapter: AuthUiAdapter }) {
               )}
 
               <h2 className="text-2xl font-bold text-[#001040] mb-2">
-                {modalState.ok ? "Berhasil Masuk!" : "Gagal Masuk"}
+                {modalState.ok ? "Berhasil Masuk!" : modalState.destination === "/verify-email" ? "Verifikasi Email" : "Gagal Masuk"}
               </h2>
               <p className="text-[#53647A] text-sm mb-6 whitespace-pre-line leading-relaxed" data-testid="auth-modal-message">
                 {modalState.message}
               </p>
 
-              {modalState.ok ? (
+              {modalState.ok || modalState.destination === "/verify-email" ? (
                 <div className="w-full bg-[#EAF3FF] py-2.5 px-4 rounded-xl text-xs font-bold text-[#006FE6] flex items-center justify-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#006FE6] animate-ping" />
                   Mengalihkan otomatis...

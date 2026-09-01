@@ -39,7 +39,7 @@ export async function loginWithCredentials({ email, password }: Parameters<AuthU
     }
     if (!user.emailVerified) {
       (await cookies()).set("pending_verification", user.email!, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 24 * 60 * 60, path: "/" });
-      return redirect("/verify-email");
+      return { ok: false, code: "EMAIL_NOT_VERIFIED", message: "Email Anda belum diverifikasi. Mengalihkan ke halaman verifikasi...", requiresVerification: true } as AuthResult;
     }
 
     const authUser: AuthUser = {
