@@ -3,15 +3,14 @@ import { describe, expect, it } from "vitest";
 import { isTalentOnboardingComplete, talentOnboardingSchema } from "./onboarding";
 
 describe("Talent onboarding", () => {
-  it("requires academic data, target career, one skill, and portfolio choice", () => {
-    expect(talentOnboardingSchema.safeParse({ university: "", major: "", careerTarget: "", skills: [], hasNoPortfolio: false }).success).toBe(false);
+  it("requires academic data, target career, and portfolio choice without forcing skills in onboarding", () => {
+    expect(talentOnboardingSchema.safeParse({ university: "", major: "", careerTarget: "", hasNoPortfolio: false }).success).toBe(false);
     expect(talentOnboardingSchema.safeParse({
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
       careerTarget: "Frontend Developer",
       portfolioUrl: "https://github.com/talent",
       hasNoPortfolio: false,
-      skills: ["React"],
     }).success).toBe(true);
   });
 
@@ -22,7 +21,6 @@ describe("Talent onboarding", () => {
       careerTarget: "Frontend Developer",
       portfolioUrl: null,
       hasNoPortfolio: true,
-      skillCount: 1,
       onboardingCompletedAt: new Date(),
     })).toBe(true);
   });

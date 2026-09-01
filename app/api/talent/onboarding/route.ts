@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 
 import { prisma } from "@/src/adapters/database/prisma";
-import { getSession } from "@/src/lib/session";
+import { getSession, createSession } from "@/src/lib/session";
 import { talentOnboardingSchema } from "@/src/modules/talent/onboarding";
 
 export async function POST(request: Request) {
   const session = await getSession();
   if (!session || session.role !== "TALENT") return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { id: session.id }, select: { emailVerified: true } });
+  const user = await prisma.user.findUnique({ where: { id: session.id }, select: { emailVerified: true, role: true, email: true } });
   if (!user?.emailVerified) return NextResponse.json({ message: "Email belum diverifikasi." }, { status: 403 });
 
   const body = await request.json().catch(() => null);
@@ -17,9 +17,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: parsed.success ? "Nama depan dan nama belakang wajib diisi." : parsed.error.issues[0]?.message }, { status: 400 });
   }
 
+  const fullName = `${body.firstName.trim()} ${body.lastName.trim()}`;
+
   try {
+    // Perform atomic profile save and user name update
     await prisma.$transaction(async (tx) => {
-      const profile = await tx.talentProfile.upsert({
+      await tx.talentProfile.upsert({
         where: { userId: session.id },
         update: {
           university: parsed.data.university,
@@ -41,21 +44,25 @@ export async function POST(request: Request) {
           onboardingCompletedAt: new Date(),
         },
       });
-      await tx.user.update({ where: { id: session.id }, data: { name: `${body.firstName.trim()} ${body.lastName.trim()}` } });
 
-      for (const skillName of parsed.data.skills) {
-        const skill = await tx.skill.upsert({ where: { name: skillName }, update: {}, create: { name: skillName, category: "UNCATEGORIZED" } });
-        await tx.talentSkill.upsert({
-          where: { talentProfileId_skillId: { talentProfileId: profile.id, skillId: skill.id } },
-          update: {},
-          create: { talentProfileId: profile.id, skillId: skill.id, evidenceLevel: "SELF_DECLARED" },
-        });
-      }
+      await tx.user.update({
+        where: { id: session.id },
+        data: { name: fullName },
+      });
+    });
+
+    // Re-issue fresh session with updated display name
+    await createSession({
+      id: session.id,
+      email: user.email!,
+      displayName: fullName,
+      role: user.role,
     });
 
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[ONBOARDING ERROR]", error);
-    return NextResponse.json({ message: "Gagal menyimpan profil onboarding. Silakan coba lagi." }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "Gagal menyimpan profil onboarding. Silakan coba lagi.";
+    return NextResponse.json({ message: `Gagal menyimpan profil onboarding: ${errorMessage}` }, { status: 500 });
   }
 }

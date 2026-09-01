@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/src/adapters/database/prisma";
 import { getSession } from "@/src/lib/session";
 import { TalentOnboardingWizard } from "@/src/components/talent/talent-onboarding-wizard";
-import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 import { isTalentOnboardingComplete } from "@/src/modules/talent/onboarding";
+import { AppShell } from "@/src/design-system/app-shell";
 
 export default async function TalentOnboardingPage() {
   const session = await getSession();
@@ -27,18 +27,26 @@ export default async function TalentOnboardingPage() {
   })) redirect("/talent");
 
   return (
-    <main className="min-h-[100dvh] bg-[#F7F9FC] flex flex-col items-center justify-center p-4 sm:p-8">
-      <div className="w-full max-w-xl overflow-hidden rounded-3xl border border-[#D8E1EE] bg-white shadow-xl shadow-[#001040]/5">
-        <div className="h-1.5 bg-[#006FE6]" />
-        <div className="p-6 sm:p-10">
-          <CocokInBrand className="mx-auto mb-4 h-10 w-10 object-contain" decorative priority variant="mark" />
-          <header className="mb-8 text-center">
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#001040]">Selamat datang! Mari berkenalan</h1>
-            <p className="mx-auto mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-[#53647A]">Lengkapi data profil wajib agar CocokIn dapat merekomendasikan proyek mikro dan membangun Skill Passport Anda.</p>
-          </header>
-          <TalentOnboardingWizard initialName={user.name ?? ""} />
-        </div>
+    <div className="relative min-h-[100dvh] bg-[#F7F9FC] font-sans">
+      {/* Background Dashboard Mockup/Placeholder for authentic backdrop preview */}
+      <div aria-hidden="true" className="pointer-events-none select-none filter blur-[3px] opacity-40">
+        <AppShell role="talent" user={{ id: user.id, email: user.email || "", displayName: user.name || "Talent Member", role: "TALENT" }}>
+          <div className="space-y-6 max-w-5xl mx-auto p-4 md:p-8">
+            <div className="h-10 w-48 bg-[#001040]/10 rounded-xl animate-pulse" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+            </div>
+            <div className="h-64 bg-white border border-[#D8E1EE] rounded-2xl p-6 shadow-sm" />
+          </div>
+        </AppShell>
       </div>
-    </main>
+
+      {/* Backdrop Dimmer & Pop-up Window Dialog */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#001040]/50 backdrop-blur-md p-4 sm:p-6 overflow-y-auto">
+        <TalentOnboardingWizard initialName={user.name ?? ""} />
+      </div>
+    </div>
   );
 }
