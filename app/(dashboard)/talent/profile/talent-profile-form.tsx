@@ -11,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/src/design-system/select";
+import { careerTargets } from "@/src/modules/talent/profile";
 
 type TalentProfileFormProps = {
   user: User & { talentProfile: TalentProfile | null };
@@ -20,14 +21,18 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(false);
+  const [error, setError] = useState<string>();
 
   const profile: Partial<TalentProfile> = user.talentProfile ?? {};
   const [workMode, setWorkMode] = useState(profile.workModePreference || "REMOTE");
   const [timeAvailability, setTimeAvailability] = useState(profile.timeAvailability || "PART_TIME");
+  const [careerTarget, setCareerTarget] = useState(profile.careerTarget || "");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setError(undefined);
+    setToast(false);
 
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -37,20 +42,26 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
       major: formData.get("major"),
       workModePreference: workMode,
       timeAvailability: timeAvailability,
-      careerTarget: formData.get("careerTarget"),
+      careerTarget,
     };
 
     try {
-      await fetch("/api/talent/profile", {
+      const response = await fetch("/api/talent/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      const result = await response.json().catch(() => ({ message: "Profil tidak dapat disimpan." }));
+      if (!response.ok) {
+        setError(result.message);
+        return;
+      }
       setToast(true);
       setTimeout(() => setToast(false), 3000);
       router.refresh();
     } catch (err) {
       console.error(err);
+      setError("Terjadi kendala jaringan. Silakan coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -64,6 +75,7 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
           <p className="font-bold">Profil berhasil diperbarui!</p>
         </div>
       )}
+      {error ? <div className="rounded-xl border border-[#BE123C] bg-[#FFF1F2] p-4 text-sm text-[#9F1239]" role="alert">{error}</div> : null}
 
       {/* Akademik & Bio */}
       <section className="bg-white border border-[#D8E1EE] rounded-xl p-6 shadow-sm">
@@ -125,14 +137,12 @@ export function TalentProfileForm({ user }: TalentProfileFormProps) {
         <div className="space-y-4">
           <div>
             <label htmlFor="careerTarget" className="block text-sm font-bold text-[#001040] mb-1">Target Karier</label>
-            <input
-              id="careerTarget"
-              name="careerTarget"
-              type="text"
-              placeholder="Contoh: Frontend Developer, UI/UX Designer"
-              defaultValue={profile.careerTarget || ""}
-              className="w-full px-4 py-2 border border-[#D8E1EE] rounded-lg focus:outline-none focus:border-[#006FE6]"
-            />
+            <Select onValueChange={setCareerTarget} value={careerTarget}>
+              <SelectTrigger id="careerTarget"><SelectValue placeholder="Pilih target karier" /></SelectTrigger>
+              <SelectContent>
+                {careerTargets.map((target) => <SelectItem key={target} value={target}>{target}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,11 +1,13 @@
 import { z } from "zod";
 
+import { careerTargets } from "./profile";
+
 export const onboardingSkills = ["React", "Next.js", "UI/UX Design", "Figma", "Data Analysis", "Digital Marketing"] as const;
 
 export const talentOnboardingSchema = z.object({
   university: z.string().trim().min(2, "Universitas atau institusi wajib diisi."),
   major: z.string().trim().min(2, "Jurusan atau bidang studi wajib diisi."),
-  careerTarget: z.string().trim().min(2, "Target karier wajib diisi."),
+  careerTarget: z.enum(careerTargets, { message: "Target karier tidak valid." }),
   portfolioUrl: z.string().url("Masukkan URL portofolio yang valid.").optional().or(z.literal("")),
   hasNoPortfolio: z.boolean(),
   skills: z.array(z.string()).optional().default([]),

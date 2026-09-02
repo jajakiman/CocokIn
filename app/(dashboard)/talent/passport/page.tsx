@@ -3,25 +3,11 @@ import { prisma } from "@/src/adapters/database/prisma";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/src/design-system/page-header";
 import { StatusBadge } from "@/src/design-system/status-badge";
-import { Plus } from "@phosphor-icons/react/dist/ssr";
+import { TalentSkillManager } from "@/src/components/talent/talent-skill-manager";
 
 export async function generateMetadata() {
   return { title: `Skill Passport | CocokIn` };
 }
-
-const EVIDENCE_LABEL: Record<string, string> = {
-  SELF_DECLARED: "Self-Declared",
-  ASSESSED: "Assessed",
-  PROJECT_APPLIED: "Project Applied",
-  PROJECT_VERIFIED: "Verified",
-};
-
-const EVIDENCE_TONE: Record<string, "neutral" | "info" | "warning" | "success"> = {
-  SELF_DECLARED: "neutral",
-  ASSESSED: "info",
-  PROJECT_APPLIED: "warning",
-  PROJECT_VERIFIED: "success",
-};
 
 export default async function TalentPassportPage() {
   const session = await getSession();
@@ -49,33 +35,16 @@ export default async function TalentPassportPage() {
           title={talentProfile.careerTarget || "Target Karier Belum Diatur"}
           description="Skill passport menampilkan tingkat validitas bukti keahlianmu. Tingkatkan level dengan mengikuti asesmen dan menyelesaikan proyek."
         />
-        <button className="bg-[#001040] hover:bg-[#001040]/90 text-white px-4 py-2 rounded-lg font-bold inline-flex items-center gap-2 mt-4 md:mt-0">
-          <Plus size={20} weight="bold" />
-          Klaim Keahlian Baru
-        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
-          {skills.length === 0 ? (
-            <div className="bg-white border border-[#D8E1EE] rounded-xl p-8 text-center text-[#53647A]">
-              Anda belum menambahkan keahlian apapun. Silakan klaim keahlian baru.
-            </div>
-          ) : (
-            skills.map((ts) => (
-              <div key={ts.id} className="bg-white border border-[#D8E1EE] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-xl font-bold text-[#001040]">{ts.skill.name}</h3>
-                    <p className="text-[#53647A] text-sm mt-1">Kategori: {ts.skill.category}</p>
-                  </div>
-                  <StatusBadge tone={EVIDENCE_TONE[ts.evidenceLevel] || "neutral"}>
-                    {EVIDENCE_LABEL[ts.evidenceLevel] || ts.evidenceLevel}
-                  </StatusBadge>
-                </div>
-              </div>
-            ))
-          )}
+          <TalentSkillManager skills={skills.map((item) => ({
+            id: item.id,
+            name: item.skill.name,
+            category: item.skill.category,
+            evidenceLevel: item.evidenceLevel,
+          }))} />
         </div>
 
         <div>

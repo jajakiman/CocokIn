@@ -1,52 +1,49 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/adapters/database/prisma";
-import { getSession } from "@/src/lib/session";
+import { createSession, getSession } from "@/src/lib/session";
 import { hasTalentFeatureAccess } from "@/src/modules/talent/feature-access";
+import { talentProfileSchema } from "@/src/modules/talent/profile";
 
 export async function POST(req: Request) {
   try {
     const session = await getSession();
     if (!session || session.role !== "TALENT") {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-    if (!(await hasTalentFeatureAccess(session.id))) return new NextResponse("Onboarding required", { status: 403 });
+    if (!(await hasTalentFeatureAccess(session.id))) return NextResponse.json({ message: "Onboarding required" }, { status: 403 });
 
-    const body = await req.json();
-    const { name, bio, university, major, workModePreference, timeAvailability, careerTarget } = body;
+    const parsed = talentProfileSchema.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) {
+      return NextResponse.json({ message: parsed.error.issues[0]?.message }, { status: 400 });
+    }
+    const { name, bio, university, major, workModePreference, timeAvailability, careerTarget } = parsed.data;
 
-    // Update the User name
-    if (name) {
-      await prisma.user.update({
+    const { updatedUser, profile } = await prisma.$transaction(async (tx) => {
+      const updatedUser = await tx.user.update({
         where: { id: session.id },
-        data: { name }
+        data: { name },
+        select: { id: true, email: true, name: true, role: true },
       });
-    }
 
-    // Update TalentProfile
-    const profile = await prisma.talentProfile.upsert({
-      where: { userId: session.id },
-      update: {
-        bio,
-        university,
-        major,
-        workModePreference,
-        timeAvailability,
-        careerTarget
-      },
-      create: {
-        userId: session.id,
-        bio,
-        university,
-        major,
-        workModePreference,
-        timeAvailability,
-        careerTarget
-      }
+      const profile = await tx.talentProfile.upsert({
+        where: { userId: session.id },
+        update: { bio, university, major, workModePreference, timeAvailability, careerTarget },
+        create: { userId: session.id, bio, university, major, workModePreference, timeAvailability, careerTarget },
+      });
+
+      return { updatedUser, profile };
+    });
+
+    await createSession({
+      id: updatedUser.id,
+      email: updatedUser.email!,
+      displayName: updatedUser.name ?? "Talent",
+      role: updatedUser.role,
     });
 
     return NextResponse.json(profile);
   } catch (error) {
     console.error("Failed to save talent profile:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json({ message: "Profil tidak dapat disimpan. Silakan coba lagi." }, { status: 500 });
   }
 }

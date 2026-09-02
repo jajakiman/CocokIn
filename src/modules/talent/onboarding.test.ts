@@ -12,6 +12,12 @@ describe("Talent onboarding", () => {
       portfolioUrl: "https://github.com/talent",
       hasNoPortfolio: false,
     }).success).toBe(true);
+    expect(talentOnboardingSchema.safeParse({
+      university: "Universitas Indonesia",
+      major: "Sistem Informasi",
+      careerTarget: "Astronaut",
+      hasNoPortfolio: true,
+    }).success).toBe(false);
   });
 
   it("treats the no-portfolio declaration as a valid alternative", () => {
