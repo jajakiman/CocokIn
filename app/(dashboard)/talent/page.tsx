@@ -92,7 +92,7 @@ export default async function TalentDashboardPage() {
   const firstName = talentProfile.user.name?.split(" ")[0] || "Talent";
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-10">
+    <div className="talent-dashboard space-y-10">
       {/* ── TOP GREETING & STATUS BAR (Braintrust & CocokIn Refined) ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#D8E1EE]">
         <div>
@@ -126,9 +126,9 @@ export default async function TalentDashboardPage() {
 
       {/* ── HERO BANNER & 3 ACTION CARDS (Braintrust Bento Hero) ── */}
       <div className="bg-white border border-[#D8E1EE] rounded-2xl p-6 md:p-8 shadow-sm">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-stretch">
           {/* Welcome Message Card */}
-          <div className="lg:col-span-1 flex flex-col justify-between pr-0 lg:pr-4 border-b lg:border-b-0 lg:border-r border-[#D8E1EE] pb-6 lg:pb-0">
+          <div className="xl:col-span-1 flex flex-col justify-between pr-0 xl:pr-4 border-b xl:border-b-0 xl:border-r border-[#D8E1EE] pb-6 xl:pb-0">
             <div>
               <div className="text-xs font-extrabold text-[#006FE6] uppercase tracking-wider mb-2">
                 Selamat Datang di
@@ -147,7 +147,7 @@ export default async function TalentDashboardPage() {
           </div>
 
           {/* 3 Quick Action Cards */}
-          <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="xl:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Action 1: Explore Micro Projects */}
             <div className="bg-[#FFFDF5] border border-[#FDE68A] rounded-xl p-5 flex flex-col justify-between hover:shadow-md transition-all group">
               <div>
@@ -161,7 +161,7 @@ export default async function TalentDashboardPage() {
               </div>
               <Link
                 href="/talent/projects"
-                className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full"
+                className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 !text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full whitespace-nowrap"
               >
                 Jelajahi Proyek
               </Link>
@@ -180,7 +180,7 @@ export default async function TalentDashboardPage() {
               </div>
               <Link
                 href="/talent/assessment"
-                className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full"
+                className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 !text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full whitespace-nowrap"
               >
                 Mulai Asesmen
               </Link>
@@ -199,7 +199,7 @@ export default async function TalentDashboardPage() {
               </div>
               <Link
                 href="/talent/passport"
-                className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full"
+                className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 !text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full whitespace-nowrap"
               >
                 Lihat Paspor
               </Link>

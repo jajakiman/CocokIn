@@ -83,6 +83,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
       className={`app-shell ${isCollapsed ? "app-shell--rail" : ""}`}
       data-density={config.density}
       data-role={role}
+      data-sidebar={isCollapsed ? "collapsed" : "expanded"}
     >
       <a className="skip-link" href="#main-content">
         Lewati ke konten utama
@@ -90,9 +91,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
 
       {/* ── Steady Sidebar for Desktop & Tablet (No Scroll Offset) ── */}
       <aside
-        className={`app-sidebar transition-all duration-300 ${
-          isCollapsed ? "w-20 px-3" : "w-64 px-4"
-        }`}
+        className="app-sidebar"
       >
         {/* Brand and collapse control */}
         <div className="py-4 border-b border-[#D8E1EE]">
@@ -100,7 +99,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
             {!isCollapsed ? (
               <Link className="flex items-center gap-2.5 overflow-hidden pl-1" href={`/${role}`}>
                 <CocokInBrand className="w-7 h-7 object-contain" decorative priority variant="mark" />
-                <span className="font-black text-lg text-[#001040] tracking-tight">CocokIn</span>
+                <span className="app-sidebar__brand-label font-black text-lg text-[#001040] tracking-tight">CocokIn</span>
               </Link>
             ) : (
               <div className="w-full flex justify-center">
@@ -111,7 +110,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
             <button
               type="button"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className={`w-7 h-7 rounded-lg border border-[#D8E1EE] bg-white text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] hover:border-[#9AABC2] transition-all hidden md:flex items-center justify-center shrink-0 shadow-2xs ${
+              className={`w-7 h-7 rounded-lg border border-[#D8E1EE] bg-white text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] hover:border-[#9AABC2] transition-colors hidden lg:flex items-center justify-center shrink-0 shadow-2xs ${
                 isCollapsed ? "mx-auto mt-2" : ""
               }`}
               title={isCollapsed ? "Buka Sidebar" : "Sembunyikan Sidebar"}
@@ -132,6 +131,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
               const active = isNavActive(item.href);
               return (
                 <Link
+                  aria-label={item.label}
                   className={`nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
                     active
                       ? "bg-white text-[#001040] shadow-sm border border-[#D8E1EE]"
@@ -164,7 +164,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
                   priority
                   variant="mark"
                 />
-                <span className="truncate text-[#001040]">CocokIn Ecosystem</span>
+                <span className="app-sidebar__ecosystem-label truncate text-[#001040]">CocokIn Ecosystem</span>
               </div>
             ) : (
               <div className="flex justify-center py-1">
@@ -178,6 +178,7 @@ export function AppShell({ children, role, user }: AppShellProps) {
             )}
 
             <button
+              aria-label="Keluar"
               type="button"
               onClick={() => setShowLogoutModal(true)}
               className={`nav-link text-[#E11D48] hover:bg-[#FFF1F2] hover:text-[#BE123C] w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-bold transition-colors ${
