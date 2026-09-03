@@ -12,7 +12,8 @@ import {
   SelectItem,
 } from "@/src/design-system/select";
 import { careerTargets } from "@/src/modules/talent/profile";
-import { TalentSkillManager, type ManagedSkill } from "@/src/components/talent/talent-skill-manager";
+import { LazyTalentSkillManager } from "@/src/components/talent/lazy-talent-skill-manager";
+import type { ManagedSkill } from "@/src/components/talent/talent-skill-manager";
 
 type TalentProfileFormProps = {
   user: User & { talentProfile: TalentProfile | null };
@@ -157,7 +158,7 @@ export function TalentProfileForm({ user, skills }: TalentProfileFormProps) {
           <h2 className="text-xl font-bold text-[#001040]">Keahlian</h2>
           <p className="mt-1 text-sm text-[#53647A]">Kelola klaim keahlian untuk meningkatkan relevansi Cocok Score dan rekomendasi proyek.</p>
         </div>
-        <TalentSkillManager compact skills={skills} showHeading={false} />
+        <LazyTalentSkillManager compact skills={skills} showHeading={false} />
       </section>
 
       <div className="flex justify-end pt-4">
