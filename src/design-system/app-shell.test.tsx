@@ -43,5 +43,12 @@ describe("AppShell", () => {
 
     expect(shell).toHaveAttribute("data-sidebar", "collapsed");
     expect(screen.getByRole("main")).toHaveTextContent("Dashboard Talent");
+
+    // Clicking unified morphing toggle in collapsed rail re-expands the sidebar
+    const expandButton = screen.getByRole("button", { name: "Buka Sidebar" });
+    expect(expandButton).toBeVisible();
+    await user.click(expandButton);
+
+    expect(shell).toHaveAttribute("data-sidebar", "expanded");
   });
 });

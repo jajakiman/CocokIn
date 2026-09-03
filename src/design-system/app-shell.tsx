@@ -95,30 +95,43 @@ export function AppShell({ children, role, user }: AppShellProps) {
       >
         {/* Brand and collapse control */}
         <div className="py-4 border-b border-[#D8E1EE]">
-          <div className="flex items-center justify-between gap-2">
-            {!isCollapsed ? (
+          {!isCollapsed ? (
+            <div className="flex items-center justify-between gap-2">
               <Link className="flex items-center gap-2.5 overflow-hidden pl-1" href={`/${role}`}>
                 <CocokInBrand className="w-7 h-7 object-contain" decorative priority variant="mark" />
                 <span className="app-sidebar__brand-label font-black text-lg text-[#001040] tracking-tight">CocokIn</span>
               </Link>
-            ) : (
-              <div className="w-full flex justify-center">
-                <CocokInBrand className="w-7 h-7 object-contain" decorative priority variant="mark" />
-              </div>
-            )}
 
-            <button
-              type="button"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className={`w-7 h-7 rounded-lg border border-[#D8E1EE] bg-white text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] hover:border-[#9AABC2] transition-colors hidden lg:flex items-center justify-center shrink-0 shadow-2xs ${
-                isCollapsed ? "mx-auto mt-2" : ""
-              }`}
-              title={isCollapsed ? "Buka Sidebar" : "Sembunyikan Sidebar"}
-              aria-label={isCollapsed ? "Buka Sidebar" : "Sembunyikan Sidebar"}
-            >
-              {isCollapsed ? <List size={14} weight="bold" /> : <CaretLeft size={14} weight="bold" />}
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(true)}
+                className="w-7 h-7 rounded-lg border border-[#D8E1EE] bg-white text-[#53647A] hover:bg-[#F1F5FB] hover:text-[#001040] hover:border-[#9AABC2] transition-colors hidden lg:flex items-center justify-center shrink-0 shadow-2xs"
+                title="Sembunyikan Sidebar"
+                aria-label="Sembunyikan Sidebar"
+              >
+                <CaretLeft size={14} weight="bold" />
+              </button>
+            </div>
+          ) : (
+            <div className="w-full flex justify-center">
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(false)}
+                className="relative w-10 h-10 rounded-xl border border-transparent hover:border-[#D8E1EE] hover:bg-[#F1F5FB] text-[#001040] flex items-center justify-center transition-all group focus:outline-none focus:ring-2 focus:ring-[#006FE6] focus:ring-offset-2"
+                title="Buka Sidebar"
+                aria-label="Buka Sidebar"
+              >
+                {/* Logo Mark shown by default, fades out on hover */}
+                <span className="flex items-center justify-center transition-opacity duration-200 group-hover:opacity-0">
+                  <CocokInBrand className="w-7 h-7 object-contain" decorative priority variant="mark" />
+                </span>
+                {/* Hamburger / Menu toggle icon reveals smoothly on hover */}
+                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-[#001040]">
+                  <List size={20} weight="bold" />
+                </span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Navigation Links */}
