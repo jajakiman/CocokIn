@@ -1,4 +1,5 @@
 import { prisma } from "@/src/adapters/database/prisma";
+import { handleApprovedMilestoneRelease } from "@/src/modules/payments/payout";
 
 export async function submitMilestoneStaging(
   talentUserId: string,
@@ -105,10 +106,18 @@ export async function reviewMilestone(
       data: { status: newStatus }
     });
 
-    // We can export an event or payload here later for Treasury if APPROVED
+    // Hook to Treasury/Payout upon milestone approval (TEAM_JOBDESCS.md:335)
     if (decision === "APPROVED") {
-      // Treasury logic hooks here for payout queueing
-      // e.g. create ApprovedMilestoneRelease payload
+      const grossAmount =
+        (submission.milestone.project.serviceValue * BigInt(submission.milestone.weightBps)) / 10000n;
+
+      await handleApprovedMilestoneRelease(tx, {
+        projectId: submission.milestone.projectId,
+        milestoneId: submission.projectMilestoneId,
+        grossAmount,
+        approvedAt: new Date(),
+        approvedBy: businessUserId,
+      });
     }
 
     return review;

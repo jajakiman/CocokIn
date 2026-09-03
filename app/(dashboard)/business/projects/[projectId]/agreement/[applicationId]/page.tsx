@@ -164,7 +164,7 @@ export default async function ProjectAgreementPage({
             </div>
 
             <div className="pt-2">
-              <AcceptTalentForm applicationId={application.id} />
+              <AcceptTalentForm applicationId={application.id} projectId={project.id} />
             </div>
           </div>
         </div>

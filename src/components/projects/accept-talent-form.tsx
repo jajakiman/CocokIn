@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { acceptApplicantAction, type ActionState } from "@/src/adapters/projects/project-actions";
 import { useRouter } from "next/navigation";
 
-export function AcceptTalentForm({ applicationId }: { applicationId: string }) {
+export function AcceptTalentForm({ applicationId, projectId }: { applicationId: string; projectId?: string }) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     acceptApplicantAction,
@@ -15,11 +15,11 @@ export function AcceptTalentForm({ applicationId }: { applicationId: string }) {
     if (state.ok && state.message) {
       // Short delay so they can read the success message before redirecting
       const timer = setTimeout(() => {
-        router.push("/business");
+        router.push(projectId ? `/business/projects/${projectId}/funding` : "/business");
       }, 1500);
       return () => clearTimeout(timer);
     }
-  }, [state, router]);
+  }, [state, router, projectId]);
 
   return (
     <form action={formAction}>
