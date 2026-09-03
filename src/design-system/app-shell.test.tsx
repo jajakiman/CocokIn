@@ -37,6 +37,7 @@ describe("AppShell", () => {
     expect(sidebar).not.toHaveClass("w-64", "w-20");
     const sidebarNavigation = screen.getByRole("navigation", { name: "Navigasi utama" });
     expect(within(sidebarNavigation).getByRole("link", { name: "Beranda" })).toHaveAttribute("aria-label", "Beranda");
+    expect(within(sidebarNavigation).getByRole("link", { name: "Cek Kesiapan" })).toHaveAttribute("aria-label", "Cek Kesiapan");
     expect(within(sidebarNavigation).getByRole("button", { name: "Keluar" })).toHaveAttribute("aria-label", "Keluar");
 
     await user.click(screen.getByRole("button", { name: "Sembunyikan Sidebar" }));

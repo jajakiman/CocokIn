@@ -26,7 +26,7 @@ export const roleConfigs: Record<AppRole, RoleShellConfig> = {
     primaryAction: { label: "Cari proyek", href: "/talent/projects" },
     navigation: [
       { label: "Beranda", href: "/talent" },
-      { label: "Asesmen", href: "/talent/assessment" },
+      { label: "Cek Kesiapan", href: "/talent/assessment" },
       { label: "Cari Proyek", href: "/talent/projects" },
       { label: "Proyek Saya", href: "/talent/workspace" },
       { label: "Skill Passport", href: "/talent/passport" },

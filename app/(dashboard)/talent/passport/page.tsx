@@ -57,7 +57,7 @@ export default async function TalentPassportPage() {
               </div>
               <div>
                 <dt className="mb-1"><StatusBadge tone="info">Assessed</StatusBadge></dt>
-                <dd className="text-sm text-[#53647A]">Teruji lewat kuis asesmen platform</dd>
+                <dd className="text-sm text-[#53647A]">Teruji lewat fitur Cek Kesiapan platform</dd>
               </div>
               <div>
                 <dt className="mb-1"><StatusBadge tone="warning">Project Applied</StatusBadge></dt>

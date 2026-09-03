@@ -13,6 +13,14 @@ describe("roleConfigs", () => {
 
   it("gives each role a distinct primary task without changing the shell", () => {
     expect(getRoleConfig("talent").primaryAction.label).toBe("Cari proyek");
+    expect(getRoleConfig("talent").navigation.map((n) => n.label)).toEqual([
+      "Beranda",
+      "Cek Kesiapan",
+      "Cari Proyek",
+      "Proyek Saya",
+      "Skill Passport",
+      "Portofolio",
+    ]);
     expect(getRoleConfig("business").primaryAction.label).toBe("Buat proyek");
     expect(getRoleConfig("admin").primaryAction.label).toBe("Tangani antrean");
     expect(new Set(Object.values(roleConfigs).map((config) => config.shell))).toEqual(

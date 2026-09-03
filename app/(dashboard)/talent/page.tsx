@@ -173,16 +173,16 @@ export default async function TalentDashboardPage() {
                 <div className="w-10 h-10 rounded-lg bg-[#DBEAFE] text-[#006FE6] flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
                   <ClipboardText size={22} weight="duotone" />
                 </div>
-                <h3 className="font-bold text-[#001040] text-base mb-1">Ikuti Asesmen</h3>
+                <h3 className="font-bold text-[#001040] text-base mb-1">Cek Kesiapan</h3>
                 <p className="text-xs text-[#53647A] leading-relaxed">
-                  Uji keahlian untuk mendongkrak nilai Cocok Score profilmu.
+                  Cari tahu kesiapan skill kamu dan tingkatkan nilai Cocok Score.
                 </p>
               </div>
               <Link
                 href="/talent/assessment"
                 className="mt-4 inline-flex items-center justify-center bg-[#001040] hover:bg-[#001040]/90 !text-white text-xs font-bold py-2.5 px-4 rounded-lg transition-colors w-full whitespace-nowrap"
               >
-                Mulai Asesmen
+                Mulai Cek Kesiapan
               </Link>
             </div>
 
