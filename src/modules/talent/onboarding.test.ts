@@ -8,7 +8,7 @@ describe("Talent onboarding", () => {
     expect(talentOnboardingSchema.safeParse({
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
-      careerTarget: "Frontend Developer",
+      careerTarget: "Fullstack Developer",
       portfolioUrl: "https://github.com/talent",
       hasNoPortfolio: false,
     }).success).toBe(true);
@@ -24,7 +24,7 @@ describe("Talent onboarding", () => {
     expect(isTalentOnboardingComplete({
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
-      careerTarget: "Frontend Developer",
+      careerTarget: "Fullstack Developer",
       portfolioUrl: null,
       hasNoPortfolio: true,
       onboardingCompletedAt: new Date(),

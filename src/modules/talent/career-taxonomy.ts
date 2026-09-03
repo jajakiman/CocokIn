@@ -6,20 +6,20 @@ import type { CareerDomain, CareerDomainId } from "./types";
  * ponytail: hardcoded data; move to DB when admin needs CRUD.
  */
 export const CAREER_TAXONOMY: Record<CareerDomainId, CareerDomain> = {
-  "frontend-dev": {
-    id: "frontend-dev",
-    label: "Frontend Developer",
+  "fullstack-dev": {
+    id: "fullstack-dev",
+    label: "Fullstack Developer",
     technicalSkills: [
-      { skillId: "html", name: "HTML", benchmarkScore: 75 },
-      { skillId: "css", name: "CSS", benchmarkScore: 70 },
-      { skillId: "javascript", name: "JavaScript", benchmarkScore: 70 },
-      { skillId: "react", name: "React", benchmarkScore: 60 },
-      { skillId: "tailwind", name: "Tailwind CSS", benchmarkScore: 55 },
-      { skillId: "nextjs", name: "Next.js", benchmarkScore: 50 },
-      { skillId: "responsive-design", name: "Responsive Design", benchmarkScore: 70 },
-      { skillId: "web-performance", name: "Web Performance", benchmarkScore: 60 },
-      { skillId: "typescript", name: "TypeScript", benchmarkScore: 60 },
+      { skillId: "html-css", name: "HTML & CSS", benchmarkScore: 70 },
+      { skillId: "javascript", name: "JavaScript / TypeScript", benchmarkScore: 70 },
+      { skillId: "react-nextjs", name: "React & Next.js", benchmarkScore: 65 },
+      { skillId: "responsive-ui", name: "Responsive UI", benchmarkScore: 65 },
       { skillId: "git", name: "Git & Version Control", benchmarkScore: 65 },
+      { skillId: "api-design", name: "REST API Design", benchmarkScore: 65 },
+      { skillId: "database", name: "Database & SQL", benchmarkScore: 65 },
+      { skillId: "auth-security", name: "Auth & Security", benchmarkScore: 60 },
+      { skillId: "server-logic", name: "Backend Logic (Node.js)", benchmarkScore: 60 },
+      { skillId: "deployment", name: "Deployment & DevOps", benchmarkScore: 55 },
     ],
     softSkills: [
       { skillId: "problem-solving", name: "Problem Solving", benchmarkScore: 65 },

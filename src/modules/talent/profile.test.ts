@@ -11,16 +11,16 @@ describe("Talent profile", () => {
     expect(talentProfileSchema.safeParse({
       firstName: "Nadia",
       lastName: "Arina",
-      bio: "Frontend developer",
+      bio: "Fullstack Developer",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
-      careerTarget: "Frontend Developer",
+      careerTarget: "Fullstack Developer",
     }).success).toBe(true);
 
     expect(talentProfileSchema.safeParse({
       firstName: "Nadia",
       lastName: "Arina",
-      bio: "Frontend developer",
+      bio: "Fullstack Developer",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
       careerTarget: "Astronaut",
@@ -33,7 +33,7 @@ describe("Talent profile", () => {
       lastName: "",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
-      careerTarget: "Frontend Developer",
+      careerTarget: "Fullstack Developer",
     }).success).toBe(false);
   });
 

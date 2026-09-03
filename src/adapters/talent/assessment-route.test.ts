@@ -33,7 +33,7 @@ describe("POST /api/talent/assessment", () => {
     const res = await POST(
       new Request("http://localhost/api/talent/assessment", {
         method: "POST",
-        body: JSON.stringify({ careerId: "frontend-dev", answers: [] }),
+        body: JSON.stringify({ careerId: "fullstack-dev", answers: [] }),
       })
     );
     expect(res.status).toBe(401);
@@ -54,22 +54,22 @@ describe("POST /api/talent/assessment", () => {
     mocks.getSession.mockResolvedValue({ id: "user-1", role: "TALENT" });
     mocks.findProfile.mockResolvedValue({ id: "profile-1", userId: "user-1" });
     mocks.createAssessment.mockResolvedValue({ id: "assessment-1" });
-    mocks.findSkill.mockResolvedValue({ id: "skill-html", name: "HTML" });
+    mocks.findSkill.mockResolvedValue({ id: "skill-html", name: "HTML & CSS" });
     mocks.updateTalentSkill.mockResolvedValue({ count: 1 });
 
     const payload = {
-      careerId: "frontend-dev",
+      careerId: "fullstack-dev",
       answers: [
-        { questionId: "fe-html-1", selectedScore: 100 },
-        { questionId: "fe-css-1", selectedScore: 100 },
-        { questionId: "fe-js-1", selectedScore: 100 },
-        { questionId: "fe-react-1", selectedScore: 100 },
-        { questionId: "fe-tailwind-1", selectedScore: 100 },
-        { questionId: "fe-nextjs-1", selectedScore: 100 },
-        { questionId: "fe-responsive-1", selectedScore: 100 },
-        { questionId: "fe-perf-1", selectedScore: 100 },
-        { questionId: "fe-ts-1", selectedScore: 100 },
-        { questionId: "fe-git-1", selectedScore: 100 },
+        { questionId: "fs-htmlcss-1", selectedScore: 100 },
+        { questionId: "fs-js-1", selectedScore: 100 },
+        { questionId: "fs-react-1", selectedScore: 100 },
+        { questionId: "fs-responsive-1", selectedScore: 100 },
+        { questionId: "fs-git-1", selectedScore: 100 },
+        { questionId: "fs-api-1", selectedScore: 100 },
+        { questionId: "fs-db-1", selectedScore: 100 },
+        { questionId: "fs-auth-1", selectedScore: 100 },
+        { questionId: "fs-server-1", selectedScore: 100 },
+        { questionId: "fs-deploy-1", selectedScore: 100 },
         { questionId: "ss-problem-1", selectedScore: 100 },
         { questionId: "ss-comm-1", selectedScore: 100 },
         { questionId: "ss-digital-1", selectedScore: 100 },

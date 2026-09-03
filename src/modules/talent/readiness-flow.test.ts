@@ -8,14 +8,14 @@ import {
 } from "./readiness-flow";
 
 const result: CareerReadinessResult = {
-  careerId: "frontend-dev",
+  careerId: "fullstack-dev",
   technicalScore: 55,
   softSkillScore: 80,
   compositeScore: 65,
   technicalBreakdown: [
     { skillId: "html-css", name: "HTML & CSS", talentScore: 80 },
-    { skillId: "javascript", name: "JavaScript", talentScore: 45 },
-    { skillId: "react", name: "React", talentScore: 50 },
+    { skillId: "javascript", name: "JavaScript / TypeScript", talentScore: 45 },
+    { skillId: "react-nextjs", name: "React & Next.js", talentScore: 50 },
   ],
   softSkillBreakdown: [
     { skillId: "communication", name: "Communication", talentScore: 80 },
@@ -31,7 +31,7 @@ describe("readiness flow", () => {
   });
 
   it("returns major gap ids from the latest assessment for matching", () => {
-    expect(getReadinessSkillGapIds(result)).toEqual(["javascript", "react"]);
+    expect(getReadinessSkillGapIds(result)).toEqual(["javascript", "react-nextjs"]);
   });
 
   it("returns no live gap data before an assessment exists", () => {
@@ -39,11 +39,11 @@ describe("readiness flow", () => {
     expect(getReadinessSkillGapIds(null)).toEqual([]);
   });
 
-  it("uses the frontend demo fallback only for the seeded frontend profile", () => {
+  it("uses the seeded demo fallback only for the seeded fullstack profile", () => {
     const fallback = result.technicalBreakdown;
 
-    expect(resolveSkillGapInput(null, "frontend-dev", fallback)).toEqual({
-      careerId: "frontend-dev",
+    expect(resolveSkillGapInput(null, "fullstack-dev", fallback)).toEqual({
+      careerId: "fullstack-dev",
       scores: fallback,
     });
     expect(resolveSkillGapInput(null, "data-analyst", fallback)).toEqual({
@@ -54,7 +54,7 @@ describe("readiness flow", () => {
 
   it("always prefers the active assessment career and scores", () => {
     expect(resolveSkillGapInput(result, "data-analyst", [])).toEqual({
-      careerId: "frontend-dev",
+      careerId: "fullstack-dev",
       scores: [...result.technicalBreakdown, ...result.softSkillBreakdown],
     });
   });

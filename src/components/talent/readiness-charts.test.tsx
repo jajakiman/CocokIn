@@ -51,9 +51,9 @@ describe("CompositeScoreDonut", () => {
 
 describe("ReadinessBarChart", () => {
   const technical: SkillAssessmentScore[] = [
-    { skillId: "html", name: "HTML", talentScore: 85 },
-    { skillId: "css", name: "CSS", talentScore: 80 },
-    { skillId: "javascript", name: "JavaScript", talentScore: 60 },
+    { skillId: "html-css", name: "HTML & CSS", talentScore: 80 },
+    { skillId: "javascript", name: "JavaScript / TypeScript", talentScore: 60 },
+    { skillId: "api-design", name: "REST API Design", talentScore: 70 },
   ];
   const soft: SkillAssessmentScore[] = [
     { skillId: "problem-solving", name: "Problem Solving", talentScore: 90 },
@@ -64,15 +64,16 @@ describe("ReadinessBarChart", () => {
   it("renders skill rows with talent score and benchmark", () => {
     render(
       <ReadinessBarChart
-        careerId="frontend-dev"
+        careerId="fullstack-dev"
         technicalBreakdown={technical}
         softSkillBreakdown={soft}
       />,
     );
 
-    expect(screen.getByText("HTML")).toBeInTheDocument();
+    expect(screen.getByText("HTML & CSS")).toBeInTheDocument();
+    // html-css benchmark is 70, 80 - 70 = +10
     expect(
-      screen.getByText(/Benchmark: 75% \| \+10% Kompeten/),
+      screen.getByText(/Benchmark: 70% \| \+10% Kompeten/),
     ).toBeInTheDocument();
     // javascript benchmark is 70, 60 - 70 = -10
     expect(
@@ -83,7 +84,7 @@ describe("ReadinessBarChart", () => {
   it("renders section headings with counts", () => {
     render(
       <ReadinessBarChart
-        careerId="frontend-dev"
+        careerId="fullstack-dev"
         technicalBreakdown={technical}
         softSkillBreakdown={soft}
       />,
@@ -96,7 +97,7 @@ describe("ReadinessBarChart", () => {
   it("exposes meter semantics per skill for screen readers", () => {
     render(
       <ReadinessBarChart
-        careerId="frontend-dev"
+        careerId="fullstack-dev"
         technicalBreakdown={technical}
         softSkillBreakdown={soft}
       />,
@@ -104,10 +105,10 @@ describe("ReadinessBarChart", () => {
 
     const meters = screen.getAllByRole("meter");
     expect(meters).toHaveLength(6);
-    expect(meters[0]).toHaveAttribute("aria-valuenow", "85");
+    expect(meters[0]).toHaveAttribute("aria-valuenow", "80");
     expect(meters[0]).toHaveAttribute(
       "aria-label",
-      expect.stringContaining("HTML"),
+      expect.stringContaining("HTML & CSS"),
     );
   });
 });

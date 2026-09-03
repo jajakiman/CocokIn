@@ -10,7 +10,7 @@ import { useTalent } from "@/src/context/talent-context";
 
 // Helper map label karier dari profil ke taxonomy ID
 const CAREER_MAP: Record<string, CareerDomainId> = {
-  "Frontend Developer": "frontend-dev",
+  "Fullstack Developer": "fullstack-dev",
   "UI/UX Designer": "ui-ux-designer",
   "Data Analyst": "data-analyst",
   "Digital Marketer": "digital-marketer",

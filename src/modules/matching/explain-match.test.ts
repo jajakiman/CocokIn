@@ -7,7 +7,7 @@ describe("explainMatch", () => {
   it("generates human-readable reasons and gap warnings in Indonesian", () => {
     const talent: TalentMatchProfile = {
       skills: [{ skillId: "react", name: "React", level: "PROJECT_VERIFIED" }],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       majorSkillGapIds: ["typescript"],
       availability: "PART_TIME",
       completedProjectsCount: 2,
@@ -19,7 +19,7 @@ describe("explainMatch", () => {
         { skillId: "react", name: "React" },
         { skillId: "typescript", name: "TypeScript" },
       ],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       difficulty: "INTERMEDIATE",
       durationDays: 7,
       workMode: "REMOTE",

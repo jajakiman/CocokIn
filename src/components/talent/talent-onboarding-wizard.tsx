@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 const CAREER_ROLES = [
-  { id: "Frontend Developer", label: "Frontend Developer", desc: "Web interaktif, slicing UI, integrasi React/Next.js" },
+  { id: "Fullstack Developer", label: "Fullstack Developer", desc: "Website & API end-to-end: React/Next.js, Node.js, database, deployment" },
   { id: "UI/UX Designer", label: "UI/UX Designer", desc: "Riset pengguna, wireframe, Figma design system" },
   { id: "Data Analyst", label: "Data Analyst", desc: "Pengolahan database, SQL, spreadsheet & visualisasi data" },
   { id: "Digital Marketer", label: "Digital Marketer", desc: "Strategi konten, SEO, Meta Ads & analitik pemasaran" },

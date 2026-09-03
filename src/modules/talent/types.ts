@@ -5,7 +5,7 @@ import type { EvidenceLevel } from "@/src/modules/matching/types";
 // --- Career Taxonomy ---
 
 export type CareerDomainId =
-  | "frontend-dev"
+  | "fullstack-dev"
   | "ui-ux-designer"
   | "data-analyst"
   | "digital-marketer";

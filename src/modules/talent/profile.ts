@@ -3,18 +3,23 @@ import { z } from "zod";
 import { CAREER_TAXONOMY } from "./career-taxonomy";
 
 export const careerTargets = [
-  "Frontend Developer",
+  "Fullstack Developer",
   "UI/UX Designer",
   "Data Analyst",
   "Digital Marketer",
 ] as const;
 
+// Canonical aliases for common skill spellings outside the taxonomy (dotted acronyms etc.)
+const CANONICAL_SKILL_ALIASES = ["Next.js", "Node.js", "Vue.js"];
+
 export function normalizeSkillName(value: string) {
   const compact = value.trim().replace(/\s+/g, " ");
-  const canonical = Object.values(CAREER_TAXONOMY)
-    .flatMap((career) => career.technicalSkills)
-    .find((skill) => skill.name.toLowerCase() === compact.toLowerCase());
-  return canonical?.name ?? compact.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const candidates = [
+    ...Object.values(CAREER_TAXONOMY).flatMap((career) => career.technicalSkills).map((s) => s.name),
+    ...CANONICAL_SKILL_ALIASES,
+  ];
+  const canonical = candidates.find((name) => name.toLowerCase() === compact.toLowerCase());
+  return canonical ?? compact.toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 export const claimSkillSchema = z.object({

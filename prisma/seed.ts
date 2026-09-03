@@ -24,7 +24,7 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
     update: {
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
-      careerTarget: "Frontend Developer",
+      careerTarget: "Fullstack Developer",
       hasNoPortfolio: true,
       onboardingCompletedAt: new Date(),
       workModePreference: "REMOTE",
@@ -34,7 +34,7 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
       bio: "Mahasiswa Sistem Informasi tingkat akhir dengan pengalaman fullstack web development. Senang membantu UMKM go digital.",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
-      careerTarget: "Frontend Developer",
+      careerTarget: "Fullstack Developer",
       hasNoPortfolio: true,
       onboardingCompletedAt: new Date(),
       workModePreference: "REMOTE",
@@ -42,7 +42,7 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
   });
 
   // Create some basic skills
-  const skillsData = ["React", "Next.js", "TailwindCSS", "Node.js", "PostgreSQL"];
+  const skillsData = ["React", "Next.js", "TailwindCSS", "Node.js", "PostgreSQL", "REST API", "Git"];
   
   for (const skillName of skillsData) {
     const skill = await prisma.skill.upsert({
@@ -72,6 +72,12 @@ async function main() {
   console.log("Seeding database...");
 
   const passwordHash = await bcrypt.hash("password123", 10);
+
+  // Backfill: rename legacy career target (track FE+BE digabung menjadi Fullstack)
+  await prisma.talentProfile.updateMany({
+    where: { careerTarget: "Frontend Developer" },
+    data: { careerTarget: "Fullstack Developer" },
+  });
 
   // Seed Business User
   const umkmUser = await prisma.user.upsert({

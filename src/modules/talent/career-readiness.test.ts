@@ -3,21 +3,21 @@ import { calculateCareerReadiness } from "./career-readiness";
 import type { AssessmentAnswer, CareerDomainId, SkillAssessmentScore } from "./types";
 
 describe("calculateCareerReadiness", () => {
-  const careerId: CareerDomainId = "frontend-dev";
+  const careerId: CareerDomainId = "fullstack-dev";
 
   it("returns composite = 60% technical + 40% soft skill", () => {
-    // Frontend-dev has 10 technical skills, 3 soft skills in enriched taxonomy
+    // Fullstack-dev has 10 technical skills, 3 soft skills in taxonomy
     const technicalAnswers: AssessmentAnswer[] = [
-      { questionId: "fe-html-1", selectedScore: 100 },
-      { questionId: "fe-css-1", selectedScore: 100 },
-      { questionId: "fe-js-1", selectedScore: 100 },
-      { questionId: "fe-react-1", selectedScore: 100 },
-      { questionId: "fe-tailwind-1", selectedScore: 100 },
-      { questionId: "fe-nextjs-1", selectedScore: 100 },
-      { questionId: "fe-responsive-1", selectedScore: 100 },
-      { questionId: "fe-perf-1", selectedScore: 100 },
-      { questionId: "fe-ts-1", selectedScore: 100 },
-      { questionId: "fe-git-1", selectedScore: 100 },
+      { questionId: "fs-htmlcss-1", selectedScore: 100 },
+      { questionId: "fs-js-1", selectedScore: 100 },
+      { questionId: "fs-react-1", selectedScore: 100 },
+      { questionId: "fs-responsive-1", selectedScore: 100 },
+      { questionId: "fs-git-1", selectedScore: 100 },
+      { questionId: "fs-api-1", selectedScore: 100 },
+      { questionId: "fs-db-1", selectedScore: 100 },
+      { questionId: "fs-auth-1", selectedScore: 100 },
+      { questionId: "fs-server-1", selectedScore: 100 },
+      { questionId: "fs-deploy-1", selectedScore: 100 },
     ];
     const softSkillAnswers: AssessmentAnswer[] = [
       { questionId: "ss-problem-1", selectedScore: 100 },
@@ -34,21 +34,21 @@ describe("calculateCareerReadiness", () => {
     expect(result.softSkillScore).toBe(100);
     // 60% * 100 + 40% * 100 = 100
     expect(result.compositeScore).toBe(100);
-    expect(result.careerId).toBe("frontend-dev");
+    expect(result.careerId).toBe("fullstack-dev");
   });
 
   it("handles mixed scores correctly", () => {
     const answers: AssessmentAnswer[] = [
-      { questionId: "fe-html-1", selectedScore: 80 },
-      { questionId: "fe-css-1", selectedScore: 60 },
-      { questionId: "fe-js-1", selectedScore: 40 },
-      { questionId: "fe-react-1", selectedScore: 100 },
-      { questionId: "fe-tailwind-1", selectedScore: 20 },
-      { questionId: "fe-nextjs-1", selectedScore: 0 },
-      { questionId: "fe-responsive-1", selectedScore: 100 },
-      { questionId: "fe-perf-1", selectedScore: 50 },
-      { questionId: "fe-ts-1", selectedScore: 30 },
-      { questionId: "fe-git-1", selectedScore: 20 },
+      { questionId: "fs-htmlcss-1", selectedScore: 80 },
+      { questionId: "fs-js-1", selectedScore: 60 },
+      { questionId: "fs-react-1", selectedScore: 40 },
+      { questionId: "fs-responsive-1", selectedScore: 100 },
+      { questionId: "fs-git-1", selectedScore: 20 },
+      { questionId: "fs-api-1", selectedScore: 0 },
+      { questionId: "fs-db-1", selectedScore: 100 },
+      { questionId: "fs-auth-1", selectedScore: 50 },
+      { questionId: "fs-server-1", selectedScore: 30 },
+      { questionId: "fs-deploy-1", selectedScore: 20 },
       { questionId: "ss-problem-1", selectedScore: 80 },
       { questionId: "ss-comm-1", selectedScore: 60 },
       { questionId: "ss-digital-1", selectedScore: 40 },
@@ -66,16 +66,16 @@ describe("calculateCareerReadiness", () => {
 
   it("clamps scores to 0-100 range", () => {
     const answers: AssessmentAnswer[] = [
-      { questionId: "fe-html-1", selectedScore: 150 },
-      { questionId: "fe-css-1", selectedScore: -20 },
-      { questionId: "fe-js-1", selectedScore: 100 },
-      { questionId: "fe-react-1", selectedScore: 100 },
-      { questionId: "fe-tailwind-1", selectedScore: 100 },
-      { questionId: "fe-nextjs-1", selectedScore: 100 },
-      { questionId: "fe-responsive-1", selectedScore: 100 },
-      { questionId: "fe-perf-1", selectedScore: 100 },
-      { questionId: "fe-ts-1", selectedScore: 100 },
-      { questionId: "fe-git-1", selectedScore: 100 },
+      { questionId: "fs-htmlcss-1", selectedScore: 150 },
+      { questionId: "fs-js-1", selectedScore: -20 },
+      { questionId: "fs-react-1", selectedScore: 100 },
+      { questionId: "fs-responsive-1", selectedScore: 100 },
+      { questionId: "fs-git-1", selectedScore: 100 },
+      { questionId: "fs-api-1", selectedScore: 100 },
+      { questionId: "fs-db-1", selectedScore: 100 },
+      { questionId: "fs-auth-1", selectedScore: 100 },
+      { questionId: "fs-server-1", selectedScore: 100 },
+      { questionId: "fs-deploy-1", selectedScore: 100 },
       { questionId: "ss-problem-1", selectedScore: 100 },
       { questionId: "ss-comm-1", selectedScore: 100 },
       { questionId: "ss-digital-1", selectedScore: 100 },
@@ -91,16 +91,16 @@ describe("calculateCareerReadiness", () => {
 
   it("returns breakdown per skill", () => {
     const answers: AssessmentAnswer[] = [
-      { questionId: "fe-html-1", selectedScore: 90 },
-      { questionId: "fe-css-1", selectedScore: 70 },
-      { questionId: "fe-js-1", selectedScore: 50 },
-      { questionId: "fe-react-1", selectedScore: 80 },
-      { questionId: "fe-tailwind-1", selectedScore: 60 },
-      { questionId: "fe-nextjs-1", selectedScore: 40 },
-      { questionId: "fe-responsive-1", selectedScore: 85 },
-      { questionId: "fe-perf-1", selectedScore: 75 },
-      { questionId: "fe-ts-1", selectedScore: 65 },
-      { questionId: "fe-git-1", selectedScore: 95 },
+      { questionId: "fs-htmlcss-1", selectedScore: 90 },
+      { questionId: "fs-js-1", selectedScore: 70 },
+      { questionId: "fs-react-1", selectedScore: 50 },
+      { questionId: "fs-responsive-1", selectedScore: 80 },
+      { questionId: "fs-git-1", selectedScore: 60 },
+      { questionId: "fs-api-1", selectedScore: 40 },
+      { questionId: "fs-db-1", selectedScore: 85 },
+      { questionId: "fs-auth-1", selectedScore: 75 },
+      { questionId: "fs-server-1", selectedScore: 65 },
+      { questionId: "fs-deploy-1", selectedScore: 95 },
       { questionId: "ss-problem-1", selectedScore: 75 },
       { questionId: "ss-comm-1", selectedScore: 65 },
       { questionId: "ss-digital-1", selectedScore: 85 },
@@ -111,10 +111,15 @@ describe("calculateCareerReadiness", () => {
     expect(result.technicalBreakdown).toHaveLength(10);
     expect(result.softSkillBreakdown).toHaveLength(3);
 
-    const htmlScore = result.technicalBreakdown.find(
-      (s: SkillAssessmentScore) => s.skillId === "html",
+    const htmlCssScore = result.technicalBreakdown.find(
+      (s: SkillAssessmentScore) => s.skillId === "html-css",
     );
-    expect(htmlScore?.talentScore).toBe(90);
+    expect(htmlCssScore?.talentScore).toBe(90);
+
+    const dbScore = result.technicalBreakdown.find(
+      (s: SkillAssessmentScore) => s.skillId === "database",
+    );
+    expect(dbScore?.talentScore).toBe(85);
   });
 
   it("handles empty answers gracefully (zero scores)", () => {

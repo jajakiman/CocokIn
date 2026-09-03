@@ -38,10 +38,10 @@ describe("Talent profile route", () => {
       body: JSON.stringify({
         firstName: " Nadia ",
         lastName: " Arina ",
-        bio: "Frontend developer",
+        bio: "Fullstack Developer",
         university: "Universitas Indonesia",
         major: "Sistem Informasi",
-        careerTarget: "Frontend Developer",
+        careerTarget: "Fullstack Developer",
       }),
     }));
 
@@ -50,17 +50,17 @@ describe("Talent profile route", () => {
     expect(mocks.upsertProfile).toHaveBeenCalledWith({
       where: { userId: "user-1" },
       update: {
-        bio: "Frontend developer",
+        bio: "Fullstack Developer",
         university: "Universitas Indonesia",
         major: "Sistem Informasi",
-        careerTarget: "Frontend Developer",
+        careerTarget: "Fullstack Developer",
       },
       create: {
         userId: "user-1",
-        bio: "Frontend developer",
+        bio: "Fullstack Developer",
         university: "Universitas Indonesia",
         major: "Sistem Informasi",
-        careerTarget: "Frontend Developer",
+        careerTarget: "Fullstack Developer",
       },
     });
     expect(mocks.createSession).toHaveBeenCalledWith({

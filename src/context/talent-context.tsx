@@ -43,7 +43,7 @@ export type TalentProfileData = {
 const SEED_DRAFT_KEY = "cocokin_seeded_demo_talent_draft";
 
 function createInitialPassport(careerId: CareerDomainId): TalentSkillPassport {
-  if (careerId === "frontend-dev") {
+  if (careerId === "fullstack-dev") {
     return createSeededTalentPassport();
   }
   const career = CAREER_TAXONOMY[careerId];

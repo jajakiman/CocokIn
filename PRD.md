@@ -69,7 +69,7 @@ Business Problem ➔ Digital Need Diagnosis ➔ Project Creation ➔ Smart Match
     4. *Project Verified* (Tervalidasi secara sah oleh UMKM pemilik proyek).
 
 * **FR-TAL-02 — Career Readiness Assessment (Priority: P0)**
-  * Modul asesmen adaptif sesuai target profesi pilihan talent (*Frontend Dev, UI/UX Designer, Data Analyst, Digital Marketer*).
+  * Modul asesmen adaptif sesuai target profesi pilihan talent (*Fullstack Developer, UI/UX Designer, Data Analyst, Digital Marketer*).
   * Menilai dua komponen utama:
     * *Technical Skills* (logika, sintaks, best-practices).
     * *Soft Skills* (problem solving, komunikasi profesional, digital literacy).

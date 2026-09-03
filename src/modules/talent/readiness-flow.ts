@@ -32,6 +32,6 @@ export function resolveSkillGapInput(
 
   return {
     careerId: profileCareerId,
-    scores: profileCareerId === "frontend-dev" ? frontendDemoScores : [],
+    scores: profileCareerId === "fullstack-dev" ? frontendDemoScores : [],
   };
 }

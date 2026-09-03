@@ -81,7 +81,7 @@ describe("seeded demo fixtures", () => {
 
     expect(firstPassport).not.toBe(secondPassport);
     expect(firstPassport.entries).not.toBe(secondPassport.entries);
-    expect(secondPassport.entries[0].name).toBe("HTML");
+    expect(secondPassport.entries[0].name).toBe("HTML & CSS");
     expect(secondPassport).toMatchObject({ source: "SEEDED_DEMO", synthetic: true });
 
     const firstIdentities = createSeededIdentities();
@@ -108,7 +108,7 @@ describe("seeded demo fixtures", () => {
     expect(firstProjects[0].project.requiredSkills).not.toBe(
       secondProjects[0].project.requiredSkills,
     );
-    expect(secondProjects[0].project.requiredSkills[0].name).toBe("HTML");
+    expect(secondProjects[0].project.requiredSkills[0].name).toBe("HTML & CSS");
 
     const firstPortfolio = createSeededPortfolioEntries();
     const secondPortfolio = createSeededPortfolioEntries();
@@ -122,7 +122,6 @@ describe("seeded demo fixtures", () => {
       "JavaScript",
       "Tailwind CSS",
     ]);
-
     const firstWorkspace = createSeededWorkspace();
     const secondWorkspace = createSeededWorkspace();
     firstWorkspace.milestones[0].title = "changed";
