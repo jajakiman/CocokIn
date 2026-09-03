@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { StatusBadge } from "@/src/design-system/status-badge";
 import { CAREER_TAXONOMY } from "@/src/modules/talent/career-taxonomy";
 
-type ManagedSkill = {
+export type ManagedSkill = {
   id: string;
   name: string;
   category: string;
@@ -32,7 +32,7 @@ const suggestedSkills = Array.from(new Set(
   Object.values(CAREER_TAXONOMY).flatMap((career) => career.technicalSkills.map((skill) => skill.name)),
 ));
 
-export function TalentSkillManager({ skills: initialSkills, compact = false }: { skills: ManagedSkill[]; compact?: boolean }) {
+export function TalentSkillManager({ skills: initialSkills, compact = false, showHeading = true }: { skills: ManagedSkill[]; compact?: boolean; showHeading?: boolean }) {
   const router = useRouter();
   const [skills, setSkills] = useState(initialSkills);
   const [open, setOpen] = useState(false);
@@ -127,7 +127,7 @@ export function TalentSkillManager({ skills: initialSkills, compact = false }: {
   return (
     <section className="space-y-4" aria-labelledby="talent-skills-title">
       <div className="flex items-center justify-between gap-4">
-        {compact ? <h2 id="talent-skills-title" className="text-lg font-semibold text-[#001040]">Keahlian</h2> : <span id="talent-skills-title" className="sr-only">Keahlian Talent</span>}
+        {showHeading ? (compact ? <h2 id="talent-skills-title" className="text-lg font-semibold text-[#001040]">Keahlian</h2> : <span id="talent-skills-title" className="sr-only">Keahlian Talent</span>) : <span id="talent-skills-title" className="sr-only">Keahlian Talent</span>}
         <button
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#001040] px-4 text-sm font-semibold text-white hover:bg-[#001A66] focus:outline-none focus:ring-2 focus:ring-[#006FE6] focus:ring-offset-2"
           onClick={() => { setError(undefined); setOpen(true); }}
@@ -148,7 +148,7 @@ export function TalentSkillManager({ skills: initialSkills, compact = false }: {
       ) : (
         <div className={compact ? "flex flex-wrap gap-2" : "space-y-3"}>
           {skills.map((skill) => compact ? (
-            <span className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-[#D8E1EE] bg-[#F1F5FB] pl-3 text-sm font-medium text-[#001040]" key={skill.id}>
+            <span className="inline-flex min-h-11 max-w-full items-center gap-1 break-all rounded-lg border border-[#D8E1EE] bg-[#F1F5FB] pl-3 text-sm font-medium text-[#001040]" key={skill.id}>
               {skill.name}
               {skill.evidenceLevel === "SELF_DECLARED" ? (
                 <button aria-label={`Hapus ${skill.name}`} className="flex h-11 w-11 items-center justify-center rounded-lg text-[#BE123C] hover:bg-[#FFF1F2] focus:outline-none focus:ring-2 focus:ring-[#006FE6]" disabled={pending} onClick={() => removeSkill(skill)} type="button"><X aria-hidden="true" size={16} /></button>

@@ -28,11 +28,10 @@ export const removeSkillSchema = z.object({
 });
 
 export const talentProfileSchema = z.object({
-  name: z.string().trim().min(2, "Nama lengkap wajib diisi.").max(100),
+  firstName: z.string().trim().min(1, "Nama depan wajib diisi.").max(50),
+  lastName: z.string().trim().min(1, "Nama belakang wajib diisi.").max(50),
   bio: z.string().trim().max(500).optional().default(""),
   university: z.string().trim().min(2, "Universitas wajib diisi.").max(120),
   major: z.string().trim().min(2, "Jurusan wajib diisi.").max(120),
   careerTarget: z.enum(careerTargets),
-  workModePreference: z.enum(["REMOTE", "HYBRID", "ONSITE"]),
-  timeAvailability: z.enum(["FULL_TIME", "PART_TIME", "WEEKEND"]),
 });

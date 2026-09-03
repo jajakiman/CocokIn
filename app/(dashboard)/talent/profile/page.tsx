@@ -3,7 +3,6 @@ import { prisma } from "@/src/adapters/database/prisma";
 import { redirect } from "next/navigation";
 import { TalentProfileForm } from "./talent-profile-form";
 import { PageHeader } from "@/src/design-system/page-header";
-import { TalentSkillManager } from "@/src/components/talent/talent-skill-manager";
 
 export async function generateMetadata() {
   return { title: `Profil Talent | CocokIn` };
@@ -31,12 +30,11 @@ export default async function TalentProfilePage() {
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
       <PageHeader
         eyebrow="Kelola Akun"
-        title="Profil & Preferensi Karier"
-        description="Sesuaikan preferensi kerja dan data diri untuk mendapatkan rekomendasi proyek yang paling cocok."
+        title="Profil & Target Karier"
+        description="Perbarui data diri, target karier, dan keahlian untuk mendapatkan rekomendasi proyek yang relevan."
       />
       
-      <TalentProfileForm user={user} />
-      <TalentSkillManager skills={skills.map((item) => ({
+      <TalentProfileForm user={user} skills={skills.map((item) => ({
         id: item.id,
         name: item.skill.name,
         category: item.skill.category,

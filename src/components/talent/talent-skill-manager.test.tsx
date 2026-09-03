@@ -30,7 +30,9 @@ describe("TalentSkillManager", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Hapus React" })).toBeVisible();
+    const remove = screen.getByRole("button", { name: "Hapus React" });
+    expect(remove).toBeVisible();
+    expect(remove.parentElement).toHaveClass("max-w-full", "break-all");
   });
 
   it("focuses the skill input and closes the dialog with Escape", async () => {

@@ -9,23 +9,31 @@ import {
 describe("Talent profile", () => {
   it("accepts only canonical career targets", () => {
     expect(talentProfileSchema.safeParse({
-      name: "Nadia Arina",
+      firstName: "Nadia",
+      lastName: "Arina",
       bio: "Frontend developer",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
       careerTarget: "Frontend Developer",
-      workModePreference: "REMOTE",
-      timeAvailability: "PART_TIME",
     }).success).toBe(true);
 
     expect(talentProfileSchema.safeParse({
-      name: "Nadia Arina",
+      firstName: "Nadia",
+      lastName: "Arina",
       bio: "Frontend developer",
       university: "Universitas Indonesia",
       major: "Sistem Informasi",
       careerTarget: "Astronaut",
-      workModePreference: "REMOTE",
-      timeAvailability: "PART_TIME",
+    }).success).toBe(false);
+  });
+
+  it("requires separate first and last names", () => {
+    expect(talentProfileSchema.safeParse({
+      firstName: "Nadia",
+      lastName: "",
+      university: "Universitas Indonesia",
+      major: "Sistem Informasi",
+      careerTarget: "Frontend Developer",
     }).success).toBe(false);
   });
 

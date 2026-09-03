@@ -16,7 +16,8 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ message: parsed.error.issues[0]?.message }, { status: 400 });
     }
-    const { name, bio, university, major, workModePreference, timeAvailability, careerTarget } = parsed.data;
+    const { firstName, lastName, bio, university, major, careerTarget } = parsed.data;
+    const name = `${firstName} ${lastName}`;
 
     const { updatedUser, profile } = await prisma.$transaction(async (tx) => {
       const updatedUser = await tx.user.update({
@@ -27,8 +28,8 @@ export async function POST(req: Request) {
 
       const profile = await tx.talentProfile.upsert({
         where: { userId: session.id },
-        update: { bio, university, major, workModePreference, timeAvailability, careerTarget },
-        create: { userId: session.id, bio, university, major, workModePreference, timeAvailability, careerTarget },
+        update: { bio, university, major, careerTarget },
+        create: { userId: session.id, bio, university, major, careerTarget },
       });
 
       return { updatedUser, profile };
