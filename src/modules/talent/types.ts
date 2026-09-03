@@ -36,6 +36,7 @@ export type AssessmentQuestion = {
   id: string;
   careerId: CareerDomainId;
   type: AssessmentQuestionType;
+  skillId?: string;
   text: string;
   options: AssessmentOption[];
 };

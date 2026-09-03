@@ -33,10 +33,11 @@ export function calculateCareerReadiness(
   const techQuestions = careerQuestions.filter((q) => q.type === "TECHNICAL");
   const softQuestions = careerQuestions.filter((q) => q.type === "SOFT_SKILL");
 
-  // Map each technical question to its corresponding skill by index order
+  // Map each technical question to its corresponding skill (by question.skillId or index order)
   const technicalBreakdown: SkillAssessmentScore[] = domain.technicalSkills.map(
     (skill, i) => {
-      const question = techQuestions[i];
+      const question =
+        techQuestions.find((q) => q.skillId === skill.skillId) ?? techQuestions[i];
       const raw = question ? (answerMap.get(question.id) ?? 0) : 0;
       return {
         skillId: skill.skillId,
@@ -48,7 +49,8 @@ export function calculateCareerReadiness(
 
   const softSkillBreakdown: SkillAssessmentScore[] = domain.softSkills.map(
     (skill, i) => {
-      const question = softQuestions[i];
+      const question =
+        softQuestions.find((q) => q.skillId === skill.skillId) ?? softQuestions[i];
       const raw = question ? (answerMap.get(question.id) ?? 0) : 0;
       return {
         skillId: skill.skillId,
