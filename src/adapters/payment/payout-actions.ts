@@ -6,11 +6,23 @@ import {
   executePayoutTransfer,
   executeRefundTransfer,
 } from "@/src/modules/payments/payout";
+import { z } from "zod";
 
 export type PayoutActionState = {
   ok: boolean;
   message: string;
 };
+
+const payoutActionSchema = z.object({
+  payoutInstructionId: z.string().min(1, "ID Instruksi Payout wajib diisi."),
+  externalReference: z.string().optional(),
+});
+
+const refundActionSchema = z.object({
+  projectId: z.string().min(1, "ID Proyek wajib diisi."),
+  isPlatformFault: z.boolean().default(false),
+  externalReference: z.string().optional(),
+});
 
 export async function executePayoutTransferAction(
   prevState: PayoutActionState | null,
@@ -22,13 +34,27 @@ export async function executePayoutTransferAction(
     return { ok: false, message: "Hanya tim Finance/Admin yang memiliki otorisasi eksekusi payout." };
   }
 
-  const payoutInstructionId = String(formData.get("payoutInstructionId"));
-  const externalReference = String(formData.get("externalReference") || "");
+  const rawId = formData.get("payoutInstructionId");
+  const rawRef = formData.get("externalReference");
+
+  const validation = payoutActionSchema.safeParse({
+    payoutInstructionId: typeof rawId === "string" ? rawId : "",
+    externalReference: typeof rawRef === "string" ? rawRef : undefined,
+  });
+
+  if (!validation.success) {
+    return {
+      ok: false,
+      message: validation.error.issues[0]?.message || "Data transfer payout tidak valid.",
+    };
+  }
+
+  const { payoutInstructionId, externalReference } = validation.data;
 
   try {
     await executePayoutTransfer(
       payoutInstructionId,
-      externalReference.trim() || undefined
+      externalReference?.trim() || undefined
     );
 
     revalidatePath("/admin");
@@ -52,15 +78,30 @@ export async function executeRefundTransferAction(
     return { ok: false, message: "Hanya tim Finance/Admin yang memiliki otorisasi eksekusi refund." };
   }
 
-  const projectId = String(formData.get("projectId"));
-  const isPlatformFault = formData.get("isPlatformFault") === "true";
-  const externalReference = String(formData.get("externalReference") || "");
+  const rawProjectId = formData.get("projectId");
+  const rawFault = formData.get("isPlatformFault");
+  const rawRef = formData.get("externalReference");
+
+  const validation = refundActionSchema.safeParse({
+    projectId: typeof rawProjectId === "string" ? rawProjectId : "",
+    isPlatformFault: rawFault === "true",
+    externalReference: typeof rawRef === "string" ? rawRef : undefined,
+  });
+
+  if (!validation.success) {
+    return {
+      ok: false,
+      message: validation.error.issues[0]?.message || "Data refund tidak valid.",
+    };
+  }
+
+  const { projectId, isPlatformFault, externalReference } = validation.data;
 
   try {
     await executeRefundTransfer(
       projectId,
       isPlatformFault,
-      externalReference.trim() || undefined
+      externalReference?.trim() || undefined
     );
 
     revalidatePath("/admin");

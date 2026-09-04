@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   startWarrantyPeriod,
@@ -58,7 +59,8 @@ describe("Warranty & Maintenance Module (src/modules/support)", () => {
       const result = await startWarrantyPeriod("proj_1", fixedStart);
 
       expect(result.status).toBe("ACTIVE");
-      expect(result.endDate?.getTime()! - result.startDate?.getTime()!).toBe(30 * 24 * 60 * 60 * 1000);
+      const durationMs = (result.endDate ? result.endDate.getTime() : 0) - (result.startDate ? result.startDate.getTime() : 0);
+      expect(durationMs).toBe(30 * 24 * 60 * 60 * 1000);
       expect(prisma.project.update).toHaveBeenCalledWith({
         where: { id: "proj_1" },
         data: { status: "DELIVERED" },

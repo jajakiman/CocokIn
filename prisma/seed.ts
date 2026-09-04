@@ -69,6 +69,10 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
 }
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("PEMBERITAHUAN KEAMANAN: Database seeding dilarang keras dijalankan pada lingkungan produksi!");
+  }
+
   console.log("Seeding database...");
 
   const passwordHash = await bcrypt.hash("password123", 10);

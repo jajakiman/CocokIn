@@ -7,11 +7,30 @@ import {
   reconcileFundingDeposit,
   simulateInstantFundingSuccess,
 } from "@/src/modules/payments/funding";
+import { z } from "zod";
 
 export type FundingActionState = {
   ok: boolean;
   message: string;
 };
+
+function sanitizeToBigInt(val: unknown): bigint | null {
+  if (typeof val !== "string" && typeof val !== "number") return null;
+  const clean = String(val).replace(/[^0-9]/g, "");
+  if (!clean) return null;
+  try {
+    return BigInt(clean);
+  } catch {
+    return null;
+  }
+}
+
+const submitProofSchema = z.object({
+  projectId: z.string().min(1, "ID Proyek wajib diisi."),
+  senderBank: z.string().min(1).default("BCA"),
+  senderAccount: z.string().trim().min(3, "Nomor rekening pengirim minimal 3 karakter."),
+  senderName: z.string().trim().min(2, "Nama pemilik rekening minimal 2 karakter."),
+});
 
 export async function submitPaymentProofAction(
   prevState: FundingActionState | null,
@@ -23,21 +42,32 @@ export async function submitPaymentProofAction(
     return { ok: false, message: "Hanya akun Bisnis/UMKM yang dapat mengirim bukti transfer." };
   }
 
-  const projectId = String(formData.get("projectId"));
-  const senderBank = String(formData.get("senderBank") || "BCA");
-  const senderAccount = String(formData.get("senderAccount") || "");
-  const senderName = String(formData.get("senderName") || "");
-  const amountTransferred = BigInt(String(formData.get("amountTransferred") || "0"));
+  const rawProjectId = formData.get("projectId");
+  const rawSenderBank = formData.get("senderBank");
+  const rawSenderAccount = formData.get("senderAccount");
+  const rawSenderName = formData.get("senderName");
+  const rawAmount = formData.get("amountTransferred");
 
-  if (!senderAccount.trim()) {
-    return { ok: false, message: "Nomor rekening pengirim wajib diisi." };
+  const validation = submitProofSchema.safeParse({
+    projectId: rawProjectId,
+    senderBank: rawSenderBank || "BCA",
+    senderAccount: rawSenderAccount,
+    senderName: rawSenderName,
+  });
+
+  if (!validation.success) {
+    return {
+      ok: false,
+      message: validation.error.issues[0]?.message || "Data formulir bukti transfer tidak valid.",
+    };
   }
-  if (!senderName.trim()) {
-    return { ok: false, message: "Nama pemilik rekening pengirim wajib diisi." };
+
+  const amountTransferred = sanitizeToBigInt(rawAmount);
+  if (!amountTransferred || amountTransferred <= 0n) {
+    return { ok: false, message: "Nominal transfer wajib berupa angka positif." };
   }
-  if (amountTransferred <= 0n) {
-    return { ok: false, message: "Nominal transfer tidak valid." };
-  }
+
+  const { projectId, senderBank, senderAccount, senderName } = validation.data;
 
   try {
     await submitFundingProof(session.id, projectId, {
@@ -74,7 +104,10 @@ export async function simulateInstantPaymentAction(
     return { ok: false, message: "Hanya akun Bisnis/UMKM yang dapat melakukan simulasi pembayaran." };
   }
 
-  const projectId = String(formData.get("projectId"));
+  const projectId = String(formData.get("projectId") || "");
+  if (!projectId) {
+    return { ok: false, message: "ID Proyek tidak valid." };
+  }
 
   try {
     await simulateInstantFundingSuccess(session.id, projectId);
@@ -106,11 +139,15 @@ export async function reconcilePaymentAction(
     return { ok: false, message: "Hanya tim Finance/Admin yang memiliki akses rekonsiliasi." };
   }
 
-  const projectId = String(formData.get("projectId"));
+  const projectId = String(formData.get("projectId") || "");
+  if (!projectId) {
+    return { ok: false, message: "ID Proyek tidak valid." };
+  }
+
   const approved = formData.get("approved") === "true";
   const externalReference = String(formData.get("externalReference") || "");
   const rawAmount = formData.get("amountReceived");
-  const amountReceived = rawAmount ? BigInt(String(rawAmount)) : undefined;
+  const amountReceived = rawAmount ? sanitizeToBigInt(rawAmount) ?? undefined : undefined;
 
   try {
     await reconcileFundingDeposit(projectId, {
