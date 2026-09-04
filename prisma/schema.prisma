@@ -141,14 +141,19 @@ enum EvidenceLevel {
 // -----------------------------------------------------------------------------
 
 model User {
-  id             String         @id @default(cuid())
-  name           String?
-  email          String?        @unique
-  emailVerified  DateTime?
-  image          String?
-  passwordHash   String?
-  role           Role           @default(TALENT)
-  identityStatus IdentityStatus @default(UNVERIFIED)
+  id               String         @id @default(cuid())
+  name             String?
+  email            String?        @unique
+  emailVerified    DateTime?
+  image            String?
+  passwordHash     String?
+  role             Role           @default(TALENT)
+  identityStatus   IdentityStatus @default(UNVERIFIED)
+  isSuspended      Boolean        @default(false)
+  suspendedAt      DateTime?
+  suspensionReason String?
+  isSynthetic      Boolean        @default(false)
+  isDemoAccount    Boolean        @default(false)
 
   accounts       Account[]
   sessions       Session[]
@@ -228,13 +233,27 @@ model TalentProfile {
   hasNoPortfolio        Boolean   @default(false)
   onboardingCompletedAt DateTime?
 
-  skills       TalentSkill[]
-  assessments  TalentAssessmentResult[]
-  applications ProjectApplication[]
-  portfolio    PortfolioEntry[]
+  skills        TalentSkill[]
+  assessments   TalentAssessmentResult[]
+  applications  ProjectApplication[]
+  portfolio     PortfolioEntry[]
+  payoutAccount TalentPayoutAccount?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model TalentPayoutAccount {
+  id              String    @id @default(cuid())
+  talentProfileId String    @unique
+  bankName        String
+  accountNumber   String
+  accountHolder   String
+  verifiedAt      DateTime?
+
+  talentProfile TalentProfile @relation(fields: [talentProfileId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 }
 
 model Skill {
@@ -579,11 +598,14 @@ model LedgerEntry {
 model PayoutInstruction {
   id                  String       @id @default(cuid())
   escrowTransactionId String
-  milestoneId         String
+  milestoneId         String       @unique
   status              PayoutStatus @default(PAYOUT_DUE)
   amount              BigInt
   platformReference   String?      @unique
   externalReference   String?      @unique
+  recipientBank       String
+  recipientAccount    String
+  recipientName       String
 
   escrowTransaction EscrowTransaction @relation(fields: [escrowTransactionId], references: [id], onDelete: Cascade)
   createdAt         DateTime          @default(now())

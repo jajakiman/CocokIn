@@ -29,7 +29,13 @@ export async function decrypt(input: string): Promise<JWTPayload> {
 
 export async function createSession(user: AuthUser) {
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  const persisted = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
+  const persisted = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { passwordHash: true, isSuspended: true },
+  });
+  if (!persisted || persisted.isSuspended) {
+    throw new Error("Akun tidak ditemukan atau sedang ditangguhkan.");
+  }
   const credentialFingerprint = createHash("sha256").update(persisted?.passwordHash ?? `oauth:${user.id}`).digest("hex");
   const session = await encrypt({ user, expires, credentialFingerprint });
   
@@ -48,8 +54,11 @@ export async function getSession(): Promise<AuthUser | null> {
   try {
     const parsed = await decrypt(sessionCookie);
     const user = parsed.user as AuthUser;
-    const persisted = await prisma.user.findUnique({ where: { id: user.id }, select: { passwordHash: true } });
-    if (!persisted) return null;
+    const persisted = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { passwordHash: true, isSuspended: true },
+    });
+    if (!persisted || persisted.isSuspended) return null;
     const expected = createHash("sha256").update(persisted.passwordHash ?? `oauth:${user.id}`).digest("hex");
     return parsed.credentialFingerprint === expected ? user : null;
   } catch {

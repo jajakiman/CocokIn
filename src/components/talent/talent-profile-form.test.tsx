@@ -15,6 +15,11 @@ const user = {
   passwordHash: "hash",
   role: "TALENT" as const,
   identityStatus: "CONTACT_VERIFIED" as const,
+  isSuspended: false,
+  suspendedAt: null,
+  suspensionReason: null,
+  isSynthetic: false,
+  isDemoAccount: false,
   createdAt: new Date(),
   updatedAt: new Date(),
   talentProfile: {

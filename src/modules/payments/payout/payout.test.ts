@@ -59,10 +59,25 @@ describe("Payout & Settlement Module (src/modules/payments/payout)", () => {
       const mockTx = {
         projectMilestone: {
           findUnique: vi.fn().mockResolvedValueOnce({
-            id: "mile_1",
-            title: "Desain Sistem & UI",
-            weightBps: 5000, // 50%
-            project: { id: "proj_1", serviceValue: 5_000_000n },
+          id: "mile_1",
+          title: "Desain Sistem & UI",
+          weightBps: 5000, // 50%
+          status: "APPROVED",
+          project: {
+            id: "proj_1",
+            serviceValue: 5_000_000n,
+            applications: [{
+              status: "ACCEPTED",
+              talentProfile: {
+                payoutAccount: {
+                  bankName: "BCA",
+                  accountNumber: "1234567890",
+                  accountHolder: "Budi Santoso",
+                  verifiedAt: new Date("2026-09-01T00:00:00.000Z"),
+                },
+              },
+            }],
+          },
           }),
           update: vi.fn(),
         },
@@ -88,6 +103,13 @@ describe("Payout & Settlement Module (src/modules/payments/payout)", () => {
       expect(payout.amount).toBe(2_250_000n);
       expect(payout.status).toBe("PAYOUT_DUE");
       expect(payout.platformReference).toContain("CCK-PROJ1-PAYOUT-0001");
+      expect(mockTx.payoutInstruction.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          recipientBank: "BCA",
+          recipientAccount: "1234567890",
+          recipientName: "Budi Santoso",
+        }),
+      });
 
       // Verify milestone status updated to PAYOUT_DUE
       expect(mockTx.projectMilestone.update).toHaveBeenCalledWith({
@@ -95,9 +117,79 @@ describe("Payout & Settlement Module (src/modules/payments/payout)", () => {
         data: { status: "PAYOUT_DUE" },
       });
     });
+
+    it("rejects payout instruction when the selected Talent has no verified payout account", async () => {
+      const mockTx = {
+        projectMilestone: {
+          findUnique: vi.fn().mockResolvedValueOnce({
+            id: "mile_1",
+            status: "APPROVED",
+            weightBps: 5000,
+            project: {
+              id: "proj_1",
+              serviceValue: 5_000_000n,
+              applications: [{
+                status: "ACCEPTED",
+                talentProfile: { payoutAccount: null },
+              }],
+            },
+          }),
+        },
+      } as any;
+
+      await expect(handleApprovedMilestoneRelease(mockTx, {
+        projectId: "proj_1",
+        milestoneId: "mile_1",
+        grossAmount: 2_500_000n,
+        approvedAt: new Date(),
+        approvedBy: "business_user_1",
+      })).rejects.toThrow(/rekening payout Talent terverifikasi/i);
+    });
+
+    it("rejects a release whose project or gross amount does not match the approved milestone", async () => {
+      const mockTx = {
+        projectMilestone: {
+          findUnique: vi.fn().mockResolvedValue({
+            id: "mile_1",
+            status: "APPROVED",
+            weightBps: 5000,
+            project: { id: "proj_1", serviceValue: 5_000_000n, applications: [] },
+          }),
+        },
+      } as any;
+
+      await expect(handleApprovedMilestoneRelease(mockTx, {
+        projectId: "other-project",
+        milestoneId: "mile_1",
+        grossAmount: 2_500_000n,
+        approvedAt: new Date(),
+        approvedBy: "business_user_1",
+      })).rejects.toThrow(/tidak cocok/i);
+
+      await expect(handleApprovedMilestoneRelease(mockTx, {
+        projectId: "proj_1",
+        milestoneId: "mile_1",
+        grossAmount: 3_000_000n,
+        approvedAt: new Date(),
+        approvedBy: "business_user_1",
+      })).rejects.toThrow(/nominal release/i);
+    });
   });
 
   describe("executePayoutTransfer", () => {
+    it("rejects migrated payout instructions without a valid recipient snapshot", async () => {
+      vi.mocked(prisma.payoutInstruction.findUnique).mockResolvedValueOnce({
+        id: "pay_legacy",
+        status: "PAYOUT_DUE",
+        recipientBank: "UNSET",
+        recipientAccount: "UNSET",
+        recipientName: "UNSET",
+      } as any);
+
+      await expect(executePayoutTransfer("pay_legacy")).rejects.toThrow(/rekening tujuan payout/i);
+      expect(prisma.ledgerEntry.createMany).not.toHaveBeenCalled();
+    });
+
     it("commits payout journal, updates payout to PAID, and advances project when all milestones complete", async () => {
       vi.mocked(prisma.payoutInstruction.findUnique).mockResolvedValueOnce({
         id: "pay_1",
@@ -106,6 +198,9 @@ describe("Payout & Settlement Module (src/modules/payments/payout)", () => {
         platformReference: "CCK-PRJ1-PAYOUT-0001",
         milestoneId: "mile_1",
         escrowTransactionId: "escrow_1",
+        recipientBank: "BCA",
+        recipientAccount: "1234567890",
+        recipientName: "Budi Santoso",
         escrowTransaction: {
           projectId: "proj_1",
           project: {

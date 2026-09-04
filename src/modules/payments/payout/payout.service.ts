@@ -18,11 +18,39 @@ export async function handleApprovedMilestoneRelease(
 ) {
   const milestone = await tx.projectMilestone.findUnique({
     where: { id: release.milestoneId },
-    include: { project: true },
+    include: {
+      project: {
+        include: {
+          applications: {
+            where: { status: "ACCEPTED" },
+            include: {
+              talentProfile: { include: { payoutAccount: true } },
+            },
+          },
+        },
+      },
+    },
   });
 
   if (!milestone) {
     throw new Error("Milestone tidak ditemukan.");
+  }
+
+  if (milestone.project.id !== release.projectId) {
+    throw new Error("Milestone dan proyek pada release tidak cocok.");
+  }
+  if (milestone.status !== "APPROVED") {
+    throw new Error("Payout hanya dapat dibuat dari milestone berstatus APPROVED.");
+  }
+
+  const expectedGrossAmount = (milestone.project.serviceValue * BigInt(milestone.weightBps)) / 10_000n;
+  if (release.grossAmount !== expectedGrossAmount) {
+    throw new Error("Nominal release tidak sesuai nilai bobot milestone.");
+  }
+
+  const payoutAccount = milestone.project.applications[0]?.talentProfile.payoutAccount;
+  if (!payoutAccount?.verifiedAt) {
+    throw new Error("Instruksi payout memerlukan rekening payout Talent terverifikasi.");
   }
 
   // Calculate 90% immediate payout and 10% warranty retention
@@ -57,6 +85,9 @@ export async function handleApprovedMilestoneRelease(
       status: "PAYOUT_DUE",
       amount: immediatePayout,
       platformReference: platformRef,
+      recipientBank: payoutAccount.bankName,
+      recipientAccount: payoutAccount.accountNumber,
+      recipientName: payoutAccount.accountHolder,
     },
   });
 
@@ -95,6 +126,15 @@ export async function executePayoutTransfer(
 
   if (payout.status === "PAID") {
     throw new Error("Payout ini sudah berhasil dibayarkan sebelumnya.");
+  }
+
+  if (
+    !payout.recipientBank ||
+    !payout.recipientAccount ||
+    !payout.recipientName ||
+    [payout.recipientBank, payout.recipientAccount, payout.recipientName].includes("UNSET")
+  ) {
+    throw new Error("Rekening tujuan payout tidak valid atau belum diverifikasi.");
   }
 
   const extRef =
