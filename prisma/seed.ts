@@ -79,6 +79,20 @@ async function main() {
     data: { careerTarget: "Fullstack Developer" },
   });
 
+  // Seed Admin User (Farid - Platform Trust & Operations)
+  await prisma.user.upsert({
+    where: { email: "admin@cocokin.id" },
+    update: { emailVerified: new Date(), identityStatus: "CONTACT_VERIFIED", role: "ADMIN" },
+    create: {
+      email: "admin@cocokin.id",
+      name: "Admin Farid",
+      emailVerified: new Date(),
+      identityStatus: "CONTACT_VERIFIED",
+      role: "ADMIN",
+      passwordHash,
+    },
+  });
+
   // Seed Business User
   const umkmUser = await prisma.user.upsert({
     where: { email: "umkm@cocokin.id" },
