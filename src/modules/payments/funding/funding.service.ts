@@ -48,8 +48,14 @@ export async function getOrCreateFundingInstruction(
   const platformRef =
     project.fundingReceipt?.platformReference ||
     createPlatformReference(project.id, "FUNDING", 1);
+  const accountHolder = "PT COCOKIN TEKNOLOGI INDONESIA";
 
   let receipt = project.fundingReceipt;
+  const selectedMethod = receipt?.paymentMethod ?? method;
+  const selectedBank = receipt?.destinationBank as SupportedBank | null ?? bankName;
+  const accountNumber = selectedMethod === "BANK_TRANSFER"
+    ? receipt?.destinationAccount || getSimulatedAccountNumber(selectedBank, project.id)
+    : undefined;
 
   if (!receipt) {
     receipt = await prisma.fundingReceipt.create({
@@ -58,15 +64,27 @@ export async function getOrCreateFundingInstruction(
         status: "AWAITING_PAYMENT",
         amountDue: financials.fundingDue,
         platformReference: platformRef,
+        paymentMethod: selectedMethod,
+        destinationBank: selectedMethod === "BANK_TRANSFER" ? selectedBank : null,
+        destinationAccount: accountNumber,
+        destinationAccountHolder: accountHolder,
+      },
+    });
+  } else if (
+    selectedMethod === "BANK_TRANSFER" &&
+    (!receipt.destinationBank || !receipt.destinationAccount || !receipt.destinationAccountHolder)
+  ) {
+    receipt = await prisma.fundingReceipt.update({
+      where: { projectId: project.id },
+      data: {
+        destinationBank: selectedBank,
+        destinationAccount: accountNumber,
+        destinationAccountHolder: accountHolder,
       },
     });
   }
 
-  const accountNumber = method === "BANK_TRANSFER"
-    ? getSimulatedAccountNumber(bankName, project.id)
-    : undefined;
-
-  const qrisPayload = method === "QRIS"
+  const qrisPayload = selectedMethod === "QRIS"
     ? `00020101021226600016ID.CO.COCOKIN.WWW011893600999${platformRef}520458125303360540${financials.fundingDue.toString()}5802ID5914PT COCOKIN IND6007JAKARTA6304`
     : undefined;
 
@@ -83,10 +101,10 @@ export async function getOrCreateFundingInstruction(
     fundingDue: financials.fundingDue,
     status: receipt.status,
     platformReference: platformRef,
-    paymentMethod: method,
-    bankName: method === "BANK_TRANSFER" ? bankName : undefined,
+    paymentMethod: selectedMethod,
+    bankName: selectedMethod === "BANK_TRANSFER" ? selectedBank : undefined,
     accountNumber,
-    accountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+    accountHolder,
     qrisCodePayload: qrisPayload,
     expiresAt,
   };
@@ -119,11 +137,22 @@ export async function submitFundingProof(
   }
 
   return prisma.$transaction(async (tx) => {
+    const paymentMethod = proof.paymentMethod ?? "BANK_TRANSFER";
     const updatedReceipt = await tx.fundingReceipt.update({
       where: { projectId },
       data: {
         status: "PROOF_SUBMITTED",
         amountReceived: proof.amountTransferred,
+        paymentMethod,
+        destinationBank: paymentMethod === "BANK_TRANSFER" ? proof.destinationBank || "BCA" : null,
+        destinationAccount: paymentMethod === "BANK_TRANSFER"
+          ? getSimulatedAccountNumber(proof.destinationBank || "BCA", projectId)
+          : null,
+        destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+        senderBank: paymentMethod === "BANK_TRANSFER" ? proof.senderBank || null : null,
+        senderAccount: paymentMethod === "BANK_TRANSFER" ? proof.senderAccount || null : null,
+        senderName: proof.senderName,
+        paymentReference: paymentMethod === "QRIS" ? proof.paymentReference || null : null,
       },
     });
 

@@ -76,6 +76,11 @@ enum FundingStatus {
   CANCELLED
 }
 
+enum FundingPaymentMethod {
+  BANK_TRANSFER
+  QRIS
+}
+
 enum PayoutStatus {
   PAYOUT_DUE
   PROCESSING
@@ -213,14 +218,14 @@ model TalentProfile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  bio                String?
-  university         String?
-  major              String?
-  workModePreference String? // Remote, Hybrid, Onsite
-  timeAvailability   String? // Full-time, Part-time, Weekend
-  careerTarget       String?
-  portfolioUrl        String?
-  hasNoPortfolio      Boolean   @default(false)
+  bio                   String?
+  university            String?
+  major                 String?
+  workModePreference    String? // Remote, Hybrid, Onsite
+  timeAvailability      String? // Full-time, Part-time, Weekend
+  careerTarget          String?
+  portfolioUrl          String?
+  hasNoPortfolio        Boolean   @default(false)
   onboardingCompletedAt DateTime?
 
   skills       TalentSkill[]
@@ -333,11 +338,11 @@ model BusinessAssessmentResult {
   readinessScore    Int
 
   // 5-Pillar Readiness Scores
-  financeScore      Int @default(0)
-  marketingScore    Int @default(0)
-  teamScore         Int @default(0)
-  operationsScore   Int @default(0)
-  outsourcingScore  Int @default(0)
+  financeScore     Int @default(0)
+  marketingScore   Int @default(0)
+  teamScore        Int @default(0)
+  operationsScore  Int @default(0)
+  outsourcingScore Int @default(0)
 
   businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
   createdAt       DateTime        @default(now())
@@ -528,13 +533,21 @@ model InfrastructureHandover {
 // -----------------------------------------------------------------------------
 
 model FundingReceipt {
-  id                String        @id @default(cuid())
-  projectId         String        @unique
-  status            FundingStatus @default(AWAITING_PAYMENT)
-  platformReference String?       @unique
-  externalReference String?       @unique
-  amountDue         BigInt
-  amountReceived    BigInt?
+  id                       String               @id @default(cuid())
+  projectId                String               @unique
+  status                   FundingStatus        @default(AWAITING_PAYMENT)
+  platformReference        String?              @unique
+  externalReference        String?              @unique
+  amountDue                BigInt
+  amountReceived           BigInt?
+  paymentMethod            FundingPaymentMethod @default(BANK_TRANSFER)
+  destinationBank          String?
+  destinationAccount       String?
+  destinationAccountHolder String?
+  senderBank               String?
+  senderAccount            String?
+  senderName               String?
+  paymentReference         String?
 
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())

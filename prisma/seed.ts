@@ -139,6 +139,105 @@ async function main() {
     });
   }
 
+  const bankFundingProject = await prisma.project.upsert({
+    where: { id: "seed-funding-bank" },
+    update: {
+      status: "FUNDING_PENDING",
+      serviceValue: 5_000_000n,
+    },
+    create: {
+      id: "seed-funding-bank",
+      businessProfileId: businessProfile.id,
+      title: "Website Katalog & Order Online Kopi Nusantara",
+      scope: "Katalog produk, keranjang, pemesanan WhatsApp, dan dashboard inventori sederhana.",
+      difficulty: "INTERMEDIATE",
+      estimatedDays: 12,
+      deadline: new Date("2026-10-15T00:00:00.000Z"),
+      serviceValue: 5_000_000n,
+      status: "FUNDING_PENDING",
+    },
+  });
+
+  await prisma.fundingReceipt.upsert({
+    where: { projectId: bankFundingProject.id },
+    update: {
+      status: "PROOF_SUBMITTED",
+      amountDue: 5_500_000n,
+      amountReceived: 5_500_000n,
+      paymentMethod: "BANK_TRANSFER",
+      destinationBank: "BCA",
+      destinationAccount: "8801212345678",
+      destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+      senderBank: "BCA",
+      senderAccount: "0912345678",
+      senderName: "Kopi Kenangan Senja",
+      paymentReference: null,
+      platformReference: "CCK-SEEDBANK-FUNDING-0001",
+    },
+    create: {
+      projectId: bankFundingProject.id,
+      status: "PROOF_SUBMITTED",
+      amountDue: 5_500_000n,
+      amountReceived: 5_500_000n,
+      paymentMethod: "BANK_TRANSFER",
+      destinationBank: "BCA",
+      destinationAccount: "8801212345678",
+      destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+      senderBank: "BCA",
+      senderAccount: "0912345678",
+      senderName: "Kopi Kenangan Senja",
+      platformReference: "CCK-SEEDBANK-FUNDING-0001",
+    },
+  });
+
+  const qrisFundingProject = await prisma.project.upsert({
+    where: { id: "seed-funding-qris" },
+    update: {
+      status: "FUNDING_PENDING",
+      serviceValue: 3_000_000n,
+    },
+    create: {
+      id: "seed-funding-qris",
+      businessProfileId: businessProfile.id,
+      title: "Landing Page Promo Paket Kopi Hampers",
+      scope: "Landing page kampanye hampers dengan katalog paket, CTA order, dan analytics dasar.",
+      difficulty: "BEGINNER",
+      estimatedDays: 7,
+      deadline: new Date("2026-10-01T00:00:00.000Z"),
+      serviceValue: 3_000_000n,
+      status: "FUNDING_PENDING",
+    },
+  });
+
+  await prisma.fundingReceipt.upsert({
+    where: { projectId: qrisFundingProject.id },
+    update: {
+      status: "PROOF_SUBMITTED",
+      amountDue: 3_300_000n,
+      amountReceived: 3_300_000n,
+      paymentMethod: "QRIS",
+      destinationBank: null,
+      destinationAccount: null,
+      destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+      senderBank: null,
+      senderAccount: null,
+      senderName: "Kopi Kenangan Senja",
+      paymentReference: "QRIS-RRN-9081726354",
+      platformReference: "CCK-SEEDQRIS-FUNDING-0001",
+    },
+    create: {
+      projectId: qrisFundingProject.id,
+      status: "PROOF_SUBMITTED",
+      amountDue: 3_300_000n,
+      amountReceived: 3_300_000n,
+      paymentMethod: "QRIS",
+      destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+      senderName: "Kopi Kenangan Senja",
+      paymentReference: "QRIS-RRN-9081726354",
+      platformReference: "CCK-SEEDQRIS-FUNDING-0001",
+    },
+  });
+
   await seedTalent(prisma, passwordHash);
 
   console.log("Database seeded successfully!");

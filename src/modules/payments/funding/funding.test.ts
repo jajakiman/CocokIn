@@ -61,6 +61,14 @@ describe("Simulated Funding & Reconciliation Module (src/modules/payments/fundin
       expect(instruction.accountNumber).toContain("88012");
       expect(instruction.accountHolder).toBe("PT COCOKIN TEKNOLOGI INDONESIA");
       expect(instruction.platformReference).toMatch(/^CCK-[A-Z0-9]+-FUNDING-\d{4}$/);
+      expect(prisma.fundingReceipt.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          paymentMethod: "BANK_TRANSFER",
+          destinationBank: "BCA",
+          destinationAccount: expect.stringContaining("88012"),
+          destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
+        }),
+      });
     });
 
     it("generates QRIS payload when QRIS method selected", async () => {
@@ -74,6 +82,10 @@ describe("Simulated Funding & Reconciliation Module (src/modules/payments/fundin
           status: "AWAITING_PAYMENT",
           amountDue: 3_300_000n,
           platformReference: "CCK-BC123-FUNDING-0001",
+          paymentMethod: "QRIS",
+          destinationBank: null,
+          destinationAccount: null,
+          destinationAccountHolder: "PT COCOKIN TEKNOLOGI INDONESIA",
           createdAt: new Date(),
         },
       } as any);
@@ -106,6 +118,7 @@ describe("Simulated Funding & Reconciliation Module (src/modules/payments/fundin
         senderBank: "BCA",
         senderAccount: "1234567890",
         senderName: "Budi Santoso",
+        destinationBank: "BCA",
         amountTransferred: 5_500_000n,
       });
 
@@ -113,6 +126,47 @@ describe("Simulated Funding & Reconciliation Module (src/modules/payments/fundin
       expect(prisma.project.update).toHaveBeenCalledWith({
         where: { id: "proj_1" },
         data: { status: "FUNDING_PENDING" },
+      });
+      expect(prisma.fundingReceipt.update).toHaveBeenCalledWith({
+        where: { projectId: "proj_1" },
+        data: expect.objectContaining({
+          paymentMethod: "BANK_TRANSFER",
+          senderBank: "BCA",
+          senderAccount: "1234567890",
+          senderName: "Budi Santoso",
+          destinationBank: "BCA",
+          destinationAccount: expect.stringContaining("88012"),
+        }),
+      });
+    });
+
+    it("persists QRIS as the selected alternative with its payment reference", async () => {
+      vi.mocked(prisma.project.findUnique).mockResolvedValueOnce({
+        id: "proj_1",
+        businessProfile: { userId: "user_owner" },
+        fundingReceipt: { id: "rec_1", status: "AWAITING_PAYMENT" },
+      } as any);
+      vi.mocked(prisma.fundingReceipt.update).mockResolvedValueOnce({
+        id: "rec_1",
+        status: "PROOF_SUBMITTED",
+      } as any);
+
+      await submitFundingProof("user_owner", "proj_1", {
+        paymentMethod: "QRIS",
+        senderName: "Budi Santoso",
+        paymentReference: "QRIS-RRN-9081726354",
+        amountTransferred: 5_500_000n,
+      });
+
+      expect(prisma.fundingReceipt.update).toHaveBeenCalledWith({
+        where: { projectId: "proj_1" },
+        data: expect.objectContaining({
+          paymentMethod: "QRIS",
+          senderBank: null,
+          senderAccount: null,
+          senderName: "Budi Santoso",
+          paymentReference: "QRIS-RRN-9081726354",
+        }),
       });
     });
 

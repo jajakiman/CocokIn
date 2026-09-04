@@ -25,12 +25,26 @@ function sanitizeToBigInt(val: unknown): bigint | null {
   }
 }
 
-const submitProofSchema = z.object({
-  projectId: z.string().min(1, "ID Proyek wajib diisi."),
-  senderBank: z.string().min(1).default("BCA"),
-  senderAccount: z.string().trim().min(3, "Nomor rekening pengirim minimal 3 karakter."),
-  senderName: z.string().trim().min(2, "Nama pemilik rekening minimal 2 karakter."),
-});
+const submitProofSchema = z.discriminatedUnion("paymentMethod", [
+  z.object({
+    projectId: z.string().min(1, "ID Proyek wajib diisi."),
+    paymentMethod: z.literal("BANK_TRANSFER"),
+    senderBank: z.string().trim().min(1, "Bank pengirim wajib diisi.").max(30),
+    senderAccount: z.string().trim().regex(/^\d{3,30}$/, "Nomor rekening pengirim harus berupa 3-30 digit."),
+    senderName: z.string().trim().min(2, "Nama pemilik rekening minimal 2 karakter.").max(100),
+    destinationBank: z.enum(["BCA", "MANDIRI", "BRI", "BNI"]),
+    paymentReference: z.string().optional(),
+  }),
+  z.object({
+    projectId: z.string().min(1, "ID Proyek wajib diisi."),
+    paymentMethod: z.literal("QRIS"),
+    senderBank: z.string().optional(),
+    senderAccount: z.string().optional(),
+    senderName: z.string().trim().min(2, "Nama pembayar minimal 2 karakter.").max(100),
+    destinationBank: z.undefined().optional(),
+    paymentReference: z.string().trim().regex(/^[A-Za-z0-9._-]{6,100}$/, "Referensi transaksi QRIS tidak valid."),
+  }),
+]);
 
 export async function submitPaymentProofAction(
   prevState: FundingActionState | null,
@@ -46,13 +60,19 @@ export async function submitPaymentProofAction(
   const rawSenderBank = formData.get("senderBank");
   const rawSenderAccount = formData.get("senderAccount");
   const rawSenderName = formData.get("senderName");
+  const rawPaymentReference = formData.get("paymentReference");
+  const rawDestinationBank = formData.get("destinationBank");
   const rawAmount = formData.get("amountTransferred");
+  const paymentMethod = formData.get("paymentMethod") === "QRIS" ? "QRIS" : "BANK_TRANSFER";
 
   const validation = submitProofSchema.safeParse({
     projectId: rawProjectId,
-    senderBank: rawSenderBank || "BCA",
-    senderAccount: rawSenderAccount,
+    paymentMethod,
+    senderBank: typeof rawSenderBank === "string" ? rawSenderBank : undefined,
+    senderAccount: typeof rawSenderAccount === "string" ? rawSenderAccount : undefined,
     senderName: rawSenderName,
+    destinationBank: paymentMethod === "BANK_TRANSFER" ? rawDestinationBank : undefined,
+    paymentReference: typeof rawPaymentReference === "string" ? rawPaymentReference : undefined,
   });
 
   if (!validation.success) {
@@ -67,13 +87,23 @@ export async function submitPaymentProofAction(
     return { ok: false, message: "Nominal transfer wajib berupa angka positif." };
   }
 
-  const { projectId, senderBank, senderAccount, senderName } = validation.data;
+  const {
+    projectId,
+    senderBank,
+    senderAccount,
+    senderName,
+    destinationBank,
+    paymentReference,
+  } = validation.data;
 
   try {
     await submitFundingProof(session.id, projectId, {
+      paymentMethod,
+      destinationBank,
       senderBank,
       senderAccount,
       senderName,
+      paymentReference,
       amountTransferred,
     });
 

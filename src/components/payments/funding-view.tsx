@@ -14,11 +14,19 @@ import {
   QrCode,
   CheckCircle,
   Copy,
-  WarningCircle,
-  Clock,
   Lightning,
 } from "@phosphor-icons/react";
 import Link from "next/link";
+
+function getAccountNumber(bank: SupportedBank, projectId: string) {
+  const prefixes: Record<SupportedBank, string> = {
+    BCA: "88012",
+    MANDIRI: "89012",
+    BRI: "88812",
+    BNI: "82012",
+  };
+  return `${prefixes[bank]}${projectId.replace(/\D/g, "").slice(-8).padStart(8, "12345678")}`;
+}
 
 export function FundingView({
   initialDetails,
@@ -26,7 +34,7 @@ export function FundingView({
   initialDetails: FundingInstructionDetails;
 }) {
   const [method, setMethod] = useState<"BANK_TRANSFER" | "QRIS">(initialDetails.paymentMethod);
-  const [selectedBank, setSelectedBank] = useState<SupportedBank>("BCA");
+  const [selectedBank, setSelectedBank] = useState<SupportedBank>(initialDetails.bankName ?? "BCA");
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const [proofState, proofAction, isProofPending] = useActionState<FundingActionState, FormData>(
@@ -47,6 +55,7 @@ export function FundingView({
 
   const isFunded = initialDetails.status === "FUNDED";
   const isProofSubmitted = initialDetails.status === "PROOF_SUBMITTED";
+  const destinationAccount = getAccountNumber(selectedBank, initialDetails.projectId);
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8">
@@ -182,15 +191,14 @@ export function FundingView({
                     <div>
                       <span className="text-xs text-[#53647A] block">Nomor Virtual Account {selectedBank}</span>
                       <span className="text-lg md:text-xl font-mono font-bold text-[#001040]">
-                        {selectedBank === "BCA" ? "88012" : selectedBank === "MANDIRI" ? "89012" : "88812"}
-                        {initialDetails.projectId.replace(/\D/g, "").slice(-8).padStart(8, "12345678")}
+                        {destinationAccount}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() =>
                         copyToClipboard(
-                          `${selectedBank === "BCA" ? "88012" : "89012"}${initialDetails.projectId.replace(/\D/g, "").slice(-8).padStart(8, "12345678")}`,
+                          destinationAccount,
                           "va"
                         )
                       }
@@ -228,10 +236,10 @@ export function FundingView({
                 </div>
                 <div>
                   <span className="text-sm font-bold text-[#001040] block">
-                    Scan via GoPay, OVO, Dana, atau Mobile Banking
+                    Simulasi QRIS via GoPay, OVO, Dana, atau Mobile Banking
                   </span>
                   <span className="text-xs text-[#53647A]">
-                    Total pembayaran: <strong>{formatIdr(initialDetails.fundingDue)}</strong> (MDR diserap platform, tanpa biaya tambahan)
+                    Gunakan referensi QRIS di atas untuk simulasi sebesar <strong>{formatIdr(initialDetails.fundingDue)}</strong> (tanpa uang riil)
                   </span>
                 </div>
               </div>
@@ -259,8 +267,14 @@ export function FundingView({
               <form action={proofAction} className="space-y-3">
                 <input type="hidden" name="projectId" value={initialDetails.projectId} />
                 <input type="hidden" name="amountTransferred" value={initialDetails.fundingDue.toString()} />
+                <input type="hidden" name="paymentMethod" value={method} />
+                {method === "BANK_TRANSFER" ? (
+                  <>
+                    <input type="hidden" name="destinationBank" value={selectedBank} />
+                  </>
+                ) : null}
 
-                <div>
+                {method === "BANK_TRANSFER" ? <div>
                   <label className="text-xs font-semibold text-[#53647A] block mb-1">
                     Bank Pengirim
                   </label>
@@ -271,9 +285,9 @@ export function FundingView({
                     className="w-full text-sm border border-[#D8E1EE] rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-[#006FE6]"
                     placeholder="Contoh: BCA, Mandiri"
                   />
-                </div>
+                </div> : null}
 
-                <div>
+                {method === "BANK_TRANSFER" ? <div>
                   <label className="text-xs font-semibold text-[#53647A] block mb-1">
                     Nomor Rekening Pengirim
                   </label>
@@ -283,19 +297,34 @@ export function FundingView({
                     className="w-full text-sm border border-[#D8E1EE] rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-[#006FE6]"
                     placeholder="Contoh: 1234567890"
                   />
-                </div>
+                </div> : null}
 
                 <div>
                   <label className="text-xs font-semibold text-[#53647A] block mb-1">
-                    Nama Pemilik Rekening
+                    {method === "BANK_TRANSFER" ? "Nama Pemilik Rekening" : "Nama Pembayar QRIS"}
                   </label>
                   <input
                     name="senderName"
                     required
                     className="w-full text-sm border border-[#D8E1EE] rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-[#006FE6]"
-                    placeholder="Nama sesuai buku tabungan"
+                    placeholder={method === "BANK_TRANSFER" ? "Nama sesuai buku tabungan" : "Nama akun pembayaran"}
                   />
                 </div>
+
+                {method === "QRIS" ? (
+                  <div>
+                    <label className="text-xs font-semibold text-[#53647A] block mb-1">
+                      Referensi Transaksi / RRN
+                    </label>
+                    <input
+                      name="paymentReference"
+                      required
+                      minLength={6}
+                      className="w-full text-sm border border-[#D8E1EE] rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-[#006FE6]"
+                      placeholder="Contoh: QRIS-RRN-9081726354"
+                    />
+                  </div>
+                ) : null}
 
                 {proofState.message && (
                   <div

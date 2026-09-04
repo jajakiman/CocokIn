@@ -19,6 +19,7 @@ import {
   Scales,
   Receipt,
   Ticket,
+  QrCode,
 } from "@phosphor-icons/react";
 
 export type AdminDashboardBalanceSheet = {
@@ -44,6 +45,14 @@ export type AdminDashboardData = {
     amountReceived: string | null;
     status: string;
     platformReference: string | null;
+    paymentMethod: "BANK_TRANSFER" | "QRIS";
+    destinationBank: string | null;
+    destinationAccount: string | null;
+    destinationAccountHolder: string | null;
+    senderBank: string | null;
+    senderAccount: string | null;
+    senderName: string | null;
+    paymentReference: string | null;
     createdAt: string;
   }>;
   payoutInstructions: Array<{
@@ -257,6 +266,7 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
                   <tr>
                     <th className="px-6 py-3">Proyek & UMKM</th>
                     <th className="px-6 py-3">Platform Reference</th>
+                    <th className="px-6 py-3">Metode & Sumber</th>
                     <th className="px-6 py-3">Nominal Tagihan</th>
                     <th className="px-6 py-3">Status</th>
                     <th className="px-6 py-3 text-right">Aksi Finance</th>
@@ -271,6 +281,31 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
                       </td>
                       <td className="px-6 py-4 font-mono text-xs text-[#53647A]">
                         {receipt.platformReference || "-"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-start gap-2">
+                          {receipt.paymentMethod === "QRIS" ? (
+                            <QrCode className="text-lg text-[#006FE6] shrink-0" aria-hidden />
+                          ) : (
+                            <Bank className="text-lg text-[#006FE6] shrink-0" aria-hidden />
+                          )}
+                          <div className="text-xs">
+                            <strong className="block text-[#001040]">
+                              {receipt.paymentMethod === "QRIS" ? "QRIS (Opsi)" : "Transfer Rekening (Default)"}
+                            </strong>
+                            <span className="block text-[#53647A]">
+                              {receipt.paymentMethod === "QRIS"
+                                ? receipt.paymentReference || "Referensi belum dikirim"
+                                : [receipt.senderBank, receipt.senderAccount].filter(Boolean).join(" · ") || "Data pengirim belum dikirim"}
+                            </span>
+                            {receipt.senderName ? <span className="block text-[#53647A]">a.n. {receipt.senderName}</span> : null}
+                            {receipt.paymentMethod === "BANK_TRANSFER" && receipt.destinationAccount ? (
+                              <span className="block mt-1 text-[#006FE6]">
+                                Tujuan: {receipt.destinationBank} {receipt.destinationAccount}
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 font-bold text-[#001040]">
                         {formatIdr(BigInt(receipt.amountDue))}

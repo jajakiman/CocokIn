@@ -119,15 +119,43 @@ describe("Server Actions Safety & Zod Validation (Review Prioritas 1)", () => {
       formData.append("senderBank", "BCA");
       formData.append("senderAccount", "1234567890");
       formData.append("senderName", "Budi Santoso");
+      formData.append("destinationBank", "BCA");
+      formData.append("destinationAccount", "9999999999999999");
       formData.append("amountTransferred", "Rp 5.500.000"); // Formatted string with Rp and dots!
 
       const result = await submitPaymentProofAction(null, formData);
 
       expect(result.ok).toBe(true);
       expect(submitFundingProof).toHaveBeenCalledWith("biz_1", "prj_99", {
+        paymentMethod: "BANK_TRANSFER",
+        destinationBank: "BCA",
         senderBank: "BCA",
         senderAccount: "1234567890",
         senderName: "Budi Santoso",
+        paymentReference: undefined,
+        amountTransferred: 5_500_000n,
+      });
+    });
+
+    it("submits QRIS proof with payment reference without bank account fields", async () => {
+      vi.mocked(getSession).mockResolvedValueOnce(mockBusinessSession);
+
+      const formData = new FormData();
+      formData.append("projectId", "prj_99");
+      formData.append("paymentMethod", "QRIS");
+      formData.append("senderName", "Budi Santoso");
+      formData.append("paymentReference", "QRIS-RRN-9081726354");
+      formData.append("amountTransferred", "5500000");
+
+      const result = await submitPaymentProofAction(null, formData);
+
+      expect(result.ok).toBe(true);
+      expect(submitFundingProof).toHaveBeenCalledWith("biz_1", "prj_99", {
+        paymentMethod: "QRIS",
+        senderBank: undefined,
+        senderAccount: undefined,
+        senderName: "Budi Santoso",
+        paymentReference: "QRIS-RRN-9081726354",
         amountTransferred: 5_500_000n,
       });
     });
@@ -140,6 +168,7 @@ describe("Server Actions Safety & Zod Validation (Review Prioritas 1)", () => {
       formData.append("senderBank", "BCA");
       formData.append("senderAccount", "1234567890");
       formData.append("senderName", "Budi Santoso");
+      formData.append("destinationBank", "BCA");
       formData.append("amountTransferred", "abc-bukan-angka");
 
       const result = await submitPaymentProofAction(null, formData);

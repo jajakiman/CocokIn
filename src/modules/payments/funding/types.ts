@@ -22,9 +22,12 @@ export type FundingInstructionDetails = {
 };
 
 export type ProofSubmissionInput = {
-  senderBank: string;
-  senderAccount: string;
+  paymentMethod?: PaymentMethod;
+  destinationBank?: SupportedBank;
+  senderBank?: string;
+  senderAccount?: string;
   senderName: string;
+  paymentReference?: string;
   amountTransferred: bigint;
   proofFileUrl?: string;
 };
