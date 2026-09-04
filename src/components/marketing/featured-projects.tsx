@@ -57,7 +57,7 @@ export function FeaturedProjects() {
           </div>
           <h2>Hasil Kerja Nyata yang Telah Tervalidasi</h2>
           <p>
-            Proyek mikro berdurasi 3–14 hari yang diselesaikan talenta muda dan disahkan langsung oleh pelaku usaha UMKM.
+            Proyek mikro berdasarkan kesepakatan milestone terarah yang diselesaikan talenta muda dan disahkan langsung oleh pelaku usaha UMKM.
           </p>
         </motion.div>
 

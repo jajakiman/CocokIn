@@ -102,7 +102,7 @@ export default function TermsOfServicePage() {
           </h2>
           <div className="space-y-3 text-sm text-[#53647A] leading-relaxed">
             <p>
-              3.1. <strong>Definisi Proyek Mikro:</strong> Proyek yang diterbitkan di CocokIn merupakan pekerjaan transformasi digital berskala terukur dengan estimasi durasi pengerjaan antara <strong>3 hingga 14 hari kerja</strong>.
+              3.1. <strong>Definisi Proyek Mikro:</strong> Proyek yang diterbitkan di CocokIn merupakan pekerjaan transformasi digital berskala terukur dengan estimasi durasi dan target milestone yang disepakati bersama antara UMKM dan Talent.
             </p>
             <p>
             3.2. <strong>Moda Pengerjaan:</strong> Setiap proyek menetapkan moda Remote, Hybrid, atau Onsite sesuai kebutuhan dan kesepakatan para pihak. Cocok Score mempertimbangkan kecocokan preferensi moda kerja Talent dengan kebutuhan proyek.

@@ -50,7 +50,7 @@ Business Problem ➔ Digital Need Diagnosis ➔ Project Creation ➔ Smart Match
 
 | Aktor / Persona | Karakteristik & Kebutuhan Utama | Hak Akses & Fungsionalitas Kunci |
 |---|---|---|
-| **Talent**<br>*(Mahasiswa / Fresh Graduate)* | • Butuh portofolio kerja nyata yang terbukti valid.<br>• Butuh evaluasi kesiapan kerja (*Careekarenr Readiness*) & *skill gap* terukur.<br>• Butuh proyek dengan durasi realistis (3–14 hari) sesuai jam luang. | • Kelola Profil, Target Karier & *Skill Passport*.<br>• Mengikuti *Career Readiness Assessment*.<br>• Melihat *Cocok Score* & melamar *Micro-Project*.<br>• Akses *Project Workspace*, submit deliverable, & klaim bukti portofolio. |
+| **Talent**<br>*(Mahasiswa / Fresh Graduate)* | • Butuh portofolio kerja nyata yang terbukti valid.<br>• Butuh evaluasi kesiapan kerja (*Careekarenr Readiness*) & *skill gap* terukur.<br>• Butuh proyek dengan durasi realistis berbasis milestone sesuai jam luang. | • Kelola Profil, Target Karier & *Skill Passport*.<br>• Mengikuti *Career Readiness Assessment*.<br>• Melihat *Cocok Score* & melamar *Micro-Project*.<br>• Akses *Project Workspace*, submit deliverable, & klaim bukti portofolio. |
 | **UMKM (Business)**<br>*(Pelaku Usaha Mikro/Kecil)* | • Butuh solusi digital terjangkau tanpa bahasa teknis rumit.<br>• Butuh kepastian kualitas eksekutor proyek.<br>• Butuh monitoring kemajuan digitalisasi bisnis secara berkala. | • Kelola Profil Usaha & Pengajuan Verifikasi Bisnis.<br>• Mengikuti *Digital Readiness Assessment* (5 pilar).<br>• Mengubah masalah bisnis menjadi draf proyek digital otomatis.<br>• Seleksi pelamar berdasar *Cocok Score*, verifikasi tugas, pantau *Growth*. |
 | **Admin**<br>*(Platform Overseer)* | • Menjaga keamanan, kepatuhan ekosistem, dan kualitas moderasi.<br>• Memantau agregasi dampak sosial (*impact metrics*). | • Verifikasi legalitas UMKM & moderasi lowongan proyek.<br>• Kelola master data taksonomi skill, karier, dan bank soal asesmen.<br>• Monitoring dashboard pencapaian indikator SDG 8 & SDG 9. |
 
@@ -104,7 +104,7 @@ Business Problem ➔ Digital Need Diagnosis ➔ Project Creation ➔ Smart Match
   * Mesin diagnosis yang menerjemahkan keluhan bisnis non-teknis (misal: *"Katalog produk sulit dilihat pelanggan dan stok sering salah catat"*) menjadi spesifikasi proyek mikro digital terstandarisasi (*"Website Katalog Produk Digital & Modul Inventori"*).
 
 * **FR-BIZ-04 — Micro-Project Management (Priority: P0)**
-  * Formulir penerbitan proyek terstruktur: cakupan kerja (*scope*), keahlian wajib, tingkat kesulitan (*Beginner, Intermediate, Advanced*), estimasi durasi (3–14 hari), batas akhir (*deadline*), anggaran imbalan, dan daftar luaran (*expected deliverables*).
+  * Formulir penerbitan proyek terstruktur: cakupan kerja (*scope*), keahlian wajib, tingkat kesulitan (*Beginner, Intermediate, Advanced*), estimasi durasi dan target milestone, batas akhir (*deadline*), anggaran imbalan, dan daftar luaran (*expected deliverables*).
 
 * **FR-BIZ-05 — Digital Growth Indicator (Priority: P1)**
   * Sistem menghitung rekalkulasi pertumbuhan kesiapan digital UMKM pasca-proyek selesai:

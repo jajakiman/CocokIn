@@ -78,7 +78,7 @@ export function BusinessFeatureSplit() {
                 <span className="check-bullet check-bullet--biz"><Check size={16} weight="bold" /></span>
                 <div>
                   <strong>Ubah Masalah Usaha Jadi Proyek Nyata</strong>
-                  <p>Susun kendala usaha menjadi rencana proyek digital 3–14 hari yang praktis.</p>
+                  <p>Susun kendala usaha menjadi rencana proyek digital dengan tahapan milestone yang praktis.</p>
                 </div>
               </li>
               <li>

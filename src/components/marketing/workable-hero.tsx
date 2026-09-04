@@ -26,7 +26,7 @@ export function WorkableHero() {
           </h1>
 
           <p className="heyretro-hero__lead">
-            CocokIn mempertemukan talenta muda dan UMKM melalui pengerjaan proyek 3–14 hari
+            CocokIn mempertemukan talenta muda dan UMKM melalui pengerjaan proyek berbasis milestone terstruktur
             dengan pencocokan terbuka, hasil yang dapat ditinjau, dan perlindungan yang jelas.
           </p>
 
