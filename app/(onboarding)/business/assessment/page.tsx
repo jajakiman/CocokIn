@@ -1,92 +1,76 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { prisma } from "@/src/adapters/database/prisma";
+import { getSession } from "@/src/lib/session";
+import { BusinessAssessmentWizard } from "@/src/components/business/business-assessment-wizard";
+import { AppShell } from "@/src/design-system/app-shell";
 
-const questions = [
-  { id: "q1", text: "Apakah bisnis Anda sudah memiliki pencatatan keuangan digital?", options: ["Belum", "Dalam Proses", "Sudah"] },
-  { id: "q2", text: "Apakah Anda memiliki target pasar digital yang jelas?", options: ["Belum", "Sebagian", "Sudah"] },
-  { id: "q3", text: "Seberapa siap tim Anda untuk mengadopsi teknologi baru?", options: ["Kurang Siap", "Cukup Siap", "Sangat Siap"] },
-  { id: "q4", text: "Apakah Anda memiliki SOP (Standard Operating Procedure) operasional?", options: ["Tidak Ada", "Ada namun tidak lengkap", "Ada dan Lengkap"] },
-  { id: "q5", text: "Apakah Anda pernah menggunakan jasa freelancer/talent sebelumnya?", options: ["Belum Pernah", "Pernah, tapi kurang puas", "Pernah dan Puas"] }
-];
+export async function generateMetadata() {
+  return { title: "Asesmen Kesiapan UMKM | CocokIn" };
+}
 
-export default function BusinessAssessmentPage() {
-  const router = useRouter();
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
+export default async function BusinessAssessmentPage() {
+  const session = await getSession();
+  if (!session || session.role !== "BUSINESS") redirect("/login");
 
-  const handleSelect = (qId: string, value: string) => {
-    setAnswers(prev => ({ ...prev, [qId]: value }));
-  };
+  const user = await prisma.user.findUnique({
+    where: { id: session.id },
+    include: {
+      businessProfile: {
+        include: { assessments: { select: { id: true }, take: 1 } },
+      },
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (Object.keys(answers).length < questions.length) {
-      alert("Harap jawab semua pertanyaan.");
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      await fetch("/api/business/assessment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers }),
-      });
-      router.push("/business"); // Redirect to dashboard
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!user?.emailVerified) redirect("/verify-email");
+
+  const profile = user.businessProfile;
+
+  // Jika belum mengisi data profil dasar bisnis, kembalikan ke profil
+  if (!profile || !profile.businessName) {
+    redirect("/business/profile");
+  }
+
+  // Jika asesmen sudah pernah diisi, langsung arahkan ke dashboard
+  if (profile.assessments.length > 0) {
+    redirect("/business");
+  }
 
   return (
-    <div className="min-h-screen bg-[#F7F9FC] flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-[#D8E1EE]">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-[#001040]">
-            Asesmen Kesiapan UMKM
-          </h2>
-          <p className="mt-2 text-center text-sm text-[#53647A]">
-            Bantu kami memahami kesiapan bisnis Anda (5 Pilar) untuk mencocokkan Anda dengan talent terbaik.
-          </p>
-        </div>
-        <form className="mt-8 space-y-8" onSubmit={handleSubmit}>
-          {questions.map((q, index) => (
-            <div key={q.id} className="space-y-4">
-              <label className="block text-base font-medium text-[#001040]">
-                {index + 1}. {q.text}
-              </label>
-              <div className="space-y-2">
-                {q.options.map((opt) => (
-                  <label key={opt} className="flex items-center space-x-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name={q.id}
-                      value={opt}
-                      checked={answers[q.id] === opt}
-                      onChange={() => handleSelect(q.id, opt)}
-                      className="h-4 w-4 text-[#0080FF] border-[#D8E1EE] focus:ring-[#0080FF]"
-                    />
-                    <span className="text-sm text-[#53647A]">{opt}</span>
-                  </label>
-                ))}
-              </div>
+    <div className="relative min-h-[100dvh] bg-[#F7F9FC] font-sans">
+      {/* Background Dashboard Mockup (Blurred Backdrop for authentic portal preview) */}
+      <div aria-hidden="true" className="pointer-events-none select-none filter blur-[3px] opacity-40">
+        <AppShell
+          role="business"
+          user={{
+            id: user.id,
+            email: user.email || "",
+            displayName: profile.businessName || user.name || "Pemilik Usaha",
+            role: "BUSINESS",
+          }}
+        >
+          <div className="space-y-6 max-w-6xl mx-auto p-4 md:p-8">
+            <div className="flex justify-between items-center">
+              <div className="h-10 w-56 bg-[#001040]/10 rounded-xl animate-pulse" />
+              <div className="h-10 w-36 bg-[#001040]/10 rounded-xl" />
             </div>
-          ))}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#001040] hover:bg-[#001040]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0080FF] disabled:opacity-50"
-            >
-              {loading ? "Menyimpan..." : "Selesai & Mulai Eksplorasi"}
-            </button>
+            <div className="h-16 w-full bg-[#EAF3FF] border border-[#BAE6FD] rounded-xl" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+            </div>
+
+            <div className="h-72 bg-white border border-[#D8E1EE] rounded-2xl p-6 shadow-sm" />
           </div>
-        </form>
+        </AppShell>
+      </div>
+
+      {/* Backdrop Dimmer & Pop-up Modal Dialog Window */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#001040]/50 backdrop-blur-md p-4 sm:p-6 overflow-y-auto">
+        <BusinessAssessmentWizard />
       </div>
     </div>
   );
