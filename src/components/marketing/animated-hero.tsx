@@ -19,8 +19,8 @@ export function AnimatedHero() {
           </div>
 
           <h1>
-            Ubah Potensi Jadi <span className="highlight-gradient">Bukti Nyata</span>, Selesaikan
-            Kebutuhan Solutif.
+            Ubah Potensi Jadi <span className="highlight-gradient">Bukti</span>, Selesaikan{" "}
+            <span className="highlight-gradient">Solusi Pasti</span>.
           </h1>
 
           <p className="landing-hero__lead">

@@ -13,7 +13,7 @@ export function PublicFooter() {
               <CocokInBrand className="public-brand__wordmark" decorative variant="wordmark" />
             </Link>
             <p className="public-footer__desc">
-              CocokIn menghubungkan talenta muda dengan kebutuhan digital UMKM melalui proyek yang
+              <strong>Ubah Potensi Jadi Bukti, Selesaikan Solusi Pasti.</strong> CocokIn menghubungkan talenta muda dengan kebutuhan digital UMKM melalui proyek yang
               terarah, mudah dipantau, dan memiliki perlindungan hasil kerja.
             </p>
             <p className="public-footer__platform-note">

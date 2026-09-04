@@ -21,8 +21,8 @@ export function WorkableHero() {
           </div>
 
           <h1>
-            Potensi Bertemu Kebutuhan, <br className="hidden md:inline" />
-            Proyek Nyata Mulai Berjalan.
+            Ubah Potensi Jadi Bukti, <br className="hidden md:inline" />
+            Selesaikan Solusi Pasti.
           </h1>
 
           <p className="heyretro-hero__lead">
@@ -48,7 +48,7 @@ export function WorkableHero() {
               <CheckCircle size={16} weight="fill" /> Pencocokan Objektif & Adil
             </span>
             <span>
-              <Clock size={16} weight="fill" /> Durasi Nyata 3–14 Hari
+              <Clock size={16} weight="fill" /> Berbasis Milestone Terarah
             </span>
             <span>
               <ShieldCheck size={16} weight="fill" /> Dana Aman & Garansi 30 Hari
