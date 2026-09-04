@@ -1,120 +1,76 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { prisma } from "@/src/adapters/database/prisma";
+import { getSession } from "@/src/lib/session";
+import { BusinessOnboardingWizard } from "@/src/components/business/business-onboarding-wizard";
+import { AppShell } from "@/src/design-system/app-shell";
 
-export default function BusinessProfilePage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+export async function generateMetadata() {
+  return { title: "Profil Awal UMKM | CocokIn" };
+}
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+export default async function BusinessProfilePage() {
+  const session = await getSession();
+  if (!session || session.role !== "BUSINESS") redirect("/login");
 
-    const formData = new FormData(e.currentTarget);
-    const data = {
-      name: formData.get("name"),
-      industry: formData.get("industry"),
-      description: formData.get("description"),
-      city: formData.get("city"),
-    };
+  const user = await prisma.user.findUnique({
+    where: { id: session.id },
+    include: {
+      businessProfile: {
+        include: { assessments: { select: { id: true }, take: 1 } },
+      },
+    },
+  });
 
-    try {
-      await fetch("/api/business/profile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      router.push("/business/assessment");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!user?.emailVerified) redirect("/verify-email");
+
+  const profile = user.businessProfile;
+
+  // Jika profile sudah lengkap dan asesmen sudah dikerjakan, arahkan langsung ke dashboard
+  if (profile && profile.businessName && profile.assessments.length > 0) {
+    redirect("/business");
+  }
 
   return (
-    <div className="min-h-screen bg-[#F7F9FC] flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-[#D8E1EE]">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-[#001040]">
-            Profil UMKM
-          </h2>
-          <p className="mt-2 text-center text-sm text-[#53647A]">
-            Lengkapi data bisnis Anda untuk menemukan talent yang tepat.
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-[#001040]">
-                Nama Bisnis
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="appearance-none relative block w-full px-3 py-2 border border-[#D8E1EE] placeholder-[#53647A] text-[#001040] rounded-md focus:outline-none focus:ring-[#0080FF] focus:border-[#0080FF] sm:text-sm"
-                placeholder="Misal: Kopi Kenangan"
-              />
+    <div className="relative min-h-[100dvh] bg-[#F7F9FC] font-sans">
+      {/* Background Dashboard Mockup (Blurred Backdrop for authentic portal preview) */}
+      <div aria-hidden="true" className="pointer-events-none select-none filter blur-[3px] opacity-40">
+        <AppShell
+          role="business"
+          user={{
+            id: user.id,
+            email: user.email || "",
+            displayName: profile?.businessName || user.name || "Pemilik Usaha",
+            role: "BUSINESS",
+          }}
+        >
+          <div className="space-y-6 max-w-6xl mx-auto p-4 md:p-8">
+            <div className="flex justify-between items-center">
+              <div className="h-10 w-56 bg-[#001040]/10 rounded-xl animate-pulse" />
+              <div className="h-10 w-36 bg-[#001040]/10 rounded-xl" />
             </div>
-            <div>
-              <label htmlFor="industry" className="block text-sm font-medium text-[#001040]">
-                Industri
-              </label>
-              <select
-                id="industry"
-                name="industry"
-                required
-                className="appearance-none relative block w-full px-3 py-2 border border-[#D8E1EE] bg-white text-[#001040] rounded-md focus:outline-none focus:ring-[#0080FF] focus:border-[#0080FF] sm:text-sm"
-              >
-                <option value="">Pilih Industri</option>
-                <option value="F&B">F&B</option>
-                <option value="Retail">Retail</option>
-                <option value="Jasa">Jasa</option>
-                <option value="Teknologi">Teknologi</option>
-                <option value="Lainnya">Lainnya</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="city" className="block text-sm font-medium text-[#001040]">
-                Kota/Kabupaten
-              </label>
-              <input
-                id="city"
-                name="city"
-                type="text"
-                required
-                className="appearance-none relative block w-full px-3 py-2 border border-[#D8E1EE] placeholder-[#53647A] text-[#001040] rounded-md focus:outline-none focus:ring-[#0080FF] focus:border-[#0080FF] sm:text-sm"
-                placeholder="Misal: Jakarta Selatan"
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-[#001040]">
-                Deskripsi Singkat
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                rows={3}
-                required
-                className="appearance-none relative block w-full px-3 py-2 border border-[#D8E1EE] placeholder-[#53647A] text-[#001040] rounded-md focus:outline-none focus:ring-[#0080FF] focus:border-[#0080FF] sm:text-sm"
-                placeholder="Ceritakan sedikit tentang bisnis Anda"
-              />
-            </div>
-          </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#001040] hover:bg-[#001040]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0080FF] disabled:opacity-50"
-            >
-              {loading ? "Menyimpan..." : "Lanjutkan"}
-            </button>
+            <div className="h-16 w-full bg-[#EAF3FF] border border-[#BAE6FD] rounded-xl" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+              <div className="h-28 bg-white border border-[#D8E1EE] rounded-2xl p-4 shadow-sm" />
+            </div>
+
+            <div className="h-72 bg-white border border-[#D8E1EE] rounded-2xl p-6 shadow-sm" />
           </div>
-        </form>
+        </AppShell>
+      </div>
+
+      {/* Backdrop Dimmer & Pop-up Modal Dialog Window */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#001040]/50 backdrop-blur-md p-4 sm:p-6 overflow-y-auto">
+        <BusinessOnboardingWizard
+          initialBusinessName={profile?.businessName || ""}
+          initialIndustry={profile?.industryCategory || ""}
+          initialCity={profile?.location || ""}
+          initialDescription={profile?.description || ""}
+        />
       </div>
     </div>
   );
