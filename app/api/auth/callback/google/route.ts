@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { prisma } from "@/src/adapters/database/prisma";
 import { createSession } from "@/src/lib/session";
+import { initialBusinessProfile } from "@/src/modules/business/profile";
 import { validateOAuthState } from "@/src/modules/identity/oauth";
 
 type GoogleProfile = {
@@ -84,7 +85,7 @@ export async function GET(request: Request) {
         await tx.businessProfile.upsert({
           where: { userId: saved.id },
           update: {},
-          create: { userId: saved.id, businessName: saved.name || "UMKM Partner" },
+          create: initialBusinessProfile(saved.id),
         });
       }
       return saved;

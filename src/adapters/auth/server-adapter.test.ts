@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { parseRegistrationRequest } from "./server-adapter";
 import { registrationConsentRecords } from "@/src/modules/identity/registration-consent";
+import { initialBusinessProfile } from "@/src/modules/business/profile";
 
 describe("registration trust boundary", () => {
   it("rejects privileged roles, short passwords, and missing consent", async () => {
@@ -14,6 +15,13 @@ describe("registration trust boundary", () => {
     await expect(parseRegistrationRequest({ role: "TALENT", fullName: " Talent Baru ", email: "talent@example.com", password: "password123", termsAccepted: true })).resolves.toMatchObject({
       role: "TALENT",
       fullName: "Talent Baru",
+    });
+  });
+
+  it("keeps the owner name separate from the initial business name", () => {
+    expect(initialBusinessProfile("user-id")).toEqual({
+      userId: "user-id",
+      businessName: "",
     });
   });
 

@@ -21,7 +21,9 @@ describe("BusinessAssessmentWizard", () => {
     // Dialog accessibility
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-labelledby", "modal-assessment-title");
-    expect(screen.getByText("Asesmen Kesiapan Digital")).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: "Asesmen Kesiapan Digital" });
+    expect(heading).toBeInTheDocument();
+    expect(heading.querySelector("svg")).toBeNull();
 
     // Required indicators (*)
     const asterisks = screen.getAllByTitle("Wajib dijawab");

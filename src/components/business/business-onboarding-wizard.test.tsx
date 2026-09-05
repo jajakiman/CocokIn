@@ -21,7 +21,9 @@ describe("BusinessOnboardingWizard", () => {
     // Dialog accessibility
     const dialog = screen.getByRole("dialog");
     expect(dialog).toHaveAttribute("aria-labelledby", "modal-biz-title");
-    expect(screen.getByText("Profil Usaha UMKM")).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: "Profil UMKM" });
+    expect(heading).toBeInTheDocument();
+    expect(heading.querySelector("svg")).toBeNull();
 
     // Required indicators (*)
     const asterisks = screen.getAllByTitle("Wajib diisi");

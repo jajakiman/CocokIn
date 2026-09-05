@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Sparkle, ChartLineUp, CheckCircle, Circle } from "@phosphor-icons/react";
+import { ArrowRight, ChartLineUp, CheckCircle, Circle } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -101,10 +101,9 @@ export function BusinessAssessmentWizard() {
             <div>
               <h2
                 id="modal-assessment-title"
-                className="text-lg font-bold text-[#001040] leading-tight flex items-center gap-1.5"
+                className="text-lg font-bold text-[#001040] leading-tight"
               >
                 Asesmen Kesiapan Digital
-                <Sparkle className="text-[#FF8010]" size={16} weight="fill" />
               </h2>
               <p className="text-xs text-[#53647A]">
                 Evaluasi 5 pilar kesiapan bisnis Anda untuk pencocokan proyek yang akurat.

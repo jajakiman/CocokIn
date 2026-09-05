@@ -25,9 +25,14 @@ export default async function BusinessProfilePage() {
   if (!user?.emailVerified) redirect("/verify-email");
 
   const profile = user.businessProfile;
+  const savedBusinessName = profile?.businessName.trim() ?? "";
+  const ownerName = user.name?.trim() ?? "";
+  const hasDistinctBusinessName = Boolean(
+    savedBusinessName && savedBusinessName.toLocaleLowerCase("id-ID") !== ownerName.toLocaleLowerCase("id-ID"),
+  );
 
   // Jika profile sudah lengkap dan asesmen sudah dikerjakan, arahkan langsung ke dashboard
-  if (profile && profile.businessName && profile.assessments.length > 0) {
+  if (profile && hasDistinctBusinessName && profile.assessments.length > 0) {
     redirect("/business");
   }
 
@@ -40,7 +45,7 @@ export default async function BusinessProfilePage() {
           user={{
             id: user.id,
             email: user.email || "",
-            displayName: profile?.businessName || user.name || "Pemilik Usaha",
+            displayName: hasDistinctBusinessName ? savedBusinessName : "UMKM Baru",
             role: "BUSINESS",
           }}
         >
@@ -66,7 +71,7 @@ export default async function BusinessProfilePage() {
       {/* Backdrop Dimmer & Pop-up Modal Dialog Window */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#001040]/50 backdrop-blur-md p-4 sm:p-6 overflow-y-auto">
         <BusinessOnboardingWizard
-          initialBusinessName={profile?.businessName || ""}
+          initialBusinessName={hasDistinctBusinessName ? savedBusinessName : ""}
           initialIndustry={profile?.industryCategory || ""}
           initialCity={profile?.location || ""}
           initialDescription={profile?.description || ""}

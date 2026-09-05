@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Sparkle, Storefront, Buildings, MapPin, Tag } from "@phosphor-icons/react";
+import { ArrowRight, Storefront, Buildings, MapPin, Tag } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -104,9 +104,8 @@ export function BusinessOnboardingWizard({
         <div className="flex items-center gap-2.5">
           <CocokInBrand className="h-7 w-7 object-contain" decorative priority variant="mark" />
           <div>
-            <h2 id="modal-biz-title" className="text-lg font-bold text-[#001040] leading-tight flex items-center gap-1.5">
-              Profil Usaha UMKM
-              <Sparkle className="text-[#FF8010]" size={16} weight="fill" />
+            <h2 id="modal-biz-title" className="text-lg font-bold text-[#001040] leading-tight">
+              Profil UMKM
             </h2>
             <p className="text-xs text-[#53647A]">Lengkapi data bisnis Anda untuk mulai memposting proyek digital.</p>
           </div>

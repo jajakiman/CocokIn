@@ -12,6 +12,7 @@ import { registrationConsentRecords } from "@/src/modules/identity/registration-
 import { hashEmailVerificationToken, verificationIdentifier } from "@/src/modules/identity/email-verification";
 import { scheduleVerificationEmail } from "@/src/adapters/email/verification-delivery";
 import { cookies } from "next/headers";
+import { initialBusinessProfile } from "@/src/modules/business/profile";
 
 const serverRegistrationSchema = z.object({
   role: z.enum(["TALENT", "BUSINESS"]),
@@ -87,7 +88,7 @@ export async function register(input: RegistrationRequest) {
         });
       } else if (req.role === "BUSINESS") {
         await tx.businessProfile.create({
-          data: { userId: createdUser.id, businessName: req.fullName }
+          data: initialBusinessProfile(createdUser.id)
         });
       }
 
