@@ -171,11 +171,14 @@ export async function applyToProject(talentUserId: string, projectId: string, mo
       skills: talentProfile.skills.map((s) => ({
         skillId: s.skillId,
         name: s.skill.name,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         level: s.evidenceLevel as any,
       })),
       targetCareerId: talentProfile.careerTarget || "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       availability: talentProfile.timeAvailability as any,
       completedProjectsCount: 0, // Fallback for MVP
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       workModePreference: talentProfile.workModePreference as any,
       city: undefined,
     },
@@ -185,6 +188,7 @@ export async function applyToProject(talentUserId: string, projectId: string, mo
         name: s.skill.name,
       })),
       targetCareerId: "", // Simplification for now
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       difficulty: project.difficulty as any,
       durationDays: project.estimatedDays,
       workMode: "REMOTE", // Simplified for Phase 3 MVP

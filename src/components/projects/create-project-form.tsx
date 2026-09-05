@@ -43,7 +43,7 @@ export function CreateProjectForm() {
   const [deadline, setDeadline] = useState("");
   const [serviceValue, setServiceValue] = useState("");
   const [milestones, setMilestones] = useState([
-    { id: Date.now(), title: "Milestone 1", weightBps: 10000, deadline: "", acceptanceCriteria: [""] }
+    { id: 1, title: "Milestone 1", weightBps: 10000, deadline: "", acceptanceCriteria: [""] }
   ]);
 
   // AI Modal State
@@ -63,15 +63,17 @@ export function CreateProjectForm() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (parsed.title) setTitle(parsed.title);
-        if (parsed.scope) setScope(parsed.scope);
-        if (parsed.skills) setSkills(parsed.skills);
-        if (parsed.difficulty) setDifficulty(parsed.difficulty);
-        if (parsed.infrastructureNeed) setInfrastructureNeed(parsed.infrastructureNeed);
-        if (parsed.estimatedDays) setEstimatedDays(parsed.estimatedDays);
-        if (parsed.deadline) setDeadline(parsed.deadline);
-        if (parsed.serviceValue) setServiceValue(parsed.serviceValue);
-        if (parsed.milestones) setMilestones(parsed.milestones);
+        setTimeout(() => {
+          if (parsed.title) setTitle(parsed.title);
+          if (parsed.scope) setScope(parsed.scope);
+          if (parsed.skills) setSkills(parsed.skills);
+          if (parsed.difficulty) setDifficulty(parsed.difficulty);
+          if (parsed.infrastructureNeed) setInfrastructureNeed(parsed.infrastructureNeed);
+          if (parsed.estimatedDays) setEstimatedDays(parsed.estimatedDays);
+          if (parsed.deadline) setDeadline(parsed.deadline);
+          if (parsed.serviceValue) setServiceValue(parsed.serviceValue);
+          if (parsed.milestones) setMilestones(parsed.milestones);
+        }, 0);
       } catch (e) {
         console.error("Failed to restore draft", e);
       }

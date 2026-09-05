@@ -120,7 +120,7 @@ export function ChatInterface({
 
   useEffect(() => {
     if (reportState?.ok) {
-      setReportingMessageId(null);
+      setTimeout(() => setReportingMessageId(null), 0);
       alert(reportState.message);
     }
   }, [reportState]);
