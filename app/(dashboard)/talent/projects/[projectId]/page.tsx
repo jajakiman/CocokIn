@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/src/design-system/page-header";
 import { ApplyProjectForm } from "@/src/components/projects/apply-project-form";
+import { ProjectAgreementCard } from "@/src/components/projects/project-agreement-card";
 import { Clock, Briefcase, Lightning, ArrowLeft, BuildingOffice, CheckCircle } from "@phosphor-icons/react/dist/ssr";
 
 export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }) {
@@ -32,11 +33,12 @@ export default async function TalentProjectDetailPage({ params }: { params: Prom
     include: {
       businessProfile: true,
       skills: { include: { skill: true } },
+      agreement: true,
       applications: { where: { talentProfileId: talentProfile.id } },
     }
   });
 
-  if (!project || project.status !== "PUBLISHED") {
+  if (!project) {
     return (
       <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 text-center">
         <h1 className="text-2xl font-bold text-[#001040]">Proyek Tidak Ditemukan</h1>
@@ -49,12 +51,36 @@ export default async function TalentProjectDetailPage({ params }: { params: Prom
   }
 
   const existingApplication = project.applications[0];
+  const isAccepted = existingApplication?.status === "ACCEPTED";
+
+  if (project.status !== "PUBLISHED" && !isAccepted) {
+    return (
+      <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-8 text-center">
+        <h1 className="text-2xl font-bold text-[#001040]">Proyek Tidak Tersedia</h1>
+        <p className="text-[#53647A]">Proyek ini tidak lagi menerima lamaran baru atau Anda tidak memiliki akses.</p>
+        <Link href="/talent/projects" className="text-[#006FE6] font-bold hover:underline">
+          &larr; Kembali ke Marketplace
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
       <Link href="/talent/projects" className="inline-flex items-center gap-2 text-[#53647A] font-medium hover:text-[#001040] transition-colors mb-4">
         <ArrowLeft weight="bold" /> Kembali ke Marketplace
       </Link>
+      
+      {project.status === "TALENT_SELECTED" && project.agreement && isAccepted && (
+        <ProjectAgreementCard 
+          projectId={project.id}
+          role="TALENT"
+          talentAgreedAt={project.agreement.talentAgreedAt}
+          businessAgreedAt={project.agreement.businessAgreedAt}
+          serviceValue={project.serviceValue}
+          estimatedDays={project.estimatedDays}
+        />
+      )}
 
       <div className="bg-white border border-[#D8E1EE] rounded-2xl overflow-hidden shadow-sm">
         {/* Header Section */}
@@ -117,15 +143,19 @@ export default async function TalentProjectDetailPage({ params }: { params: Prom
 
           <div className="lg:col-span-1">
             {existingApplication ? (
-              <div className="bg-[#ECFDF5] border border-[#059669] p-6 rounded-xl flex flex-col items-center text-center sticky top-24">
-                <CheckCircle size={48} weight="fill" className="text-[#059669] mb-4" />
-                <h3 className="font-bold text-[#001040] text-lg mb-2">Lamaran Terkirim!</h3>
-                <p className="text-[#059669] text-sm">
-                  Anda sudah melamar untuk proyek ini. UMKM sedang meninjau lamaran Anda beserta kandidat lainnya.
+              <div className={`border p-6 rounded-xl flex flex-col items-center text-center sticky top-24 ${isAccepted ? 'bg-[#FFF4E5] border-[#FF8010]' : 'bg-[#ECFDF5] border-[#059669]'}`}>
+                <CheckCircle size={48} weight="fill" className={isAccepted ? 'text-[#FF8010] mb-4' : 'text-[#059669] mb-4'} />
+                <h3 className="font-bold text-[#001040] text-lg mb-2">
+                  {isAccepted ? "Lamaran Diterima!" : "Lamaran Terkirim!"}
+                </h3>
+                <p className={isAccepted ? "text-[#FF8010] text-sm" : "text-[#059669] text-sm"}>
+                  {isAccepted 
+                    ? "Selamat! Lamaran Anda telah diterima oleh UMKM. Silakan tinjau dan tandatangani perjanjian proyek." 
+                    : "Anda sudah melamar untuk proyek ini. UMKM sedang meninjau lamaran Anda beserta kandidat lainnya."}
                 </p>
-                <div className="mt-6 w-full p-4 bg-white rounded-lg border border-[#A7F3D0] text-sm text-left">
+                <div className={`mt-6 w-full p-4 bg-white rounded-lg border text-sm text-left ${isAccepted ? 'border-[#FF8010]/30' : 'border-[#A7F3D0]'}`}>
                   <span className="block font-bold text-[#001040] mb-1">Status:</span>
-                  <span className="text-[#059669] font-semibold uppercase">{existingApplication.status}</span>
+                  <span className={`font-semibold uppercase ${isAccepted ? 'text-[#FF8010]' : 'text-[#059669]'}`}>{existingApplication.status}</span>
                 </div>
               </div>
             ) : (

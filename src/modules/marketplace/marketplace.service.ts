@@ -278,12 +278,17 @@ export async function acceptApplicant(businessUserId: string, applicationId: str
       data: { status: "TALENT_SELECTED" }
     });
     
+    // 4. Initialize empty ProjectAgreement
+    await tx.projectAgreement.create({
+      data: { projectId: application.projectId }
+    });
+    
     // Send Notification to Talent
     const { createNotification } = await import("@/src/modules/notifications/notification.service");
     await createNotification(
       application.talentProfile.userId,
       "Lamaran Diterima!",
-      `Selamat! Lamaran Anda untuk proyek "${application.project.title}" telah diterima.`
+      `Selamat! Lamaran Anda untuk proyek "${application.project.title}" telah diterima. Silakan tandatangani perjanjian.`
     );
 
     return application;
@@ -291,4 +296,71 @@ export async function acceptApplicant(businessUserId: string, applicationId: str
     maxWait: 10000,
     timeout: 20000
   });
+}
+
+export async function signProjectAgreement(userId: string, projectId: string, role: "BUSINESS" | "TALENT") {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: {
+      agreement: true,
+      businessProfile: true,
+      applications: {
+        where: { status: "ACCEPTED" },
+        include: { talentProfile: true }
+      }
+    }
+  });
+
+  if (!project || project.status !== "TALENT_SELECTED") {
+    throw new Error("Project not available for agreement signing.");
+  }
+  
+  if (!project.agreement) {
+    throw new Error("Agreement not found.");
+  }
+
+  const acceptedApp = project.applications[0];
+  if (!acceptedApp) throw new Error("No accepted talent found.");
+
+  if (role === "BUSINESS" && project.businessProfile.userId !== userId) {
+    throw new Error("Unauthorized to sign as UMKM.");
+  }
+  
+  if (role === "TALENT" && acceptedApp.talentProfile.userId !== userId) {
+    throw new Error("Unauthorized to sign as Talent.");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const updateData = role === "BUSINESS" 
+      ? { businessAgreedAt: new Date() } 
+      : { talentAgreedAt: new Date() };
+
+    const updatedAgreement = await tx.projectAgreement.update({
+      where: { projectId },
+      data: updateData
+    });
+
+    const isFullySigned = updatedAgreement.businessAgreedAt && updatedAgreement.talentAgreedAt;
+    
+    if (isFullySigned) {
+      await tx.project.update({
+        where: { id: projectId },
+        data: { status: "AGREEMENT_CONFIRMED" }
+      });
+    }
+
+    // Notify the other party
+    const { createNotification } = await import("@/src/modules/notifications/notification.service");
+    const otherUserId = role === "BUSINESS" ? acceptedApp.talentProfile.userId : project.businessProfile.userId;
+    
+    await createNotification(
+      otherUserId,
+      isFullySigned ? "Perjanjian Selesai!" : "Perjanjian Ditandatangani",
+      isFullySigned 
+        ? `Perjanjian untuk proyek "${project.title}" telah disetujui kedua belah pihak.`
+        : `${role === "BUSINESS" ? "UMKM" : "Talent"} telah menandatangani perjanjian untuk proyek "${project.title}".`
+    );
+
+    return updatedAgreement;
+  }, { maxWait: 10000, timeout: 20000 });
 }

@@ -401,9 +401,21 @@ model Project {
   escrowTransaction EscrowTransaction?
   fundingReceipt    FundingReceipt?
   portfolioEntry    PortfolioEntry?
+  agreement         ProjectAgreement?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProjectAgreement {
+  id               String    @id @default(cuid())
+  projectId        String    @unique
+  talentAgreedAt   DateTime?
+  businessAgreedAt DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model ProjectSkill {

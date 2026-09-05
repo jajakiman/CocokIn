@@ -128,3 +128,29 @@ export async function acceptApplicantAction(
   }
 }
 
+export async function signAgreementAction(
+  prevState: ActionState | null,
+  formData: FormData
+): Promise<ActionState> {
+  const session = await getSession();
+  
+  if (!session) {
+    return { ok: false, message: "Akses ditolak. Silakan login." };
+  }
+
+  const projectId = String(formData.get("projectId"));
+  const role = session.role === "BUSINESS" ? "BUSINESS" : "TALENT";
+
+  try {
+    const { signProjectAgreement } = await import("@/src/modules/marketplace/marketplace.service");
+    await signProjectAgreement(session.id, projectId, role);
+
+    revalidatePath(`/business/projects/${projectId}`);
+    revalidatePath(`/talent/projects/${projectId}`);
+
+    return { ok: true, message: "Perjanjian berhasil ditandatangani!" };
+  } catch (error: unknown) {
+    console.error(error);
+    return { ok: false, message: error instanceof Error && error.message || "Terjadi kesalahan internal." };
+  }
+}

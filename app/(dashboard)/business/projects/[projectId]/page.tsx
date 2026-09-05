@@ -3,6 +3,7 @@ import { prisma } from "@/src/adapters/database/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Users, Clock, Briefcase } from "@phosphor-icons/react/dist/ssr";
+import { ProjectAgreementCard } from "@/src/components/projects/project-agreement-card";
 
 export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }) {
   const resolvedParams = await params;
@@ -31,6 +32,7 @@ export default async function BusinessProjectDetailPage({ params }: { params: Pr
     include: {
       skills: { include: { skill: true } },
       milestones: { include: { criteria: true }, orderBy: { deadline: 'asc' } },
+      agreement: true,
       _count: { select: { applications: true } }
     }
   });
@@ -66,6 +68,17 @@ export default async function BusinessProjectDetailPage({ params }: { params: Pr
           </div>
         </div>
       </div>
+
+      {project.status === "TALENT_SELECTED" && project.agreement && (
+        <ProjectAgreementCard 
+          projectId={project.id}
+          role="BUSINESS"
+          talentAgreedAt={project.agreement.talentAgreedAt}
+          businessAgreedAt={project.agreement.businessAgreedAt}
+          serviceValue={project.serviceValue}
+          estimatedDays={project.estimatedDays}
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
