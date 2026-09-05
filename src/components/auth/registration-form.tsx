@@ -214,11 +214,23 @@ export function RegistrationForm({
             <div>
               <label htmlFor="register-termsAccepted" className="font-normal leading-relaxed">
                 Saya telah membaca dan menyetujui{" "}
-                <Link href="/terms" target="_blank" rel="noreferrer" className="text-[#006FE6] font-bold underline underline-offset-2 decoration-[#006FE6]/60 hover:decoration-[#006FE6] transition-colors">
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#006FE6] font-bold underline underline-offset-4 decoration-[#006FE6] hover:text-[#005DCC] hover:decoration-[#005DCC] transition-colors"
+                  style={{ textDecoration: "underline", textUnderlineOffset: "3px", textDecorationColor: "#006FE6" }}
+                >
                   Syarat dan Ketentuan Layanan
                 </Link>{" "}
                 serta{" "}
-                <Link href="/privacy" target="_blank" rel="noreferrer" className="text-[#006FE6] font-bold underline underline-offset-2 decoration-[#006FE6]/60 hover:decoration-[#006FE6] transition-colors">
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#006FE6] font-bold underline underline-offset-4 decoration-[#006FE6] hover:text-[#005DCC] hover:decoration-[#005DCC] transition-colors"
+                  style={{ textDecoration: "underline", textUnderlineOffset: "3px", textDecorationColor: "#006FE6" }}
+                >
                   Kebijakan Privasi
                 </Link>{" "}
                 CocokIn. <span className="text-[#E11D48]" aria-hidden="true">*</span>

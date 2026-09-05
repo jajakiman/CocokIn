@@ -159,6 +159,20 @@
   font-weight: 700;
 }
 
+.auth-checkbox-field a {
+  color: #006FE6 !important;
+  font-weight: 700 !important;
+  text-decoration: underline !important;
+  text-decoration-color: #006FE6 !important;
+  text-decoration-thickness: 1.5px !important;
+  text-underline-offset: 3px !important;
+}
+
+.auth-checkbox-field a:hover {
+  color: #005DCC !important;
+  text-decoration-color: #005DCC !important;
+}
+
 .auth-field input {
   background: var(--surface);
   border: 1px solid var(--border-strong);
