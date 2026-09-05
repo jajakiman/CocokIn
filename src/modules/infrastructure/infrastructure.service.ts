@@ -10,7 +10,8 @@ export async function submitHandover(
     where: { id: projectId },
     include: {
       applications: { where: { talentProfile: { userId: talentUserId }, status: "ACCEPTED" } },
-      milestones: true
+      milestones: true,
+      businessProfile: true,
     }
   });
 
@@ -42,13 +43,13 @@ export async function submitHandover(
 
     await tx.project.update({
       where: { id: projectId },
-      data: { status: "HANDOVER_REVIEW" }
+      data: { status: "HANDOVER_PENDING" }
     });
 
     // Notify UMKM
     const { createNotification } = await import("@/src/modules/notifications/notification.service");
     await createNotification(
-      project.businessProfileId,
+      project.businessProfile.userId,
       "Handover Infrastruktur",
       `Talent telah mensubmit handover infrastruktur untuk proyek ${project.title}. Silakan direview.`
     );
@@ -78,10 +79,9 @@ export async function reviewHandover(
     });
 
     if (decision === "ACCEPTED") {
-      await tx.project.update({
-        where: { id: projectId },
-        data: { status: "COMPLETED" }
-      });
+      // Transition project to DELIVERED and initialize 30-day warranty agreement & 5-ticket maintenance package
+      const { startWarrantyPeriod } = await import("@/src/modules/support/warranty.service");
+      await startWarrantyPeriod(projectId);
 
       // Notify Talent
       if (project.applications[0]) {
@@ -89,7 +89,7 @@ export async function reviewHandover(
         await createNotification(
           project.applications[0].talentProfile.userId,
           "Handover Disetujui",
-          `Proyek ${project.title} telah selesai sepenuhnya!`
+          `Proyek ${project.title} telah disetujui serah terimanya dan resmi memasuki masa garansi 30 hari!`
         );
       }
 
@@ -104,6 +104,11 @@ export async function reviewHandover(
           data: { readinessScore: { increment: 5 }, operationsScore: { increment: 5 } }
         });
       }
+    } else if (decision === "DISPUTED") {
+      await tx.project.update({
+        where: { id: projectId },
+        data: { status: "DISPUTED" }
+      });
     }
 
     return handover;

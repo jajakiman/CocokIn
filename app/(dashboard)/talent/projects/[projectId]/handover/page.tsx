@@ -40,7 +40,7 @@ export default async function TalentHandoverPage({
     <div className="max-w-4xl mx-auto space-y-6">
       <PageHeader 
         title="Handover Infrastruktur" 
-        subtitle="Serahkan akses dan kelengkapan proyek ke UMKM" 
+        description="Serahkan akses dan kelengkapan proyek ke UMKM" 
       />
 
       {!allMilestonesDone ? (

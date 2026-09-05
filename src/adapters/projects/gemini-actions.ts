@@ -93,7 +93,23 @@ Make sure there are between 2 to 4 milestones, and the total weightBps MUST sum 
       throw new Error("No response from AI");
     }
 
-    const data = JSON.parse(response.text);
+    // Sanitize any stray markdown wrappers (e.g. ```json ... ```)
+    let rawText = response.text.trim();
+    if (rawText.startsWith("```")) {
+      rawText = rawText.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "").trim();
+    }
+
+    const data = JSON.parse(rawText);
+
+    // Normalize milestone weights so they strictly sum to 10000 bps
+    if (Array.isArray(data.milestones) && data.milestones.length > 0) {
+      const currentSum = data.milestones.reduce((acc: number, m: { weightBps?: number }) => acc + (Number(m.weightBps) || 0), 0);
+      if (currentSum !== 10000 && currentSum > 0) {
+        const lastIndex = data.milestones.length - 1;
+        const diff = 10000 - currentSum;
+        data.milestones[lastIndex].weightBps = (Number(data.milestones[lastIndex].weightBps) || 0) + diff;
+      }
+    }
 
     return {
       ok: true,

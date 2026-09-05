@@ -37,7 +37,7 @@ export default async function BusinessHandoverPage({
     <div className="max-w-4xl mx-auto space-y-6">
       <PageHeader 
         title="Review Handover Infrastruktur" 
-        subtitle="Verifikasi hasil akhir proyek dari Talent sebelum penutupan" 
+        description="Verifikasi hasil akhir proyek dari Talent sebelum penutupan" 
       />
 
       {!project.infrastructureHandover ? (

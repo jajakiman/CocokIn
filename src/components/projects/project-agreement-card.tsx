@@ -3,7 +3,6 @@
 import React, { useActionState } from "react";
 import { signAgreementAction } from "@/src/adapters/projects/project-actions";
 import { CheckCircle, Clock } from "@phosphor-icons/react";
-import { Button } from "@/src/design-system/button"; // Assuming a button component exists, else we use raw HTML
 
 interface ProjectAgreementCardProps {
   projectId: string;

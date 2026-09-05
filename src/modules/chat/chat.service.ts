@@ -63,8 +63,9 @@ export async function saveMessage(
         });
         return message;
       });
-    } catch (error: any) {
-      if ((error.code !== "P2034" && error.code !== "P2002") || attempt === 2) throw error;
+    } catch (error: unknown) {
+      const code = typeof error === "object" && error !== null && "code" in error ? (error as { code: string }).code : undefined;
+      if ((code !== "P2034" && code !== "P2002") || attempt === 2) throw error;
     }
   }
   throw new Error("Unable to allocate message sequence");
