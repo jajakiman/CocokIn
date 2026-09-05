@@ -22,7 +22,7 @@ export function AuthShell({
   return (
     <div className="auth-shell">
       <div className="auth-shell__form">
-        <Link className="auth-shell__brand" href="/" aria-label="CocokIn beranda">
+        <Link className="auth-shell__brand auth-shell__brand--mobile" href="/" aria-label="CocokIn beranda">
           <CocokInBrand className="auth-shell__wordmark" decorative priority variant="wordmark" />
         </Link>
 
@@ -39,6 +39,11 @@ export function AuthShell({
 
       <aside className="auth-shell__context" aria-hidden="true">
         <div className="auth-shell__context-inner">
+          <div className="auth-shell__brand-wrapper">
+            <Link className="auth-shell__brand auth-shell__brand--desktop auth-shell__brand-badge" href="/" aria-label="CocokIn beranda">
+              <CocokInBrand className="auth-shell__wordmark" decorative priority variant="wordmark" />
+            </Link>
+          </div>
           <h2>{contextTitle}</h2>
           <div className="auth-shell__context-copy">
             {context}

@@ -22,6 +22,28 @@
   text-decoration: none;
 }
 
+.auth-shell__brand-wrapper {
+  margin-bottom: 2rem;
+}
+
+.auth-shell__brand-badge {
+  background: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.875rem;
+  box-shadow: 0 4px 14px rgba(0, 16, 64, 0.12);
+  padding: 0.5rem 1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-shell__brand-badge:hover {
+  box-shadow: 0 6px 20px rgba(0, 16, 64, 0.18);
+  transform: translateY(-1px);
+}
+
+.auth-shell__brand--desktop {
+  display: none;
+}
+
 .auth-shell__wordmark {
   height: auto;
   width: 8.5rem;
@@ -703,6 +725,14 @@
 
   .auth-shell__form {
     padding: 2rem;
+  }
+
+  .auth-shell__brand--mobile {
+    display: none;
+  }
+
+  .auth-shell__brand--desktop {
+    display: inline-flex;
   }
 
   .auth-shell__form-inner {

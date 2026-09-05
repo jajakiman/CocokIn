@@ -52,7 +52,7 @@ describe("AuthShell", () => {
     );
   });
 
-  it("uses the official wordmark in the auth shell", () => {
+  it("uses the official wordmark in the auth shell for both mobile and desktop views", () => {
     const { container } = render(
       <AuthShell
         title="Masuk ke CocokIn"
@@ -64,11 +64,15 @@ describe("AuthShell", () => {
       </AuthShell>,
     );
 
-    expect(screen.getByRole("link", { name: "CocokIn beranda" })).toBeVisible();
-    expect(container.querySelector(".auth-shell__brand img")).toHaveAttribute(
-      "src",
-      "/brand/cocokin/logo-wordmark.webp",
-    );
+    const brandLinks = screen.getAllByRole("link", { name: "CocokIn beranda" });
+    expect(brandLinks.length).toBeGreaterThanOrEqual(1);
+
+    const desktopBrand = container.querySelector(".auth-shell__context .auth-shell__brand img");
+    expect(desktopBrand).toHaveAttribute("src", "/brand/cocokin/logo-wordmark.webp");
+
+    const mobileBrand = container.querySelector(".auth-shell__form .auth-shell__brand img");
+    expect(mobileBrand).toHaveAttribute("src", "/brand/cocokin/logo-wordmark.webp");
+
     expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
   });
 });
