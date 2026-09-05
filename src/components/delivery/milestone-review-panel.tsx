@@ -109,11 +109,33 @@ export function MilestoneReviewPanel({
           <button 
             type="submit" 
             disabled={isPending || (state.ok && state.message !== "")}
-            className={`w-full font-bold py-3 rounded-xl transition-colors disabled:opacity-50 text-white ${
+            className={`w-full font-bold py-3 rounded-xl transition-colors disabled:opacity-50 text-white mb-3 ${
               decision === "APPROVED" ? "bg-[#059669] hover:bg-[#047857]" : "bg-[#E11D48] hover:bg-[#BE123C]"
             }`}
           >
             {isPending ? "Memproses..." : decision === "APPROVED" ? "Setujui & Konfirmasi" : "Kirim Catatan Revisi"}
+          </button>
+          
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={async () => {
+              if (confirm("Yakin ingin melaporkan server mati? Timer review akan dijeda.")) {
+                const formData = new FormData();
+                formData.append("milestoneSubmissionId", milestoneSubmissionId);
+                const { reportStagingDowntimeAction } = await import("@/src/adapters/delivery/delivery-actions");
+                const res = await reportStagingDowntimeAction(null, formData);
+                if (res.ok) {
+                  alert(res.message);
+                  router.refresh();
+                } else {
+                  alert(res.message);
+                }
+              }
+            }}
+            className="w-full font-bold py-3 rounded-xl transition-colors text-[#53647A] bg-[#F8FAFC] border border-[#D8E1EE] hover:bg-[#F1F5F9] text-sm"
+          >
+            Laporkan Server Mati (Pause Timer)
           </button>
         </div>
       </form>

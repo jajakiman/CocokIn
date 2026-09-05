@@ -496,6 +496,8 @@ model MilestoneSubmission {
   stagingUrl         String
   summary            String
   instructions       String?
+  timerPausedAt      DateTime?
+  totalPausedMinutes Int       @default(0)
 
   milestone ProjectMilestone     @relation(fields: [projectMilestoneId], references: [id], onDelete: Cascade)
   evidence  SubmissionEvidence[]

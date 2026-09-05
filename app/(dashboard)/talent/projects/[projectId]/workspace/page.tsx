@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle, Clock, WarningCircle, Check } from "@phosphor-icons/react/dist/ssr";
 import { MilestoneSubmissionForm } from "@/src/components/delivery/milestone-submission-form";
+import { ResumeTimerButton } from "@/src/components/delivery/resume-timer-button";
 
 export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }) {
   return { title: `Workspace Proyek | CocokIn` };
@@ -178,6 +179,10 @@ export default async function TalentWorkspacePage({ params }: { params: Promise<
                             <span className="bg-gray-200 text-gray-700 px-2 py-0.5 rounded text-xs font-bold">V{milestone.submissions[0].version}</span>
                            </div>
                          </div>
+                       )}
+                       
+                       {milestone.submissions[0]?.timerPausedAt && (
+                         <ResumeTimerButton milestoneSubmissionId={milestone.submissions[0].id} />
                        )}
                     </div>
                   )}

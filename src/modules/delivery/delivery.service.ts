@@ -149,3 +149,64 @@ export async function reviewMilestone(
     return review;
   }, { maxWait: 10000, timeout: 20000 });
 }
+
+export async function reportStagingDowntime(businessUserId: string, milestoneSubmissionId: string) {
+  const submission = await prisma.milestoneSubmission.findUnique({
+    where: { id: milestoneSubmissionId },
+    include: { milestone: { include: { project: true } } }
+  });
+
+  const profile = await prisma.businessProfile.findUnique({ where: { userId: businessUserId } });
+
+  if (!submission || !profile || submission.milestone.project.businessProfileId !== profile.id) {
+    throw new Error("Akses ditolak.");
+  }
+
+  if (submission.milestone.status !== "READY_FOR_REVIEW") {
+    throw new Error("Hanya bisa pause timer jika status READY_FOR_REVIEW.");
+  }
+
+  if (submission.timerPausedAt) {
+    throw new Error("Timer sudah dalam keadaan pause.");
+  }
+
+  return prisma.milestoneSubmission.update({
+    where: { id: milestoneSubmissionId },
+    data: { timerPausedAt: new Date() }
+  });
+}
+
+export async function resumeStagingTimer(talentUserId: string, milestoneSubmissionId: string) {
+  const submission = await prisma.milestoneSubmission.findUnique({
+    where: { id: milestoneSubmissionId },
+    include: {
+      milestone: {
+        include: {
+          project: {
+            include: { applications: { where: { talentProfile: { userId: talentUserId }, status: "ACCEPTED" } } }
+          }
+        }
+      }
+    }
+  });
+
+  if (!submission || submission.milestone.project.applications.length === 0) {
+    throw new Error("Akses ditolak.");
+  }
+
+  if (!submission.timerPausedAt) {
+    throw new Error("Timer tidak sedang dalam keadaan pause.");
+  }
+
+  const now = new Date();
+  const pauseDurationMs = now.getTime() - submission.timerPausedAt.getTime();
+  const pauseDurationMinutes = Math.floor(pauseDurationMs / 60000);
+
+  return prisma.milestoneSubmission.update({
+    where: { id: milestoneSubmissionId },
+    data: {
+      timerPausedAt: null,
+      totalPausedMinutes: { increment: pauseDurationMinutes }
+    }
+  });
+}
