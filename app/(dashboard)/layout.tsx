@@ -3,6 +3,7 @@ import { getSession } from "@/src/lib/session";
 import { AppShell } from "@/src/design-system/app-shell";
 import { prisma } from "@/src/adapters/database/prisma";
 import { redirect } from "next/navigation";
+import { GlobalNotification } from "@/src/components/ui/global-notification";
 
 export default async function DashboardLayout({
   children,
@@ -21,7 +22,9 @@ export default async function DashboardLayout({
 
   return (
     <AppShell role={role} user={session}>
+      <GlobalNotification userId={session.id} />
       {children}
     </AppShell>
   );
 }
+

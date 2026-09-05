@@ -13,7 +13,8 @@ export async function submitMilestoneStaging(
     include: {
       project: {
         include: {
-          applications: { where: { talentProfile: { userId: talentUserId }, status: "ACCEPTED" } }
+          applications: { where: { talentProfile: { userId: talentUserId }, status: "ACCEPTED" } },
+          businessProfile: true
         }
       },
       submissions: {
@@ -58,6 +59,14 @@ export async function submitMilestoneStaging(
         data: { status: "STAGING_REVIEW" }
       });
     }
+
+    // Notify Business
+    const { createNotification } = await import("@/src/modules/notifications/notification.service");
+    await createNotification(
+      milestone.project.businessProfile.userId,
+      "Pekerjaan Dikumpulkan",
+      `Talent telah mengumpulkan hasil pengerjaan milestone "${milestone.title}". Silakan direview.`
+    );
 
     return submission;
   }, { maxWait: 10000, timeout: 20000 });
@@ -118,6 +127,23 @@ export async function reviewMilestone(
         approvedAt: new Date(),
         approvedBy: businessUserId,
       });
+    }
+    
+    // Notify Talent
+    const { createNotification } = await import("@/src/modules/notifications/notification.service");
+    
+    // We need to fetch the talent user ID
+    const application = await tx.projectApplication.findFirst({
+      where: { projectId: submission.milestone.projectId, status: "ACCEPTED" },
+      include: { talentProfile: true }
+    });
+    
+    if (application) {
+      await createNotification(
+        application.talentProfile.userId,
+        decision === "APPROVED" ? "Milestone Disetujui" : decision === "REVISION_REQUESTED" ? "Revisi Milestone" : "Milestone Disputed",
+        `UMKM telah mereview milestone "${submission.milestone.title}" dengan status: ${decision}.`
+      );
     }
 
     return review;

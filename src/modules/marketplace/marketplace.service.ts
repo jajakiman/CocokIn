@@ -154,15 +154,43 @@ export async function applyToProject(talentUserId: string, projectId: string, mo
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    include: { skills: { include: { skill: true } } }
+    include: { 
+      skills: { include: { skill: true } },
+      businessProfile: { include: { user: true } }
+    }
   });
 
   if (!project || project.status !== "PUBLISHED") {
     throw new Error("Project is not available for applications.");
   }
 
-  const { calculateCocokScore } = await import("@/src/domain/matching/cocok-engine");
-  const match = calculateCocokScore(talentProfile, project);
+  const { calculateCocokScore } = await import("@/src/modules/matching/calculate-cocok-score");
+  
+  const match = calculateCocokScore(
+    {
+      skills: talentProfile.skills.map((s) => ({
+        skillId: s.skillId,
+        name: s.skill.name,
+        level: s.evidenceLevel as any,
+      })),
+      targetCareerId: talentProfile.careerTarget || "",
+      availability: talentProfile.timeAvailability as any,
+      completedProjectsCount: 0, // Fallback for MVP
+      workModePreference: talentProfile.workModePreference as any,
+      city: undefined,
+    },
+    {
+      requiredSkills: project.skills.map((s) => ({
+        skillId: s.skillId,
+        name: s.skill.name,
+      })),
+      targetCareerId: "", // Simplification for now
+      difficulty: project.difficulty as any,
+      durationDays: project.estimatedDays,
+      workMode: "REMOTE", // Simplified for Phase 3 MVP
+      city: undefined,
+    }
+  );
 
   return prisma.$transaction(async (tx) => {
     const application = await tx.projectApplication.create({
@@ -177,15 +205,24 @@ export async function applyToProject(talentUserId: string, projectId: string, mo
     await tx.matchSnapshot.create({
       data: {
         projectApplicationId: application.id,
-        cocokScore: match.cocokScore,
-        skillMatchScore: match.skillMatchScore,
-        careerAlignmentScore: match.careerAlignmentScore,
-        availabilityScore: match.availabilityScore,
-        experienceScore: match.experienceScore,
-        preferenceScore: match.preferenceScore,
-        explainableText: match.explainableText,
+        cocokScore: match.total,
+        skillMatchScore: match.factors.skill,
+        careerAlignmentScore: match.factors.career,
+        availabilityScore: match.factors.availability,
+        experienceScore: match.factors.experience,
+        preferenceScore: match.factors.workMode,
+        explainableText: match.reasons.join(" "),
       }
     });
+    
+    // Send Notification to Business
+    const { createNotification } = await import("@/src/modules/notifications/notification.service");
+    await createNotification(
+      project.businessProfile.userId,
+      "Lamaran Baru",
+      `Seorang Talent baru saja melamar ke proyek "${project.title}".`
+    );
+
     return application;
   }, {
     maxWait: 10000,
@@ -204,7 +241,10 @@ export async function acceptApplicant(businessUserId: string, applicationId: str
 
   const application = await prisma.projectApplication.findUnique({
     where: { id: applicationId },
-    include: { project: true }
+    include: { 
+      project: true,
+      talentProfile: { include: { user: true } }
+    }
   });
 
   if (!application) {
@@ -237,6 +277,15 @@ export async function acceptApplicant(businessUserId: string, applicationId: str
       where: { id: application.projectId },
       data: { status: "TALENT_SELECTED" }
     });
+    
+    // Send Notification to Talent
+    const { createNotification } = await import("@/src/modules/notifications/notification.service");
+    await createNotification(
+      application.talentProfile.userId,
+      "Lamaran Diterima!",
+      `Selamat! Lamaran Anda untuk proyek "${application.project.title}" telah diterima.`
+    );
+
     return application;
   }, {
     maxWait: 10000,
