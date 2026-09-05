@@ -19,6 +19,7 @@
     "verify": "corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build"
   },
   "dependencies": {
+    "@google/genai": "^2.21.0",
     "@phosphor-icons/react": "^2.1.10",
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
