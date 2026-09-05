@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       where: { projectConversationId_userId: { projectConversationId: conversationId, userId: session.id } },
       include: { conversation: { select: { status: true } } },
     });
-    if (!participant || !["ACTIVE", "SUPPORT_ACTIVE"].includes(participant.conversation.status)) {
+    if (!participant || !["PENDING", "ACTIVE", "SUPPORT_ACTIVE"].includes(participant.conversation.status)) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
