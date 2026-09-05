@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { Plus, Trash, CheckCircle, XCircle } from "@phosphor-icons/react";
+import { useActionState, useState, useEffect, useRef } from "react";
+import { Plus, Trash, CheckCircle, XCircle, Sparkle, X } from "@phosphor-icons/react";
 import { createProjectAction, type ActionState } from "@/src/adapters/projects/project-actions";
+import { generateProjectScopeAction } from "@/src/adapters/projects/gemini-actions";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -13,6 +14,17 @@ import {
   SelectItem,
 } from "@/src/design-system/select";
 
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 export function CreateProjectForm() {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
@@ -20,21 +32,67 @@ export function CreateProjectForm() {
     { ok: true, message: "" }
   );
 
+  // Form State
+  const [title, setTitle] = useState("");
+  const [scope, setScope] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [currentSkill, setCurrentSkill] = useState("");
   const [difficulty, setDifficulty] = useState("BEGINNER");
   const [infrastructureNeed, setInfrastructureNeed] = useState("MANAGED_HOSTING");
-  
+  const [estimatedDays, setEstimatedDays] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [serviceValue, setServiceValue] = useState("");
   const [milestones, setMilestones] = useState([
-    { id: 1, title: "Milestone 1", weightBps: 10000, deadline: "", acceptanceCriteria: [""] }
+    { id: Date.now(), title: "Milestone 1", weightBps: 10000, deadline: "", acceptanceCriteria: [""] }
   ]);
+
+  // AI Modal State
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const [dismissedState, setDismissedState] = useState(state);
   const showModal = state.message !== "" && state !== dismissedState;
 
+  // Autosave Logic
+  const isLoaded = useRef(false);
+
+  useEffect(() => {
+    // Restore from LocalStorage on mount
+    const saved = localStorage.getItem("cocokin_draft_project");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.title) setTitle(parsed.title);
+        if (parsed.scope) setScope(parsed.scope);
+        if (parsed.skills) setSkills(parsed.skills);
+        if (parsed.difficulty) setDifficulty(parsed.difficulty);
+        if (parsed.infrastructureNeed) setInfrastructureNeed(parsed.infrastructureNeed);
+        if (parsed.estimatedDays) setEstimatedDays(parsed.estimatedDays);
+        if (parsed.deadline) setDeadline(parsed.deadline);
+        if (parsed.serviceValue) setServiceValue(parsed.serviceValue);
+        if (parsed.milestones) setMilestones(parsed.milestones);
+      } catch (e) {
+        console.error("Failed to restore draft", e);
+      }
+    }
+    isLoaded.current = true;
+  }, []);
+
+  const debouncedFormState = useDebounce({
+    title, scope, skills, difficulty, infrastructureNeed, estimatedDays, deadline, serviceValue, milestones
+  }, 1000);
+
+  useEffect(() => {
+    if (isLoaded.current) {
+      localStorage.setItem("cocokin_draft_project", JSON.stringify(debouncedFormState));
+    }
+  }, [debouncedFormState]);
+
   const handleModalOk = () => {
     setDismissedState(state);
     if (state.ok) {
+      localStorage.removeItem("cocokin_draft_project"); // Clear draft on success
       router.push("/business");
     }
   };
@@ -72,26 +130,67 @@ export function CreateProjectForm() {
     }));
   };
 
+  const handleGenerateAI = async () => {
+    if (!aiPrompt.trim()) return;
+    setIsGenerating(true);
+    try {
+      const res = await generateProjectScopeAction(aiPrompt);
+      if (res.ok && res.data) {
+        setTitle(res.data.title);
+        setScope(res.data.scope);
+        setEstimatedDays(String(res.data.estimatedDays));
+        setDifficulty(res.data.difficulty);
+        setInfrastructureNeed(res.data.infrastructureNeed);
+        setSkills(res.data.skills);
+        setMilestones(res.data.milestones.map((m, idx) => ({
+          id: Date.now() + idx,
+          title: m.title,
+          weightBps: m.weightBps,
+          deadline: "", // Let the user fill out the date
+          acceptanceCriteria: m.acceptanceCriteria
+        })));
+        setShowAiModal(false);
+        setAiPrompt("");
+      } else {
+        alert(res.message || "Gagal menghasilkan scope.");
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan sistem saat menghubungi AI.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <>
-      <form action={formAction} className="bg-white p-6 rounded-xl border border-[#D8E1EE] shadow-sm space-y-6">
+      <form action={formAction} className="bg-white p-6 rounded-xl border border-[#D8E1EE] shadow-sm space-y-6 relative">
+        <div className="absolute top-6 right-6">
+          <button 
+            type="button" 
+            onClick={() => setShowAiModal(true)}
+            className="flex items-center gap-2 bg-[#EAF3FF] text-[#006FE6] px-4 py-2 rounded-full text-sm font-bold hover:bg-[#DBEEFE] transition-colors border border-[#BAE6FD]"
+          >
+            <Sparkle weight="fill" /> Isi Otomatis dengan AI
+          </button>
+        </div>
+
         {/* Hidden inputs to pass complex arrays to FormData */}
         <input type="hidden" name="skills" value={JSON.stringify(skills)} />
         <input type="hidden" name="milestones" value={JSON.stringify(milestones)} />
         <input type="hidden" name="difficulty" value={difficulty} />
         <input type="hidden" name="infrastructureNeed" value={infrastructureNeed} />
 
-        <div className="space-y-4 border-b pb-6">
+        <div className="space-y-4 border-b pb-6 mt-4">
           <h2 className="text-xl font-bold text-[#001040]">Detail Proyek</h2>
           
           <div>
             <label className="block text-sm font-medium text-[#53647A] mb-1">Judul Proyek</label>
-            <input required name="title" className="w-full border p-2 rounded-lg" placeholder="Cth: Pembuatan Katalog Digital" />
+            <input required name="title" value={title} onChange={e => setTitle(e.target.value)} className="w-full border p-2 rounded-lg" placeholder="Cth: Pembuatan Katalog Digital" />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-[#53647A] mb-1">Scope Pekerjaan</label>
-            <textarea required name="scope" rows={3} className="w-full border p-2 rounded-lg" placeholder="Jelaskan kebutuhan Anda secara detail..." />
+            <textarea required name="scope" value={scope} onChange={e => setScope(e.target.value)} rows={4} className="w-full border p-2 rounded-lg" placeholder="Jelaskan kebutuhan Anda secara detail..." />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -128,18 +227,18 @@ export function CreateProjectForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[#53647A] mb-1">Estimasi Hari Kerja</label>
-              <input required type="number" name="estimatedDays" min={1} className="w-full border p-2 rounded-lg" placeholder="Minimal 1 hari" />
+              <input required type="number" name="estimatedDays" value={estimatedDays} onChange={e => setEstimatedDays(e.target.value)} min={1} className="w-full border p-2 rounded-lg" placeholder="Minimal 1 hari" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-[#53647A] mb-1">Batas Akhir Pencarian Talent</label>
-              <input required type="date" name="deadline" className="w-full border p-2 rounded-lg" />
+              <input required type="date" name="deadline" value={deadline} onChange={e => setDeadline(e.target.value)} className="w-full border p-2 rounded-lg" />
             </div>
             <div>
               <label className="block text-sm font-medium text-[#53647A] mb-1">Nilai Imbalan (Rp)</label>
-              <input required type="number" name="serviceValue" min={100000} className="w-full border p-2 rounded-lg" placeholder="Minimal Rp 100.000" />
+              <input required type="number" name="serviceValue" value={serviceValue} onChange={e => setServiceValue(e.target.value)} min={100000} className="w-full border p-2 rounded-lg" placeholder="Minimal Rp 100.000" />
             </div>
           </div>
         </div>
@@ -247,10 +346,81 @@ export function CreateProjectForm() {
           </div>
         </div>
 
-        <button disabled={isPending || (state.ok && state.message !== "")} type="submit" className="w-full bg-[#FF8010] hover:bg-[#FF8010]/90 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 mt-8">
+        <div className="text-right mt-2 text-xs text-[#53647A]">
+          <span className="inline-flex items-center gap-1">
+            <CheckCircle size={14} className="text-[#059669]" /> Form otomatis tersimpan di draft lokal.
+          </span>
+        </div>
+
+        <button disabled={isPending || (state.ok && state.message !== "")} type="submit" className="w-full bg-[#FF8010] hover:bg-[#FF8010]/90 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 mt-4">
           {isPending ? "Memproses..." : "Terbitkan Proyek"}
         </button>
       </form>
+
+      {/* AI Prompt Modal */}
+      <AnimatePresence>
+        {showAiModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-xl"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-2 text-[#006FE6]">
+                  <Sparkle weight="fill" size={24} />
+                  <h3 className="text-xl font-bold text-[#001040]">AI Project Scoping</h3>
+                </div>
+                <button onClick={() => setShowAiModal(false)} className="text-[#53647A] hover:text-[#E11D48] transition-colors">
+                  <X size={24} />
+                </button>
+              </div>
+              
+              <p className="text-sm text-[#53647A] mb-4">
+                Tuliskan ide proyek Anda secara singkat. AI kami akan secara otomatis merumuskan detail Scope, Tingkat Kesulitan, Estimasi Hari, dan Kriteria Milestone!
+              </p>
+              
+              <textarea 
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="Cth: Saya mau bikin website company profile buat kedai kopi saya yang ada sistem order online..."
+                className="w-full border border-[#D8E1EE] p-3 rounded-xl min-h-[120px] focus:outline-none focus:border-[#0080FF] resize-none mb-4"
+              />
+              
+              <div className="flex justify-end gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setShowAiModal(false)}
+                  className="px-4 py-2 text-[#53647A] hover:bg-gray-100 rounded-lg transition-colors font-medium"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="button" 
+                  onClick={handleGenerateAI}
+                  disabled={isGenerating || !aiPrompt.trim()}
+                  className="flex items-center gap-2 bg-[#0080FF] hover:bg-[#006FE6] text-white px-6 py-2 rounded-lg font-bold transition-colors disabled:opacity-50"
+                >
+                  {isGenerating ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Memproses...
+                    </>
+                  ) : (
+                    "Generate AI"
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showModal && (
