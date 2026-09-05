@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
     if (session.role === "TALENT" && !(await hasTalentFeatureAccess(session.id))) {
       return new NextResponse("Onboarding required", { status: 403 });
     }
-    const { conversationId, content } = await req.json();
-    if (typeof conversationId !== "string" || typeof content !== "string" || !content.trim() || content.length > 10_000) {
+    const { conversationId, content, attachmentUrl, attachmentType } = await req.json();
+    if (typeof conversationId !== "string" || typeof content !== "string" || content.length > 10_000) {
       return new NextResponse("Bad Request", { status: 400 });
     }
     const participant = await prisma.conversationParticipant.findUnique({
@@ -24,12 +24,15 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Forbidden", { status: 403 });
     }
 
+    const attachment = attachmentUrl ? { url: attachmentUrl, type: attachmentType || "image" } : undefined;
+
     // 1. Authorize user (Assuming senderId is valid for MVP)
     // 2. Persist to DB before broadcasting as per BUSINESS_FLOW.md
     const savedMessage = await saveMessage(
       conversationId,
       session.id,
-      content.trim()
+      content.trim(),
+      attachment
     );
 
     // 3. Broadcast to Pusher presence channel
@@ -45,3 +48,4 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
+

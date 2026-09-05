@@ -60,9 +60,14 @@ export default async function TalentWorkspacePage({ params }: { params: Promise<
           <ArrowLeft weight="bold" /> Kembali ke Dashboard
         </Link>
         <h1 className="text-3xl font-bold text-[#001040]">Workspace: {project.title}</h1>
-        <p className="text-[#53647A] mt-1">
-          Pemberi Kerja: <span className="font-semibold text-[#001040]">{project.businessProfile.businessName}</span>
-        </p>
+        <div className="flex justify-between items-center mt-2">
+          <p className="text-[#53647A]">
+            Pemberi Kerja: <span className="font-semibold text-[#001040]">{project.businessProfile.businessName}</span>
+          </p>
+          <Link href={`/projects/${project.id}/chat`} className="bg-[#EAF5F8] text-[#0080FF] font-bold px-4 py-2 rounded-lg text-sm border border-[#0080FF]/20 hover:bg-[#D4EDF4] transition-colors">
+            Buka Ruang Chat
+          </Link>
+        </div>
       </div>
 
       {/* Progress Bar */}

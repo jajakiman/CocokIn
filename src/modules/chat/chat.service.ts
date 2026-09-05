@@ -20,13 +20,21 @@ export async function getConversationByProjectId(projectId: string) {
     include: {
       participants: true,
       messages: {
-        orderBy: { sequenceNumber: 'asc' }
+        orderBy: { sequenceNumber: 'asc' },
+        include: {
+          attachments: true
+        }
       }
     }
   });
 }
 
-export async function saveMessage(conversationId: string, senderId: string, content: string) {
+export async function saveMessage(
+  conversationId: string, 
+  senderId: string, 
+  content: string, 
+  attachment?: { url: string; type: string }
+) {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       return await prisma.$transaction(async (tx) => {
@@ -35,14 +43,25 @@ export async function saveMessage(conversationId: string, senderId: string, cont
           orderBy: { sequenceNumber: "desc" },
           select: { sequenceNumber: true },
         });
-        return tx.chatMessage.create({
+        
+        const message = await tx.chatMessage.create({
           data: {
             projectConversationId: conversationId,
             senderId,
             content,
             sequenceNumber: (latest?.sequenceNumber ?? 0) + 1,
+            attachments: attachment ? {
+              create: {
+                fileUrl: attachment.url,
+                fileType: attachment.type
+              }
+            } : undefined
           },
+          include: {
+            attachments: true
+          }
         });
+        return message;
       }, { isolationLevel: "Serializable" });
     } catch (error) {
       if (!(error instanceof Error) || !("code" in error) || error.code !== "P2034" || attempt === 2) throw error;

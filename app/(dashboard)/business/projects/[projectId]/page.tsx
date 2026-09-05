@@ -61,10 +61,15 @@ export default async function BusinessProjectDetailPage({ params }: { params: Pr
             </div>
           </div>
           
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end gap-3">
             <span className="bg-[#EAF3FF] text-[#006FE6] font-bold px-3 py-1.5 rounded-lg border border-[#006FE6]">
               Status: {project.status}
             </span>
+            {project.status !== "DRAFT" && project.status !== "PUBLISHED" && (
+              <Link href={`/projects/${project.id}/chat`} className="bg-[#EAF5F8] text-[#0080FF] font-bold px-4 py-2 rounded-lg text-sm border border-[#0080FF]/20 hover:bg-[#D4EDF4] transition-colors">
+                Buka Ruang Chat
+              </Link>
+            )}
           </div>
         </div>
       </div>
