@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { PageHeader } from "@/src/design-system/page-header";
 import { HandoverForm } from "@/src/components/infrastructure/handover-form";
 
-export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }) {
+export async function generateMetadata() {
   return { title: `Handover Infrastruktur | CocokIn` };
 }
 
@@ -26,7 +26,7 @@ export default async function TalentHandoverPage({
     include: {
       applications: { where: { talentProfile: { userId: session.id }, status: "ACCEPTED" } },
       milestones: true,
-      handover: true
+      infrastructureHandover: true
     }
   });
 
@@ -50,7 +50,7 @@ export default async function TalentHandoverPage({
             Anda belum bisa melakukan handover karena masih ada milestone yang belum disetujui oleh UMKM. Selesaikan semua milestone terlebih dahulu.
           </p>
         </div>
-      ) : project.handover ? (
+      ) : project.infrastructureHandover ? (
         <div className="bg-white p-6 rounded-xl border border-[#D8E1EE] shadow-sm">
           <h2 className="text-xl font-bold text-[#001040] mb-4">Status Handover</h2>
           
@@ -58,18 +58,18 @@ export default async function TalentHandoverPage({
             <div>
               <span className="text-[#53647A] block text-xs uppercase tracking-wider mb-1">Status</span>
               <span className={`px-3 py-1 rounded-full font-bold text-xs ${
-                project.handover.status === "ACCEPTED" ? "bg-[#ECFDF5] text-[#059669]" :
-                project.handover.status === "DISPUTED" ? "bg-[#FFF1F2] text-[#E11D48]" :
+                project.infrastructureHandover.status === "ACCEPTED" ? "bg-[#ECFDF5] text-[#059669]" :
+                project.infrastructureHandover.status === "DISPUTED" ? "bg-[#FFF1F2] text-[#E11D48]" :
                 "bg-[#FFFBEB] text-[#B45309]"
               }`}>
-                {project.handover.status === "ACCEPTED" ? "Disetujui" : project.handover.status === "DISPUTED" ? "Bermasalah" : "Menunggu Review UMKM"}
+                {project.infrastructureHandover.status === "ACCEPTED" ? "Disetujui" : project.infrastructureHandover.status === "DISPUTED" ? "Bermasalah" : "Menunggu Review UMKM"}
               </span>
             </div>
             
             <div>
               <span className="text-[#53647A] block text-xs uppercase tracking-wider mb-1">URL Produksi</span>
-              <a href={project.handover.productionUrl} target="_blank" rel="noreferrer" className="text-[#006FE6] font-medium hover:underline">
-                {project.handover.productionUrl}
+              <a href={project.infrastructureHandover.productionUrl} target="_blank" rel="noreferrer" className="text-[#006FE6] font-medium hover:underline">
+                {project.infrastructureHandover.productionUrl}
               </a>
             </div>
           </div>

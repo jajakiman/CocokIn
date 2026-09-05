@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { PageHeader } from "@/src/design-system/page-header";
 import { HandoverReviewPanel } from "@/src/components/infrastructure/handover-review-panel";
 
-export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }) {
+export async function generateMetadata() {
   return { title: `Review Handover Infrastruktur | CocokIn` };
 }
 
@@ -25,7 +25,7 @@ export default async function BusinessHandoverPage({
     where: { id: projectId },
     include: {
       businessProfile: true,
-      handover: true
+      infrastructureHandover: true
     }
   });
 
@@ -40,7 +40,7 @@ export default async function BusinessHandoverPage({
         subtitle="Verifikasi hasil akhir proyek dari Talent sebelum penutupan" 
       />
 
-      {!project.handover ? (
+      {!project.infrastructureHandover ? (
         <div className="bg-[#FFFBEB] border border-[#FDE68A] p-6 rounded-xl text-center">
           <h2 className="text-xl font-bold text-[#B45309] mb-2">Belum Ada Handover</h2>
           <p className="text-[#92400E]">
@@ -55,18 +55,18 @@ export default async function BusinessHandoverPage({
             <div>
               <span className="text-[#53647A] block text-xs uppercase tracking-wider mb-1">Status Handover</span>
               <span className={`px-3 py-1 rounded-full font-bold text-xs ${
-                project.handover.status === "ACCEPTED" ? "bg-[#ECFDF5] text-[#059669]" :
-                project.handover.status === "DISPUTED" ? "bg-[#FFF1F2] text-[#E11D48]" :
+                project.infrastructureHandover.status === "ACCEPTED" ? "bg-[#ECFDF5] text-[#059669]" :
+                project.infrastructureHandover.status === "DISPUTED" ? "bg-[#FFF1F2] text-[#E11D48]" :
                 "bg-[#FFFBEB] text-[#B45309]"
               }`}>
-                {project.handover.status === "ACCEPTED" ? "Disetujui" : project.handover.status === "DISPUTED" ? "Bermasalah" : "Menunggu Review Anda"}
+                {project.infrastructureHandover.status === "ACCEPTED" ? "Disetujui" : project.infrastructureHandover.status === "DISPUTED" ? "Bermasalah" : "Menunggu Review Anda"}
               </span>
             </div>
             
             <div>
               <span className="text-[#53647A] block text-xs uppercase tracking-wider mb-1">URL Produksi (Live)</span>
-              <a href={project.handover.productionUrl} target="_blank" rel="noreferrer" className="text-[#006FE6] font-medium hover:underline inline-block bg-[#EFF6FF] px-3 py-2 rounded-lg border border-[#BFDBFE]">
-                {project.handover.productionUrl}
+              <a href={project.infrastructureHandover.productionUrl} target="_blank" rel="noreferrer" className="text-[#006FE6] font-medium hover:underline inline-block bg-[#EFF6FF] px-3 py-2 rounded-lg border border-[#BFDBFE]">
+                {project.infrastructureHandover.productionUrl}
               </a>
             </div>
 
@@ -75,21 +75,21 @@ export default async function BusinessHandoverPage({
               <ul className="space-y-2 border border-[#D8E1EE] rounded-lg p-4 bg-[#F8FAFC]">
                 <li className="flex justify-between border-b border-dashed pb-2">
                   <span className="text-[#53647A]">Domain Terkonfigurasi:</span>
-                  <span className="font-bold text-[#001040]">{(project.handover.checklistData as Record<string, boolean>)?.domainConfigured ? "Ya" : "Tidak"}</span>
+                  <span className="font-bold text-[#001040]">{(project.infrastructureHandover.checklistData as Record<string, boolean>)?.domainConfigured ? "Ya" : "Tidak"}</span>
                 </li>
                 <li className="flex justify-between border-b border-dashed pb-2">
                   <span className="text-[#53647A]">HTTPS Aktif:</span>
-                  <span className="font-bold text-[#001040]">{(project.handover.checklistData as Record<string, boolean>)?.httpsActive ? "Ya" : "Tidak"}</span>
+                  <span className="font-bold text-[#001040]">{(project.infrastructureHandover.checklistData as Record<string, boolean>)?.httpsActive ? "Ya" : "Tidak"}</span>
                 </li>
                 <li className="flex justify-between">
                   <span className="text-[#53647A]">Source Code & Akses Diserahkan:</span>
-                  <span className="font-bold text-[#001040]">{(project.handover.checklistData as Record<string, boolean>)?.sourceCodeTransferred ? "Ya" : "Tidak"}</span>
+                  <span className="font-bold text-[#001040]">{(project.infrastructureHandover.checklistData as Record<string, boolean>)?.sourceCodeTransferred ? "Ya" : "Tidak"}</span>
                 </li>
               </ul>
             </div>
           </div>
           
-          {project.handover.status === "PENDING" && (
+          {project.infrastructureHandover.status === "PENDING" && (
             <HandoverReviewPanel projectId={project.id} />
           )}
         </div>

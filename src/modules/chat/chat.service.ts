@@ -62,9 +62,9 @@ export async function saveMessage(
           }
         });
         return message;
-      }, { isolationLevel: "Serializable" });
-    } catch (error) {
-      if (!(error instanceof Error) || !("code" in error) || error.code !== "P2034" || attempt === 2) throw error;
+      });
+    } catch (error: any) {
+      if ((error.code !== "P2034" && error.code !== "P2002") || attempt === 2) throw error;
     }
   }
   throw new Error("Unable to allocate message sequence");

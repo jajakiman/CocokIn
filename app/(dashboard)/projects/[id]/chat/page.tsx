@@ -39,7 +39,7 @@ export default async function ProjectChatPage({ params }: { params: Promise<{ id
   
   if (!conversation) {
     if (!acceptedTalent) redirect("/"); // Cannot create conversation if no talent is accepted yet
-    conversation = await createConversation(
+    await createConversation(
       projectId, 
       acceptedTalent.talentProfile.userId, 
       (await prisma.businessProfile.findUnique({ where: { id: project.businessProfileId } }))!.userId

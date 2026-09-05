@@ -47,6 +47,9 @@ function createInitialPassport(careerId: CareerDomainId): TalentSkillPassport {
     return createSeededTalentPassport();
   }
   const career = CAREER_TAXONOMY[careerId];
+  if (!career) {
+    return createSeededTalentPassport();
+  }
   const allSkills = [...career.technicalSkills, ...career.softSkills].map((s) => ({
     skillId: s.skillId,
     name: s.name,
