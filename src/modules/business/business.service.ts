@@ -41,7 +41,7 @@ export async function updateBusinessProfile(
   return updatedProfile;
 }
 
-export type ReadinessAnswers = Record<string, string>;
+export type ReadinessAnswers = Record<string, number>;
 
 /**
  * Submits the digital readiness assessment (5-pillars).
@@ -62,24 +62,12 @@ export async function submitReadinessAssessment(userId: string, answers: Readine
   // q4: SOP -> operationsScore
   // q5: Pengalaman freelancer -> outsourcingScore
 
-  const calculateScore = (ans?: string) => {
-    if (!ans) return 0;
-    if (ans.includes("Sudah") || ans.includes("Sangat Siap") || ans.includes("Lengkap") || ans.includes("Puas")) return 20;
-    if (ans.includes("Proses") || ans.includes("Sebagian") || ans.includes("Cukup Siap") || ans.includes("kurang puas") || ans.includes("Ada namun")) return 10;
-    return 0;
-  };
-
-  const financeScore = calculateScore(answers["q1"]);
-  const marketingScore = calculateScore(answers["q2"]);
-  const teamScore = calculateScore(answers["q3"]);
-  const operationsScore = calculateScore(answers["q4"]);
-  const outsourcingScore = calculateScore(answers["q5"]);
-  const readinessScore = financeScore + marketingScore + teamScore + operationsScore + outsourcingScore;
-
-  // Delete old assessments to keep it simple (only latest matters)
-  await prisma.businessAssessmentResult.deleteMany({
-    where: { businessProfileId: profile.id }
-  });
+  const financeScore = answers.q1 ?? 0;
+  const marketingScore = answers.q2 ?? 0;
+  const teamScore = answers.q3 ?? 0;
+  const operationsScore = answers.q4 ?? 0;
+  const outsourcingScore = answers.q5 ?? 0;
+  const readinessScore = Math.round((financeScore + marketingScore + teamScore + operationsScore + outsourcingScore) / 5);
 
   const assessmentResult = await prisma.businessAssessmentResult.create({
     data: {

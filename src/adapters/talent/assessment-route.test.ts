@@ -22,6 +22,7 @@ vi.mock("@/src/adapters/database/prisma", () => ({
 }));
 
 import { POST } from "@/app/api/talent/assessment/route";
+import { getQuestionsForCareer } from "@/src/modules/talent/assessment-bank";
 
 describe("POST /api/talent/assessment", () => {
   beforeEach(() => {
@@ -59,21 +60,10 @@ describe("POST /api/talent/assessment", () => {
 
     const payload = {
       careerId: "fullstack-dev",
-      answers: [
-        { questionId: "fs-htmlcss-1", selectedScore: 100 },
-        { questionId: "fs-js-1", selectedScore: 100 },
-        { questionId: "fs-react-1", selectedScore: 100 },
-        { questionId: "fs-responsive-1", selectedScore: 100 },
-        { questionId: "fs-git-1", selectedScore: 100 },
-        { questionId: "fs-api-1", selectedScore: 100 },
-        { questionId: "fs-db-1", selectedScore: 100 },
-        { questionId: "fs-auth-1", selectedScore: 100 },
-        { questionId: "fs-server-1", selectedScore: 100 },
-        { questionId: "fs-deploy-1", selectedScore: 100 },
-        { questionId: "ss-problem-1", selectedScore: 100 },
-        { questionId: "ss-comm-1", selectedScore: 100 },
-        { questionId: "ss-digital-1", selectedScore: 100 },
-      ],
+      answers: getQuestionsForCareer("fullstack-dev").map((question) => ({
+        questionId: question.id,
+        optionId: `${question.id}-${question.options.findIndex((option) => option.score === 100)}`,
+      })),
     };
 
     const res = await POST(

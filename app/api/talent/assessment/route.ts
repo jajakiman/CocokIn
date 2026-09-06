@@ -6,13 +6,14 @@ import { getSession } from "@/src/lib/session";
 import { calculateCareerReadiness } from "@/src/modules/talent/career-readiness";
 import { getAllCareerIds } from "@/src/modules/talent/career-taxonomy";
 import type { CareerDomainId } from "@/src/modules/talent/types";
+import { loadCareerAssessment, loadCareerDomains, resolveSubmittedAnswers } from "@/src/modules/assessment/catalog";
 
 const submitAssessmentSchema = z.object({
   careerId: z.enum(getAllCareerIds() as [CareerDomainId, ...CareerDomainId[]]),
   answers: z.array(
     z.object({
       questionId: z.string().min(1),
-      selectedScore: z.number().min(0).max(100),
+      optionId: z.string().min(1),
     })
   ),
 });
@@ -46,7 +47,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const readiness = calculateCareerReadiness(careerId, answers);
+    const questions = await loadCareerAssessment(careerId);
+    const domains = await loadCareerDomains();
+    const readiness = calculateCareerReadiness(careerId, resolveSubmittedAnswers(questions, answers), questions, domains[careerId]);
 
     await prisma.$transaction(async (tx) => {
       // 1. Simpan hasil penilaian kesiapan kerja

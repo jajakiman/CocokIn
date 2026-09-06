@@ -26,6 +26,7 @@ import {
   ChartBar,
 } from "@phosphor-icons/react";
 import { ReportResolutionControl, UserModerationControl } from "./moderation-controls";
+import { TaxonomyManagementView, type MasterData } from "./taxonomy-management-view";
 
 const SOLUTION_CATEGORY_LABELS: Record<string, string> = {
   WEBSITE_BRANDING: "Website & Branding",
@@ -128,10 +129,11 @@ export type AdminDashboardData = {
     averageReadinessGrowth: number;
     solutionCategories: Array<{ name: string; count: number }>;
   };
+  masterData: MasterData;
 };
 
 export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
-  const [activeTab, setActiveTab] = useState<"impact" | "funding" | "payout" | "disputes" | "tickets" | "users" | "reports">("impact");
+  const [activeTab, setActiveTab] = useState<"impact" | "funding" | "payout" | "disputes" | "tickets" | "users" | "reports" | "master">("impact");
 
   const bs = data.balanceSheet;
 
@@ -322,6 +324,14 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
             </span>
           ) : null}
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("master")}
+          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === "master" ? "border-[#006FE6] text-[#006FE6]" : "border-transparent text-[#53647A] hover:text-[#001040]"}`}
+        >
+          <Scales /> Master Data
+        </button>
       </div>
 
       {activeTab === "impact" && (
@@ -358,6 +368,8 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
           </div>
         </section>
       )}
+
+      {activeTab === "master" && <TaxonomyManagementView data={data.masterData} />}
 
       {/* Tab 1: Funding Reconciliation Desk */}
       {activeTab === "funding" && (

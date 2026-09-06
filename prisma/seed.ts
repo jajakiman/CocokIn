@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { seedAssessmentCatalog } from "../src/modules/assessment/seed-catalog";
 
 const prisma = new PrismaClient();
 
@@ -97,6 +98,7 @@ async function main() {
   console.log("Seeding database...");
 
   const passwordHash = await bcrypt.hash("password123", 10);
+  await seedAssessmentCatalog(prisma);
 
   // Backfill: rename legacy career target (track FE+BE digabung menjadi Fullstack)
   await prisma.talentProfile.updateMany({

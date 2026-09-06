@@ -7,6 +7,7 @@ import { ClipboardText, Sparkle, ArrowRight, Info, SealCheck, TrendUp, Lightbulb
 import { AssessmentWizard } from "@/src/components/talent/assessment-wizard";
 import type { CareerDomainId, CareerReadinessResult } from "@/src/modules/talent/types";
 import { useTalent } from "@/src/context/talent-context";
+import type { CatalogQuestion } from "@/src/modules/assessment/catalog";
 
 // Helper map label karier dari profil ke taxonomy ID
 const CAREER_MAP: Record<string, CareerDomainId> = {
@@ -25,6 +26,7 @@ type AssessmentClientViewProps = {
     compositeScore: number;
     createdAt: string;
   } | null;
+  questionCatalog: Record<CareerDomainId, CatalogQuestion[]>;
 };
 
 function GuidanceBento() {
@@ -195,6 +197,7 @@ function ResultScorecard({
 export function AssessmentClientView({
   careerTarget,
   latestAssessment,
+  questionCatalog,
 }: AssessmentClientViewProps) {
   const router = useRouter();
   const [isQuizActive, setIsQuizActive] = useState(false);
@@ -207,6 +210,7 @@ export function AssessmentClientView({
       <div className="max-w-4xl mx-auto py-6">
         <AssessmentWizard
           initialCareerId={initialCareerId}
+          questionCatalog={questionCatalog}
           onComplete={() => {
             router.refresh();
           }}

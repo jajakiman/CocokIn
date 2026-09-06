@@ -4,6 +4,7 @@ import { prisma } from "@/src/adapters/database/prisma";
 import { getSession } from "@/src/lib/session";
 import { BusinessAssessmentWizard } from "@/src/components/business/business-assessment-wizard";
 import { AppShell } from "@/src/design-system/app-shell";
+import { loadBusinessAssessment } from "@/src/modules/assessment/catalog";
 
 export async function generateMetadata() {
   return { title: "Asesmen Kesiapan UMKM | CocokIn" };
@@ -35,6 +36,7 @@ export default async function BusinessAssessmentPage() {
   if (profile.assessments.length > 0) {
     redirect("/business");
   }
+  const questions = await loadBusinessAssessment();
 
   return (
     <div className="relative min-h-[100dvh] bg-[#F7F9FC] font-sans">
@@ -70,7 +72,7 @@ export default async function BusinessAssessmentPage() {
 
       {/* Backdrop Dimmer & Pop-up Modal Dialog Window */}
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#001040]/50 backdrop-blur-md p-4 sm:p-6 overflow-y-auto">
-        <BusinessAssessmentWizard />
+        <BusinessAssessmentWizard questions={questions} />
       </div>
     </div>
   );

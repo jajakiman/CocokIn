@@ -124,6 +124,11 @@ export default async function AdminDashboardPage() {
   const readinessGrowth = Object.values(readinessByBusiness)
     .filter((scores) => scores.length >= 2)
     .map((scores) => scores[scores.length - 1] - scores[0]);
+  const [skills, careers, questions] = await Promise.all([
+    prisma.skill.findMany({ orderBy: { name: "asc" }, take: 500 }),
+    prisma.career.findMany({ include: { requirements: { include: { skill: { select: { name: true } } }, orderBy: { skill: { name: "asc" } } } }, orderBy: { name: "asc" } }),
+    prisma.assessmentQuestionRecord.findMany({ include: { options: { orderBy: { position: "asc" } } }, orderBy: [{ audience: "asc" }, { position: "asc" }], take: 500 }),
+  ]);
 
   const dashboardData: AdminDashboardData = {
     balanceSheet: {
@@ -217,6 +222,13 @@ export default async function AdminDashboardPage() {
       solutionCategories: impactProjects.map((category) => ({
         name: category.solutionCategory,
         count: category._count._all,
+      })),
+    },
+    masterData: {
+      skills: skills.map(({ id, key, name, category, isActive }) => ({ id, key, name, category, isActive })),
+      careers: careers.map((career) => ({ id: career.id, key: career.key, name: career.name, requirements: career.requirements })),
+      questions: questions.map((question) => ({
+        id: question.id, audience: question.audience, kind: question.kind, careerKey: question.careerKey, skillKey: question.skillKey, pillar: question.pillar, text: question.text, position: question.position, isActive: question.isActive, options: question.options.map(({ label, score, position }) => ({ label, score, position })),
       })),
     },
   };

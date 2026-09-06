@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/src/adapters/database/prisma";
 import { getSession } from "@/src/lib/session";
 import { submitReadinessAssessment } from "@/src/modules/business/business.service";
+import { loadBusinessAssessment, resolveSubmittedAnswers } from "@/src/modules/assessment/catalog";
+import { z } from "zod";
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +11,12 @@ export async function POST(req: Request) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { answers } = await req.json();
+    const parsed = z.object({ answers: z.array(z.object({ questionId: z.string().min(1), optionId: z.string().min(1) })) }).safeParse(await req.json());
+    if (!parsed.success) return new NextResponse("Payload tidak valid", { status: 400 });
+    const questions = await loadBusinessAssessment();
+    const resolved = resolveSubmittedAnswers(questions, parsed.data.answers);
+    const scoreByQuestion = new Map(resolved.map((answer) => [answer.questionId, answer.selectedScore]));
+    const answers = Object.fromEntries(questions.slice(0, 5).map((question, index) => [`q${index + 1}`, scoreByQuestion.get(question.id) ?? 0]));
 
     const assessmentResult = await submitReadinessAssessment(session.id, answers);
 
