@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useActionState } from "react";
+import Link from "next/link";
 import { signAgreementAction } from "@/src/adapters/projects/project-actions";
-import { CheckCircle, Clock } from "@phosphor-icons/react";
+import { CheckCircle, Clock, ArrowRight } from "@phosphor-icons/react";
 
 interface ProjectAgreementCardProps {
   projectId: string;
@@ -103,6 +104,16 @@ export function ProjectAgreementCard({
               {isPending ? "Memproses..." : "Tandatangani Perjanjian"}
             </button>
           </form>
+        )}
+
+        {hasSigned && otherPartySigned && role === "BUSINESS" && (
+          <Link
+            href={`/business/projects/${projectId}/funding`}
+            className="inline-flex items-center gap-2 bg-[#001040] hover:bg-[#001040]/90 text-white font-bold py-2 px-5 rounded-lg transition-colors text-sm shadow-sm"
+          >
+            <span>Lanjutkan ke Pendanaan Escrow</span>
+            <ArrowRight size={16} weight="bold" />
+          </Link>
         )}
       </div>
 

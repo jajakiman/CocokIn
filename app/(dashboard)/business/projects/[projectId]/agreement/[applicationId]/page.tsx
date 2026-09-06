@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle, WarningCircle, Handshake } from "@phosphor-icons/react/dist/ssr";
 import { AcceptTalentForm } from "@/src/components/projects/accept-talent-form";
+import { MoneyBreakdown } from "@/src/design-system/money-breakdown";
 
 export async function generateMetadata() {
   return { title: `Review Perjanjian Kerja | CocokIn` };
@@ -88,7 +89,7 @@ export default async function ProjectAgreementPage({
             <p className="text-[#001040] bg-[#F1F5F9] p-4 rounded-xl">{project.scope}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
             {/* INFRASTRUCTURE */}
             {project.infrastructurePlan && (
               <div>
@@ -100,13 +101,13 @@ export default async function ProjectAgreementPage({
               </div>
             )}
             
-            {/* VALUE */}
+            {/* VALUE & BREAKDOWN */}
             <div>
-              <h3 className="text-sm font-bold text-[#53647A] uppercase tracking-wider mb-2">Nilai Imbalan</h3>
-              <div className="bg-[#FFFBEB] p-4 rounded-xl border border-[#FDE68A]">
-                <span className="font-bold text-[#FF8010] text-xl">Rp {(Number(project.serviceValue)).toLocaleString("id-ID")}</span>
-                <span className="text-xs text-[#92400E] block mt-1">Belum termasuk biaya platform/layanan (ditagih setelahnya)</span>
-              </div>
+              <MoneyBreakdown
+                serviceValue={Number(project.serviceValue)}
+                role="business"
+                platformFeePercent={10}
+              />
             </div>
           </div>
         </div>

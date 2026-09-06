@@ -2,7 +2,7 @@ import { getSession } from "@/src/lib/session";
 import { prisma } from "@/src/adapters/database/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Users, Clock, Briefcase } from "@phosphor-icons/react/dist/ssr";
+import { ArrowLeft, Users, Clock, Briefcase, CurrencyCircleDollar, ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import { ProjectAgreementCard } from "@/src/components/projects/project-agreement-card";
 
 export async function generateMetadata({ params }: { params: Promise<{ projectId: string }> }) {
@@ -85,6 +85,27 @@ export default async function BusinessProjectDetailPage({ params }: { params: Pr
         />
       )}
 
+      {(project.status === "AGREEMENT_CONFIRMED" || project.status === "FUNDING_PENDING") && (
+        <div className="bg-white border-2 border-[#001040] rounded-xl p-6 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FF8010] animate-pulse" />
+              <h2 className="text-lg font-bold text-[#001040]">Perjanjian Disetujui — Menunggu Setoran Escrow</h2>
+            </div>
+            <p className="text-sm text-[#53647A]">
+              Kedua pihak telah menyepakati perjanjian kerja. Setorkan dana proyek ke rekening penampung bersama agar Talent dapat segera mulai mengerjakan proyek dengan aman.
+            </p>
+          </div>
+          <Link
+            href={`/business/projects/${project.id}/funding`}
+            className="shrink-0 inline-flex items-center gap-2 bg-[#001040] hover:bg-[#001040]/90 text-white font-bold py-2.5 px-5 rounded-lg transition-colors text-sm shadow-sm"
+          >
+            <CurrencyCircleDollar size={20} weight="bold" />
+            <span>Selesaikan Pembayaran Escrow</span>
+          </Link>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-xl border border-[#D8E1EE] shadow-sm">
@@ -137,11 +158,41 @@ export default async function BusinessProjectDetailPage({ params }: { params: Pr
             </Link>
           </div>
           
-          <div className="bg-white p-6 rounded-xl border border-[#D8E1EE] shadow-sm">
-            <h3 className="text-[#53647A] text-sm font-medium mb-1">Nilai Imbalan</h3>
-            <p className="text-2xl font-bold text-[#001040]">
-              {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(project.serviceValue))}
-            </p>
+          <div className="bg-white p-6 rounded-xl border border-[#D8E1EE] shadow-sm space-y-4">
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-[#53647A] text-xs font-bold uppercase tracking-wider">Nilai Imbalan Talent</h3>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#EAF3FF] text-[#006FE6]">100% Talent</span>
+              </div>
+              <p className="text-2xl font-bold text-[#001040]">
+                {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Number(project.serviceValue))}
+              </p>
+            </div>
+
+            <div className="border-t border-[#D8E1EE] pt-3 text-xs space-y-2">
+              <div className="flex justify-between text-[#53647A]">
+                <span>Biaya Platform (10%):</span>
+                <span className="font-semibold text-[#001040]">
+                  {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Math.round(Number(project.serviceValue) * 0.1))}
+                </span>
+              </div>
+              <div className="flex justify-between text-[#001040] font-bold pt-1 border-t border-dashed border-[#D8E1EE]">
+                <span>Total Dana Masuk Escrow:</span>
+                <span className="text-[#006FE6]">
+                  {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(Math.round(Number(project.serviceValue) * 1.1))}
+                </span>
+              </div>
+            </div>
+
+            {project.status !== "DRAFT" && project.status !== "PUBLISHED" && (
+              <Link
+                href={`/business/projects/${project.id}/funding`}
+                className="w-full inline-flex items-center justify-center gap-2 bg-[#F1F5FB] hover:bg-[#EAF3FF] text-[#006FE6] font-semibold py-2 px-3 rounded-lg text-xs transition-colors border border-[#D8E1EE]"
+              >
+                <ShieldCheck size={16} weight="bold" />
+                <span>Lihat Status Pembayaran Escrow</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>
