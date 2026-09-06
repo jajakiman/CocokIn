@@ -54,6 +54,13 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
       create: { name: skillName, category: "UNCATEGORIZED" }
     });
 
+    // Promote certain skills to ASSESSED or PROJECT_VERIFIED for demo fidelity
+    const evidenceLevel = skillName === "React" || skillName === "Next.js"
+      ? "PROJECT_VERIFIED"
+      : skillName === "REST API" || skillName === "PostgreSQL"
+      ? "ASSESSED"
+      : "SELF_DECLARED";
+
     await prisma.talentSkill.upsert({
       where: {
         talentProfileId_skillId: {
@@ -61,12 +68,27 @@ async function seedTalent(prisma: PrismaClient, passwordHash: string) {
           skillId: skill.id
         }
       },
-      update: {},
+      update: { evidenceLevel },
       create: {
         talentProfileId: talentProfile.id,
         skillId: skill.id,
-        evidenceLevel: "SELF_DECLARED"
+        evidenceLevel,
       }
+    });
+  }
+
+  // Seed Talent Career Readiness Assessment Result (87% Siap Kerja)
+  const existingAssessment = await prisma.talentAssessmentResult.findFirst({
+    where: { talentProfileId: talentProfile.id },
+  });
+  if (!existingAssessment) {
+    await prisma.talentAssessmentResult.create({
+      data: {
+        talentProfileId: talentProfile.id,
+        technicalScore: 85,
+        softSkillScore: 90,
+        compositeScore: 87,
+      },
     });
   }
 
@@ -141,7 +163,13 @@ async function main() {
   // Seed Business Profile
   const businessProfile = await prisma.businessProfile.upsert({
     where: { userId: umkmUser.id },
-    update: {},
+    update: {
+      businessName: "Kopi Kenangan Senja",
+      industryCategory: "F&B",
+      location: "Jakarta Selatan",
+      description: "Kedai kopi lokal dengan cita rasa nusantara.",
+      verificationStatus: "VERIFIED_BUSINESS",
+    },
     create: {
       userId: umkmUser.id,
       businessName: "Kopi Kenangan Senja",
@@ -541,6 +569,91 @@ async function main() {
         status: "RESOLVED",
         description: "Tombol cetak struk kadang timeout.",
       },
+    });
+  }
+
+  // Seed Verified Portfolio Entry for Talent Budi Santoso
+  await prisma.portfolioEntry.upsert({
+    where: { projectId: deliveredProject.id },
+    update: {
+      isPublic: true,
+    },
+    create: {
+      talentProfileId: talentProfile.id,
+      projectId: deliveredProject.id,
+      title: deliveredProject.title,
+      businessName: "Kopi Kenangan Senja",
+      problemSummary: "Kedai kopi membutuhkan identitas digital resmi agar pelanggan dapat melihat lokasi, jam buka, dan menu kopi secara online.",
+      solutionBuilt: "Membangun website company profile modern yang responsif dengan katalog menu interaktif dan integrasi Google Maps.",
+      isPublic: true,
+    },
+  });
+
+  // Seed Draft Project for UMKM (Kopi Kenangan Senja)
+  await prisma.project.upsert({
+    where: { id: "seed-project-draft" },
+    update: {
+      title: "Otomasi Notifikasi Pengiriman Kopi via WhatsApp",
+      status: "DRAFT",
+    },
+    create: {
+      id: "seed-project-draft",
+      businessProfileId: businessProfile.id,
+      title: "Otomasi Notifikasi Pengiriman Kopi via WhatsApp",
+      scope: "Draf proyek integrasi webhook status pengiriman paket biji kopi ke pelanggan otomatis via WhatsApp.",
+      difficulty: "BEGINNER",
+      estimatedDays: 5,
+      deadline: new Date("2026-11-01T00:00:00.000Z"),
+      serviceValue: 2_000_000n,
+      status: "DRAFT",
+      solutionCategory: "OPERATIONS_POS",
+    },
+  });
+
+  // Seed Dispute Project & Active Dispute Case for Admin Desk
+  const disputeProject = await prisma.project.upsert({
+    where: { id: "seed-project-dispute" },
+    update: { status: "DISPUTED" },
+    create: {
+      id: "seed-project-dispute",
+      businessProfileId: businessProfile.id,
+      title: "Integrasi Payment Gateway Multi-Cabang",
+      scope: "Integrasi webhook callback dan rekonsiliasi payment gateway untuk 3 cabang kedai kopi.",
+      difficulty: "ADVANCED",
+      estimatedDays: 14,
+      deadline: new Date("2026-09-01T00:00:00.000Z"),
+      serviceValue: 6_000_000n,
+      status: "DISPUTED",
+      solutionCategory: "CATALOG_COMMERCE",
+    },
+  });
+
+  const existingDispute = await prisma.dispute.findFirst({
+    where: { projectId: disputeProject.id },
+  });
+
+  if (!existingDispute) {
+    const dispute = await prisma.dispute.create({
+      data: {
+        projectId: disputeProject.id,
+        reason: "Terdapat perbedaan interpretasi penanganan webhook refund pada sistem kasir.",
+        status: "OPEN",
+      },
+    });
+
+    await prisma.disputeEvidence.createMany({
+      data: [
+        {
+          disputeId: dispute.id,
+          fileUrl: "https://otslyoqlulbpbtbcixvk.supabase.co/storage/v1/object/public/cocokin-uploads/dispute-evidence-1.png",
+          submitterId: umkmUser.id,
+        },
+        {
+          disputeId: dispute.id,
+          fileUrl: "https://otslyoqlulbpbtbcixvk.supabase.co/storage/v1/object/public/cocokin-uploads/dispute-evidence-2.png",
+          submitterId: talentProfile.userId,
+        },
+      ],
     });
   }
 
