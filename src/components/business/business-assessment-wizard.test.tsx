@@ -4,6 +4,13 @@ import userEvent from "@testing-library/user-event";
 import { BusinessAssessmentWizard } from "./business-assessment-wizard";
 
 const mockPush = vi.fn();
+const questions = [
+  ["business-q1", "Keuangan Digital", "Apakah bisnis Anda sudah memiliki pencatatan keuangan digital?", ["Belum", "Dalam Proses", "Sudah"]],
+  ["business-q2", "Target Pasar", "Apakah Anda memiliki target pasar digital yang jelas?", ["Belum", "Sebagian", "Sudah"]],
+  ["business-q3", "Kesiapan Tim", "Seberapa siap tim Anda untuk mengadopsi teknologi baru?", ["Kurang Siap", "Cukup Siap", "Sangat Siap"]],
+  ["business-q4", "SOP Operasional", "Apakah Anda memiliki SOP (Standard Operating Procedure) operasional?", ["Tidak Ada", "Ada namun tidak lengkap", "Ada dan Lengkap"]],
+  ["business-q5", "Kolaborasi", "Apakah Anda pernah menggunakan jasa freelancer/talent sebelumnya?", ["Belum Pernah", "Pernah, tapi kurang puas", "Pernah dan Puas"]],
+].map(([id, pillar, text, labels]) => ({ id: id as string, careerId: "fullstack-dev" as const, type: "TECHNICAL" as const, pillar: pillar as string, text: text as string, options: (labels as string[]).map((label, index) => ({ id: `${id}-${index}`, label, score: index * 10 })) }));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
@@ -15,8 +22,8 @@ describe("BusinessAssessmentWizard", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders modal dialog with 5 questions and required field indicators (*)", () => {
-    render(<BusinessAssessmentWizard />);
+  it("renders modal dialog with 5 questions and required field indicators (*)", async () => {
+    render(<BusinessAssessmentWizard questions={questions} />);
 
     // Dialog accessibility
     const dialog = screen.getByRole("dialog");
@@ -39,7 +46,7 @@ describe("BusinessAssessmentWizard", () => {
 
   it("shows an accessible error alert when submitting with unanswered questions", async () => {
     const user = userEvent.setup();
-    render(<BusinessAssessmentWizard />);
+    render(<BusinessAssessmentWizard questions={questions} />);
 
     const submitBtn = screen.getByRole("button", { name: /Selesaikan & Masuk ke Dashboard/i });
     await user.click(submitBtn);
@@ -58,14 +65,14 @@ describe("BusinessAssessmentWizard", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    render(<BusinessAssessmentWizard />);
+    const { container } = render(<BusinessAssessmentWizard questions={questions} />);
 
     // Select answers for all 5 questions
-    const q1Sudah = screen.getByRole("radio", { name: (content, element) => element?.getAttribute("name") === "q1" && element?.getAttribute("value") === "Sudah" });
-    const q2Sebagian = screen.getByRole("radio", { name: (content, element) => element?.getAttribute("name") === "q2" && element?.getAttribute("value") === "Sebagian" });
-    const q3SangatSiap = screen.getByRole("radio", { name: (content, element) => element?.getAttribute("name") === "q3" && element?.getAttribute("value") === "Sangat Siap" });
-    const q4Lengkap = screen.getByRole("radio", { name: (content, element) => element?.getAttribute("name") === "q4" && element?.getAttribute("value") === "Ada dan Lengkap" });
-    const q5Puas = screen.getByRole("radio", { name: (content, element) => element?.getAttribute("name") === "q5" && element?.getAttribute("value") === "Pernah dan Puas" });
+    const q1Sudah = container.querySelector<HTMLInputElement>('[name="business-q1"][value="business-q1-2"]')!;
+    const q2Sebagian = container.querySelector<HTMLInputElement>('[name="business-q2"][value="business-q2-1"]')!;
+    const q3SangatSiap = container.querySelector<HTMLInputElement>('[name="business-q3"][value="business-q3-2"]')!;
+    const q4Lengkap = container.querySelector<HTMLInputElement>('[name="business-q4"][value="business-q4-2"]')!;
+    const q5Puas = container.querySelector<HTMLInputElement>('[name="business-q5"][value="business-q5-2"]')!;
 
     await user.click(q1Sudah);
     await user.click(q2Sebagian);
@@ -80,13 +87,13 @@ describe("BusinessAssessmentWizard", () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        answers: {
-          q1: "Sudah",
-          q2: "Sebagian",
-          q3: "Sangat Siap",
-          q4: "Ada dan Lengkap",
-          q5: "Pernah dan Puas",
-        },
+        answers: [
+          { questionId: "business-q1", optionId: "business-q1-2" },
+          { questionId: "business-q2", optionId: "business-q2-1" },
+          { questionId: "business-q3", optionId: "business-q3-2" },
+          { questionId: "business-q4", optionId: "business-q4-2" },
+          { questionId: "business-q5", optionId: "business-q5-2" },
+        ],
       }),
     });
 

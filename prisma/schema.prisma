@@ -131,6 +131,17 @@ enum SolutionCategory {
   OTHER
 }
 
+enum AssessmentAudience {
+  TALENT
+  BUSINESS
+}
+
+enum AssessmentQuestionKind {
+  TECHNICAL
+  SOFT_SKILL
+  BUSINESS_READINESS
+}
+
 enum WarrantyStatus {
   NOT_STARTED
   ACTIVE
@@ -273,9 +284,11 @@ model TalentPayoutAccount {
 }
 
 model Skill {
-  id       String @id @default(cuid())
-  name     String @unique
+  id       String  @id @default(cuid())
+  name     String  @unique
   category String
+  key      String? @unique
+  isActive Boolean @default(true)
 
   talentSkills  TalentSkill[]
   projectSkills ProjectSkill[]
@@ -300,7 +313,9 @@ model TalentSkill {
 model Career {
   id           String                   @id @default(cuid())
   name         String                   @unique
+  key          String?                  @unique
   description  String?
+  isActive     Boolean                  @default(true)
   requirements CareerSkillRequirement[]
 }
 
@@ -381,6 +396,36 @@ model BusinessAssessmentResult {
 
   businessProfile BusinessProfile @relation(fields: [businessProfileId], references: [id], onDelete: Cascade)
   createdAt       DateTime        @default(now())
+}
+
+model AssessmentQuestionRecord {
+  id        String                   @id
+  audience  AssessmentAudience
+  kind      AssessmentQuestionKind
+  careerKey String?
+  skillKey  String?
+  pillar    String?
+  text      String
+  position  Int
+  isActive  Boolean                  @default(true)
+  options   AssessmentOptionRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([audience, careerKey, isActive, position])
+}
+
+model AssessmentOptionRecord {
+  id         String @id
+  questionId String
+  label      String
+  score      Int
+  position   Int
+
+  question AssessmentQuestionRecord @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, position])
 }
 
 // -----------------------------------------------------------------------------

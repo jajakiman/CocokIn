@@ -28,6 +28,7 @@ export type CareerDomain = {
 export type AssessmentQuestionType = "TECHNICAL" | "SOFT_SKILL";
 
 export type AssessmentOption = {
+  id?: string;
   label: string;
   score: number; // 0-100
 };
@@ -52,6 +53,7 @@ export type SkillAssessmentScore = {
   skillId: string;
   name: string;
   talentScore: number; // 0-100
+  benchmarkScore?: number;
 };
 
 export type CareerReadinessResult = {

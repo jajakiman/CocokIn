@@ -6,48 +6,16 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 import { CocokInBrand } from "@/src/design-system/cocokin-brand";
+import type { CatalogQuestion } from "@/src/modules/assessment/catalog";
 
-const ASSESSMENT_QUESTIONS = [
-  {
-    id: "q1",
-    pillar: "Pilar 1 • Keuangan Digital",
-    text: "Apakah bisnis Anda sudah memiliki pencatatan keuangan digital?",
-    options: ["Belum", "Dalam Proses", "Sudah"],
-  },
-  {
-    id: "q2",
-    pillar: "Pilar 2 • Target Pasar",
-    text: "Apakah Anda memiliki target pasar digital yang jelas?",
-    options: ["Belum", "Sebagian", "Sudah"],
-  },
-  {
-    id: "q3",
-    pillar: "Pilar 3 • Kesiapan Tim",
-    text: "Seberapa siap tim Anda untuk mengadopsi teknologi baru?",
-    options: ["Kurang Siap", "Cukup Siap", "Sangat Siap"],
-  },
-  {
-    id: "q4",
-    pillar: "Pilar 4 • SOP Operasional",
-    text: "Apakah Anda memiliki SOP (Standard Operating Procedure) operasional?",
-    options: ["Tidak Ada", "Ada namun tidak lengkap", "Ada dan Lengkap"],
-  },
-  {
-    id: "q5",
-    pillar: "Pilar 5 • Kolaborasi Freelancer / Talent",
-    text: "Apakah Anda pernah menggunakan jasa freelancer/talent sebelumnya?",
-    options: ["Belum Pernah", "Pernah, tapi kurang puas", "Pernah dan Puas"],
-  },
-] as const;
-
-export function BusinessAssessmentWizard() {
+export function BusinessAssessmentWizard({ questions }: { questions: CatalogQuestion[] }) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>();
 
   const answeredCount = Object.keys(answers).length;
-  const progressPercent = Math.round((answeredCount / ASSESSMENT_QUESTIONS.length) * 100);
+  const progressPercent = Math.round((answeredCount / questions.length) * 100);
 
   const handleSelect = (questionId: string, optionValue: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: optionValue }));
@@ -58,8 +26,8 @@ export function BusinessAssessmentWizard() {
     e.preventDefault();
     setError(undefined);
 
-    if (answeredCount < ASSESSMENT_QUESTIONS.length) {
-      setError(`Harap jawab seluruh ${ASSESSMENT_QUESTIONS.length} pertanyaan asesmen sebelum melanjutkan.`);
+    if (answeredCount < questions.length) {
+      setError(`Harap jawab seluruh ${questions.length} pertanyaan asesmen sebelum melanjutkan.`);
       return;
     }
 
@@ -68,7 +36,7 @@ export function BusinessAssessmentWizard() {
       const response = await fetch("/api/business/assessment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers }),
+        body: JSON.stringify({ answers: Object.entries(answers).map(([questionId, optionId]) => ({ questionId, optionId })) }),
       });
 
       if (!response.ok) {
@@ -120,7 +88,7 @@ export function BusinessAssessmentWizard() {
           <div className="flex items-center justify-between text-xs mb-1.5">
             <span className="font-semibold text-[#53647A]">Progres Pengisian</span>
             <span className="font-bold text-[#006FE6] tabular-nums">
-              {answeredCount} dari {ASSESSMENT_QUESTIONS.length} pilar ({progressPercent}%)
+              {answeredCount} dari {questions.length} pilar ({progressPercent}%)
             </span>
           </div>
           <div className="h-1.5 w-full bg-[#F1F5FB] rounded-full overflow-hidden">
@@ -139,7 +107,7 @@ export function BusinessAssessmentWizard() {
       {/* Questions Form */}
       <form className="mt-6 space-y-6" onSubmit={handleSubmit} noValidate>
         <div className="space-y-6 max-h-[55vh] overflow-y-auto pr-1">
-          {ASSESSMENT_QUESTIONS.map((question, index) => {
+          {questions.map((question, index) => {
             const currentSelected = answers[question.id];
 
             return (
@@ -159,11 +127,11 @@ export function BusinessAssessmentWizard() {
                 {/* Selectable Options Minimalist Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
                   {question.options.map((option) => {
-                    const isSelected = currentSelected === option;
+                    const isSelected = currentSelected === option.id;
 
                     return (
                       <label
-                        key={option}
+                        key={option.id}
                         className={`flex items-center gap-2.5 p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all ${
                           isSelected
                             ? "bg-[#EAF3FF] border-[#006FE6] text-[#001040] shadow-sm ring-1 ring-[#006FE6]/30"
@@ -173,9 +141,9 @@ export function BusinessAssessmentWizard() {
                         <input
                           type="radio"
                           name={question.id}
-                          value={option}
+                          value={option.id ?? ""}
                           checked={isSelected}
-                          onChange={() => handleSelect(question.id, option)}
+                          onChange={() => handleSelect(question.id, option.id ?? "")}
                           className="sr-only"
                         />
                         {isSelected ? (
@@ -183,7 +151,7 @@ export function BusinessAssessmentWizard() {
                         ) : (
                           <Circle size={18} weight="regular" className="text-[#9AABC2] shrink-0" />
                         )}
-                        <span className="leading-tight">{option}</span>
+                        <span className="leading-tight">{option.label}</span>
                       </label>
                     );
                   })}

@@ -19,15 +19,16 @@ function clamp(v: number): number {
 export function calculateCareerReadiness(
   careerId: CareerDomainId,
   answers: AssessmentAnswer[],
+  questions = ASSESSMENT_QUESTIONS,
+  domain = CAREER_TAXONOMY[careerId],
 ): CareerReadinessResult {
-  const domain = CAREER_TAXONOMY[careerId];
   const answerMap = new Map<string, number>();
   for (const a of answers) {
     answerMap.set(a.questionId, a.selectedScore);
   }
 
   // Build question → skill mapping from assessment bank
-  const careerQuestions = ASSESSMENT_QUESTIONS.filter(
+  const careerQuestions = questions.filter(
     (q) => q.careerId === careerId,
   );
   const techQuestions = careerQuestions.filter((q) => q.type === "TECHNICAL");
@@ -35,27 +36,27 @@ export function calculateCareerReadiness(
 
   // Map each technical question to its corresponding skill (by question.skillId or index order)
   const technicalBreakdown: SkillAssessmentScore[] = domain.technicalSkills.map(
-    (skill, i) => {
-      const question =
-        techQuestions.find((q) => q.skillId === skill.skillId) ?? techQuestions[i];
+    (skill) => {
+      const question = techQuestions.find((q) => q.skillId === skill.skillId);
       const raw = question ? (answerMap.get(question.id) ?? 0) : 0;
       return {
         skillId: skill.skillId,
         name: skill.name,
         talentScore: clamp(raw),
+        benchmarkScore: skill.benchmarkScore,
       };
     },
   );
 
   const softSkillBreakdown: SkillAssessmentScore[] = domain.softSkills.map(
-    (skill, i) => {
-      const question =
-        softQuestions.find((q) => q.skillId === skill.skillId) ?? softQuestions[i];
+    (skill) => {
+      const question = softQuestions.find((q) => q.skillId === skill.skillId);
       const raw = question ? (answerMap.get(question.id) ?? 0) : 0;
       return {
         skillId: skill.skillId,
         name: skill.name,
         talentScore: clamp(raw),
+        benchmarkScore: skill.benchmarkScore,
       };
     },
   );
