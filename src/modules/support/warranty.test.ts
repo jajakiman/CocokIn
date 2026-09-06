@@ -25,6 +25,12 @@ vi.mock("@/src/adapters/database/prisma", () => {
       create: vi.fn(),
       update: vi.fn(),
     },
+    portfolioEntry: {
+      upsert: vi.fn(),
+    },
+    talentSkill: {
+      updateMany: vi.fn(),
+    },
     ledgerEntry: {
       findMany: vi.fn().mockResolvedValue([
         { accountType: "CASH_AT_BANK", amount: 1_500_000n },
@@ -164,7 +170,13 @@ describe("Warranty & Maintenance Module (src/modules/support)", () => {
 
       vi.mocked(prisma.project.findUnique).mockResolvedValueOnce({
         id: "proj_1",
+        title: "Website Kopi",
+        scope: "Membangun website katalog",
         serviceValue: 10_000_000n,
+        businessProfile: { businessName: "Kedai Kopi" },
+        infrastructureHandover: { productionUrl: "https://kopi.example.com" },
+        skills: [{ skillId: "sk_1" }],
+        applications: [{ talentProfileId: "talent_prof_1" }],
         warrantyAgreement: { status: "ACTIVE", startDate: start, endDate: end },
         supportTickets: [{ status: "RESOLVED" }], // resolved!
         disputes: [],
@@ -187,6 +199,24 @@ describe("Warranty & Maintenance Module (src/modules/support)", () => {
       expect(prisma.project.update).toHaveBeenCalledWith({
         where: { id: "proj_1" },
         data: { status: "COMPLETED" },
+      });
+
+      // Automated verified portfolio created
+      expect(prisma.portfolioEntry.upsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { projectId: "proj_1" },
+          create: expect.objectContaining({
+            talentProfileId: "talent_prof_1",
+            isPublic: true,
+          }),
+        })
+      );
+      expect(prisma.talentSkill.updateMany).toHaveBeenCalledWith({
+        where: {
+          talentProfileId: "talent_prof_1",
+          skillId: { in: ["sk_1"] },
+        },
+        data: { evidenceLevel: "PROJECT_VERIFIED" },
       });
     });
   });

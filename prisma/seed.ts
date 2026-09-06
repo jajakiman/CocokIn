@@ -180,19 +180,38 @@ async function main() {
     },
   });
 
-  // Seed Assessment (Only create if not exists to prevent duplicates on re-seed)
-  const existingAssessment = await prisma.businessAssessmentResult.findFirst({
-    where: { businessProfileId: businessProfile.id }
+  // Seed Digital Growth Assessment Timeline (Baseline + Post-Project for FR-BIZ-05)
+  await prisma.businessAssessmentResult.deleteMany({
+    where: { businessProfileId: businessProfile.id },
   });
-  
-  if (!existingAssessment) {
-    await prisma.businessAssessmentResult.create({
-      data: {
-        businessProfileId: businessProfile.id,
-        readinessScore: 85,
-      },
-    });
-  }
+
+  // 1. Baseline Assessment (Onboarding awal 30 hari lalu)
+  await prisma.businessAssessmentResult.create({
+    data: {
+      businessProfileId: businessProfile.id,
+      readinessScore: 72,
+      financeScore: 65,
+      marketingScore: 75,
+      teamScore: 70,
+      operationsScore: 75,
+      outsourcingScore: 75,
+      createdAt: new Date("2026-08-05T00:00:00.000Z"),
+    },
+  });
+
+  // 2. Post-Project Assessment (Evaluasi pasca-proyek selesai)
+  await prisma.businessAssessmentResult.create({
+    data: {
+      businessProfileId: businessProfile.id,
+      readinessScore: 84,
+      financeScore: 75,
+      marketingScore: 85,
+      teamScore: 85,
+      operationsScore: 90,
+      outsourcingScore: 85,
+      createdAt: new Date("2026-09-02T00:00:00.000Z"),
+    },
+  });
 
   const bankFundingProject = await prisma.project.upsert({
     where: { id: "seed-funding-bank" },
@@ -294,18 +313,6 @@ async function main() {
   });
 
   const talentProfile = await seedTalent(prisma, passwordHash);
-
-  await prisma.businessAssessmentResult.updateMany({
-    where: { businessProfileId: businessProfile.id },
-    data: {
-      readinessScore: 82,
-      financeScore: 75,
-      marketingScore: 85,
-      teamScore: 80,
-      operationsScore: 85,
-      outsourcingScore: 85,
-    },
-  });
 
   const recruitmentProject = await prisma.project.upsert({
     where: { id: "seed-project-recruitment" },

@@ -132,6 +132,13 @@ export async function checkAndReleaseWarrantyRetention(
       supportTickets: true,
       disputes: true,
       escrowTransaction: true,
+      businessProfile: true,
+      infrastructureHandover: true,
+      skills: true,
+      applications: {
+        where: { status: "ACCEPTED" },
+        include: { talentProfile: true },
+      },
     },
   });
 
@@ -207,6 +214,48 @@ export async function checkAndReleaseWarrantyRetention(
       where: { id: projectId },
       data: { status: "COMPLETED" },
     });
+
+    // 5. Automated Verified Portfolio publication (PRD §3.1 FR-TAL-04)
+    const acceptedApp = project.applications[0];
+    if (acceptedApp) {
+      await tx.portfolioEntry.upsert({
+        where: { projectId: project.id },
+        update: {
+          title: project.title,
+          businessName: project.businessProfile.businessName,
+          problemSummary: project.scope,
+          solutionBuilt: project.infrastructureHandover?.productionUrl
+            ? `Solusi digital terverifikasi live di ${project.infrastructureHandover.productionUrl}`
+            : "Implementasi solusi transformasi digital UMKM tuntas dan terverifikasi.",
+          isPublic: true,
+        },
+        create: {
+          talentProfileId: acceptedApp.talentProfileId,
+          projectId: project.id,
+          title: project.title,
+          businessName: project.businessProfile.businessName,
+          problemSummary: project.scope,
+          solutionBuilt: project.infrastructureHandover?.productionUrl
+            ? `Solusi digital terverifikasi live di ${project.infrastructureHandover.productionUrl}`
+            : "Implementasi solusi transformasi digital UMKM tuntas dan terverifikasi.",
+          isPublic: true,
+        },
+      });
+
+      // Promote applied project skills to PROJECT_VERIFIED (PRD FR-TAL-01)
+      const projectSkillIds = project.skills.map((s) => s.skillId);
+      if (projectSkillIds.length > 0) {
+        await tx.talentSkill.updateMany({
+          where: {
+            talentProfileId: acceptedApp.talentProfileId,
+            skillId: { in: projectSkillIds },
+          },
+          data: {
+            evidenceLevel: "PROJECT_VERIFIED",
+          },
+        });
+      }
+    }
 
     return {
       released: true,

@@ -93,15 +93,22 @@ export async function reviewHandover(
         );
       }
 
-      // Trigger Digital Growth Reassessment (bump score by 5 as a proxy for successful project completion)
+      // Trigger Digital Growth Reassessment (create new snapshot record for FR-BIZ-05 growth tracking)
       const assessment = await tx.businessAssessmentResult.findFirst({
         where: { businessProfileId: project.businessProfileId },
         orderBy: { createdAt: "desc" }
       });
       if (assessment) {
-        await tx.businessAssessmentResult.update({
-          where: { id: assessment.id },
-          data: { readinessScore: { increment: 5 }, operationsScore: { increment: 5 } }
+        await tx.businessAssessmentResult.create({
+          data: {
+            businessProfileId: project.businessProfileId,
+            readinessScore: Math.min(100, assessment.readinessScore + 6),
+            financeScore: Math.min(100, assessment.financeScore + 5),
+            marketingScore: Math.min(100, assessment.marketingScore + 10),
+            teamScore: Math.min(100, assessment.teamScore + 5),
+            operationsScore: Math.min(100, assessment.operationsScore + 10),
+            outsourcingScore: Math.min(100, assessment.outsourcingScore + 10),
+          }
         });
       }
     } else if (decision === "DISPUTED") {
