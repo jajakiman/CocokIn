@@ -19,9 +19,9 @@ export function analyzeSkillGap(
   scores: SkillAssessmentScore[],
 ): SkillGapAnalysis {
   const domain = CAREER_TAXONOMY[careerId];
-  const scoreMap = new Map<string, number>();
+  const scoreMap = new Map<string, SkillAssessmentScore>();
   for (const s of scores) {
-    scoreMap.set(s.skillId, s.talentScore);
+    scoreMap.set(s.skillId, s);
   }
 
   // Only compute gaps for skills the talent has been assessed on
@@ -29,15 +29,16 @@ export function analyzeSkillGap(
   const gaps: SkillGapItem[] = [];
 
   for (const bench of allBenchmarks) {
-    const talentScore = scoreMap.get(bench.skillId);
-    if (talentScore === undefined) continue;
+    const score = scoreMap.get(bench.skillId);
+    if (!score) continue;
+    const benchmarkScore = score.benchmarkScore ?? bench.benchmarkScore;
 
     gaps.push({
       skillId: bench.skillId,
       name: bench.name,
-      talentScore,
-      benchmarkScore: bench.benchmarkScore,
-      gap: talentScore - bench.benchmarkScore,
+      talentScore: score.talentScore,
+      benchmarkScore,
+      gap: score.talentScore - benchmarkScore,
     });
   }
 

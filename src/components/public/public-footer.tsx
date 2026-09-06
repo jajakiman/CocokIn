@@ -1,5 +1,6 @@
 import { ShieldCheck } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
+import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 export function PublicFooter() {
   return (
@@ -9,12 +10,11 @@ export function PublicFooter() {
           {/* Col 1: Brand & Tagline */}
           <div className="public-footer__brand-col">
             <Link className="public-brand public-brand--footer" href="/">
-              <span className="brand-dot" aria-hidden="true" />
-              <strong>CocokIn</strong>
+              <CocokInBrand className="public-brand__wordmark" decorative variant="wordmark" />
             </Link>
             <p className="public-footer__desc">
-              Marketplace-Enabled Vertical SaaS yang menghubungkan talenta muda siap kerja dengan
-              kebutuhan transformasi digital UMKM secara terstruktur, terukur, dan bergaransi.
+              <strong>Ubah Potensi Jadi Bukti, Selesaikan Solusi Pasti.</strong> CocokIn menghubungkan talenta muda dengan kebutuhan digital UMKM melalui proyek yang
+              terarah, mudah dipantau, dan memiliki perlindungan hasil kerja.
             </p>
             <p className="public-footer__platform-note">
               <ShieldCheck aria-hidden="true" size={18} />
@@ -26,11 +26,11 @@ export function PublicFooter() {
           <nav className="public-footer__nav-col" aria-label="Navigasi footer">
             <h4>Navigasi</h4>
             <ul>
-              <li><Link href="#proyek-unggulan">Proyek Nyata</Link></li>
-              <li><Link href="#alur-kebutuhan">Pilihan Jalur</Link></li>
-              <li><Link href="#cara-kerja">Cara Kerja</Link></li>
-              <li><Link href="#product-proof">Bukti Produk</Link></li>
-              <li><Link href="#trust">Keamanan & Garansi</Link></li>
+              <li><Link href="/#untuk-talent">Untuk Talent</Link></li>
+              <li><Link href="/#untuk-umkm">Untuk UMKM</Link></li>
+              <li><Link href="/#matching-engine">Pencocokan</Link></li>
+              <li><Link href="/#proyek-unggulan">Proyek Nyata</Link></li>
+              <li><Link href="/#trust">Keamanan & Garansi</Link></li>
             </ul>
           </nav>
 
@@ -41,8 +41,6 @@ export function PublicFooter() {
               <li><Link href="/login">Masuk ke Akun</Link></li>
               <li><Link href="/register/talent">Pendaftaran Talent</Link></li>
               <li><Link href="/register/business">Pendaftaran UMKM</Link></li>
-              <li><Link href="/p/talent-nadia">Contoh Paspor Digital</Link></li>
-              <li><Link href="/dev/design-system">Design System Catalog</Link></li>
             </ul>
           </div>
         </div>
@@ -50,7 +48,7 @@ export function PublicFooter() {
         <div className="public-footer__bottom">
           <p>© 2026 CocokIn Ecosystem. Hak cipta dilindungi undang-undang.</p>
           <div className="public-footer__legal-badges">
-            <span>100% Liability Reserve</span>
+            <span>Dana Proyek Terlindungi</span>
             <span>Garansi 30 Hari</span>
             <span>Atribusi Terverifikasi</span>
           </div>

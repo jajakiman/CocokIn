@@ -3,28 +3,35 @@
 @import "../src/design-system/styles/auth.css";
 
 :root {
-  --background: #f5fafc;
+  --brand-navy: #001040;
+  --brand-blue: #0080ff;
+  --brand-orange: #ff8010;
+  --brand-gold: #ffa020;
+  --background: #f7f9fc;
   --surface: #ffffff;
-  --surface-subtle: #f0f7fa;
-  --surface-selected: #e8f4fc;
-  --border: #d4e7ee;
-  --border-strong: #94b9c7;
-  --foreground: #193546;
-  --muted-foreground: #5a7382;
-  --primary: #065b98;
-  --primary-hover: #044370;
-  --brand-blue: #1b7fdc;
-  --brand-cyan: #0db8d3;
+  --surface-subtle: #f1f5fb;
+  --surface-selected: #eaf3ff;
+  --border: #d8e1ee;
+  --border-strong: #9aabc2;
+  --foreground: var(--brand-navy);
+  --muted-foreground: #53647a;
+  --primary: var(--brand-navy);
+  --primary-hover: #001a66;
+  --interactive: #006fe6;
+  --interactive-hover: #005dcc;
+  --accent: var(--brand-orange);
+  --accent-soft: #fff3e8;
+  --accent-foreground: var(--brand-navy);
   --success: #047857;
   --success-subtle: #ecfdf5;
   --warning: #b45309;
   --warning-subtle: #fffbeb;
   --destructive: #be123c;
   --destructive-subtle: #fff1f2;
-  --info-subtle: #eff8ff;
-  --shadow-card: 0 4px 20px -2px rgb(25 53 70 / 0.06);
-  --shadow-card-hover: 0 12px 32px -4px rgb(25 53 70 / 0.12);
-  --shadow-popover: 0 20px 40px -8px rgb(25 53 70 / 0.2);
+  --info-subtle: #eaf3ff;
+  --shadow-card: 0 4px 20px -2px rgb(0 16 64 / 0.06);
+  --shadow-card-hover: 0 12px 32px -4px rgb(0 16 64 / 0.12);
+  --shadow-popover: 0 20px 40px -8px rgb(0 16 64 / 0.2);
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
@@ -72,7 +79,7 @@ button {
 }
 
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
-  outline: 3px solid var(--brand-blue);
+  outline: 3px solid var(--interactive);
   outline-offset: 2px;
 }
 
@@ -119,13 +126,47 @@ h3 {
   top: 1rem;
 }
 
-/* ── App Shell & Adaptive Layout ────────────────────────── */
+/* ── Onboarding Form Input Primitives ───────────────────── */
+
+.onboarding-input {
+  width: 100%;
+  height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  transition: all 150ms ease;
+  box-shadow: var(--shadow-card);
+}
+
+.onboarding-input:placeholder-shown {
+  color: #9AABC2;
+}
+
+.onboarding-input:focus {
+  outline: none;
+  border-color: var(--interactive);
+  box-shadow: 0 0 0 2px rgba(0, 111, 230, 0.2);
+}
+
+.onboarding-input:disabled {
+  background-color: #F8FAFC;
+  color: #9AABC2;
+  cursor: not-allowed;
+  border-color: #E2E8F0;
+}
+
+/* ── App Shell & Adaptive Layout (Steady, No-Offset, Desktop Grid) ────────── */
 
 .app-shell {
+  --app-sidebar-width: 16rem;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   padding-bottom: 5.5rem; /* Space for mobile nav bar */
+  background: var(--background);
 }
 
 .app-sidebar {
@@ -148,153 +189,87 @@ h3 {
 
 .app-content {
   width: 100%;
-  max-width: 76rem;
-  margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
   flex: 1;
 }
 
-/* ── Brand Mark ─────────────────────────────────────────── */
-
-.brand-mark {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-}
-.brand-mark .brand-dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: var(--brand-cyan, #0ea5e9);
-  box-shadow: 0 0 8px rgba(14, 165, 233, 0.5);
-  display: inline-block;
-  flex-shrink: 0;
-}
-.brand-mark__text {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: white;
-}
-.mobile-brand {
-  font-weight: 800;
-  font-size: 1.1rem;
-}
-
-/* ── Sidebar (Desktop & Tablet >= 768px) ────────────────── */
+/* ── Steady Sidebar for Tablet & Desktop (Fixed/Sticky Without Scroll Offset) ── */
 
 @media (min-width: 768px) {
   .app-shell {
+    --app-sidebar-width: 5rem;
     display: grid;
-    grid-template-columns: 5rem 1fr;
+    grid-template-columns: var(--app-sidebar-width) minmax(0, 1fr);
+    align-items: start;
     padding-bottom: 0;
   }
+
   .app-sidebar {
-    background: #0f2431;
-    color: white;
     display: flex;
     flex-direction: column;
-    grid-row: 1 / span 2;
-    min-height: 100dvh;
-    padding: 1.5rem 0.5rem;
     position: sticky;
     top: 0;
+    height: 100dvh;
+    background: #FFFFFF;
+    border-right: 1px solid var(--border);
+    flex-shrink: 0;
     z-index: 40;
-    border-right: 1px solid rgb(255 255 255 / 0.08);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-inline: 0.75rem;
+    width: 100%;
   }
-  .app-sidebar__brand-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
-    padding: 0 0.5rem;
-  }
-  .brand-mark__text, .role-pill {
+
+  .app-sidebar__brand-label,
+  .app-sidebar__ecosystem-label,
+  .app-sidebar .nav-link__label {
     display: none;
   }
-  .app-sidebar__nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-  }
-  .nav-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.65rem 0.25rem;
-    border-radius: var(--radius-md);
-    color: #94b9c7;
-    font-size: 0.65rem;
-    font-weight: 650;
-    gap: 0.35rem;
-    transition: all 180ms ease;
-  }
-  .nav-link:hover {
-    color: white;
-    background: rgb(255 255 255 / 0.06);
-  }
-  .nav-link[data-active="true"] {
-    background: rgb(13 184 211 / 0.18);
-    color: var(--brand-cyan);
-    font-weight: 750;
-    box-shadow: inset 3px 0 var(--brand-cyan);
-  }
-  .nav-link__icon {
-    display: flex;
-    align-items: center;
+
+  .app-sidebar .nav-link {
     justify-content: center;
   }
+
+  .app-sidebar > div:first-child > div {
+    justify-content: center;
+  }
+
   .app-topbar {
     display: none;
   }
+
   .app-content {
-    grid-column: 2;
-    padding: 2rem 1.75rem 4rem;
+    min-width: 0;
+    padding: 2rem clamp(1.5rem, 3vw, 3rem) 5rem;
+    overflow-x: clip;
   }
 }
 
 @media (min-width: 1024px) {
   .app-shell {
-    grid-template-columns: 16.5rem 1fr;
+    --app-sidebar-width: 16rem;
   }
+
+  .app-shell[data-sidebar="collapsed"] {
+    --app-sidebar-width: 5rem;
+  }
+
   .app-sidebar {
-    padding: 1.75rem 1.25rem;
+    padding-inline: 1rem;
   }
-  .app-sidebar__brand-container {
-    align-items: flex-start;
-    padding: 0 0.25rem;
-  }
-  .brand-mark__text {
+
+  .app-shell[data-sidebar="expanded"] .app-sidebar__brand-label,
+  .app-shell[data-sidebar="expanded"] .app-sidebar__ecosystem-label,
+  .app-shell[data-sidebar="expanded"] .app-sidebar .nav-link__label {
     display: inline;
   }
-  .role-pill {
-    display: inline-block;
-    margin-top: 0.65rem;
-    font-size: 0.7rem;
-    font-weight: 750;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #94b9c7;
-    background: rgb(255 255 255 / 0.07);
-    padding: 0.2rem 0.65rem;
-    border-radius: 999px;
-  }
-  .nav-link {
-    flex-direction: row;
+
+  .app-shell[data-sidebar="expanded"] .app-sidebar .nav-link {
     justify-content: flex-start;
-    padding: 0.75rem 1rem;
-    font-size: 0.9rem;
-    gap: 0.85rem;
-    border-radius: var(--radius-md);
   }
-  .nav-link[data-active="true"] {
-    box-shadow: none;
-    border-left: 3px solid var(--brand-cyan);
-  }
-  .app-content {
-    padding: 2.5rem 2.25rem 5rem;
+
+  .app-shell[data-sidebar="expanded"] .app-sidebar > div:first-child > div {
+    justify-content: space-between;
   }
 }
 
@@ -396,7 +371,7 @@ h3 {
 .primary-action:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgb(6 91 152 / 0.25);
+  box-shadow: 0 4px 12px rgb(0 16 64 / 0.25);
 }
 .secondary-action {
   background: var(--surface);
@@ -604,7 +579,7 @@ h3 {
   overflow: hidden;
 }
 .quiz-progress__bar {
-  background: linear-gradient(90deg, var(--brand-cyan), var(--brand-blue));
+   background: linear-gradient(90deg, var(--interactive), var(--brand-orange));
   border-radius: 999px;
   height: 100%;
   transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -647,7 +622,7 @@ h3 {
 }
 .quiz-option:hover {
   background: var(--surface-selected);
-  border-color: var(--brand-blue);
+   border-color: var(--interactive);
   transform: translateX(4px);
 }
 
@@ -753,14 +728,14 @@ h3 {
   transition: all 180ms ease;
 }
 .filter-chip:hover {
-  border-color: var(--brand-blue);
+   border-color: var(--interactive);
   background: var(--surface-subtle);
 }
 .filter-chip[data-active="true"] {
   background: var(--primary);
   border-color: var(--primary);
   color: white;
-  box-shadow: 0 4px 10px rgb(6 91 152 / 0.2);
+  box-shadow: 0 4px 10px rgb(0 16 64 / 0.2);
 }
 .catalog-grid {
   display: grid;
@@ -992,7 +967,7 @@ h3 {
 
 .public-passport-page {
   min-height: 100dvh;
-  background: #0f2431;
+   background: var(--brand-navy);
   padding: clamp(2rem, 5vw, 4.5rem) 1.5rem;
   display: flex;
   justify-content: center;
@@ -1027,9 +1002,9 @@ h3 {
 }
 
 .official-badge {
-  background: rgb(13 184 211 / 0.15);
-  border: 1px solid var(--brand-cyan);
-  color: var(--brand-cyan);
+  background: rgb(255 128 16 / 0.12);
+   border: 1px solid var(--brand-orange);
+   color: var(--brand-orange);
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -1077,7 +1052,7 @@ h3 {
 
 .passport-stamp {
   background: var(--surface-selected);
-  border: 2px dashed var(--brand-blue);
+   border: 2px dashed var(--interactive);
   border-radius: 0.75rem;
   padding: 1rem 1.25rem;
   text-align: center;
@@ -1088,7 +1063,7 @@ h3 {
   display: block;
   font-size: 2.25rem;
   font-weight: 900;
-  color: var(--brand-deep);
+   color: var(--primary);
   line-height: 1;
 }
 

@@ -1,20 +1,24 @@
 "use client";
 
-import { List, X } from "@phosphor-icons/react";
+import { ArrowRight, List, X } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { CocokInBrand } from "@/src/design-system/cocokin-brand";
 
 const publicLinks = [
-  { href: "#proyek-unggulan", label: "Proyek Nyata" },
-  { href: "#alur-kebutuhan", label: "Untuk Siapa" },
-  { href: "#cara-kerja", label: "Cara Kerja" },
-  { href: "#trust", label: "Keamanan" },
+  { href: "/#untuk-talent", label: "Untuk Talent" },
+  { href: "/#untuk-umkm", label: "Untuk UMKM" },
+  { href: "/#matching-engine", label: "Pencocokan" },
+  { href: "/#proyek-unggulan", label: "Proyek Nyata" },
+  { href: "/#trust", label: "Keamanan" },
 ] as const;
 
 export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const brandRef = useRef<HTMLAnchorElement>(null);
 
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
@@ -32,16 +36,33 @@ export function PublicHeader() {
     return () => document.removeEventListener("keydown", handleEscape);
   }, [closeMenu, isMenuOpen]);
 
+  useEffect(() => {
+    const updateScrolledState = () => setIsScrolled(window.scrollY > 16);
+    const closeMenuOnDesktop = () => {
+      if (window.innerWidth >= 1100) {
+        setIsMenuOpen((wasOpen) => {
+          if (wasOpen) brandRef.current?.focus();
+          return false;
+        });
+      }
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+    window.addEventListener("resize", closeMenuOnDesktop);
+    return () => {
+      window.removeEventListener("scroll", updateScrolledState);
+      window.removeEventListener("resize", closeMenuOnDesktop);
+    };
+  }, []);
+
   return (
-    <header className="public-header">
+    <header className="public-header" data-scrolled={isScrolled}>
       <div className="public-header__inner">
-        {/* Left: Brand Logo (Minimalist Wordmark) */}
-        <Link className="public-brand" href="/" aria-label="CocokIn beranda">
-          <span className="brand-dot" aria-hidden="true" />
-          <strong>CocokIn</strong>
+        <Link className="public-brand" href="/" aria-label="CocokIn beranda" ref={brandRef}>
+          <CocokInBrand className="public-brand__wordmark" decorative priority variant="wordmark" />
         </Link>
 
-        {/* Center & Right Navigation (Desktop) */}
         <nav className="public-nav--desktop" aria-label="Navigasi publik">
           <div className="public-nav--center">
             {publicLinks.map((link) => (
@@ -54,13 +75,13 @@ export function PublicHeader() {
             <Link className="public-nav__link public-nav__link--login" href="/login">
               Masuk
             </Link>
-            <Link className="public-nav__btn-register" href="/register">
-              Daftar Sekarang
+            <Link className="public-nav__cta" href="/register">
+              <span>Mulai Sekarang</span>
+              <ArrowRight aria-hidden="true" size={16} weight="bold" />
             </Link>
           </div>
         </nav>
 
-        {/* Mobile Hamburger Button */}
         <button
           aria-controls="public-mobile-menu"
           aria-expanded={isMenuOpen}
@@ -74,7 +95,6 @@ export function PublicHeader() {
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu with Framer Motion */}
       <AnimatePresence>
         {isMenuOpen ? (
           <motion.nav
@@ -95,8 +115,9 @@ export function PublicHeader() {
               <Link className="public-mobile-menu__link" href="/login" onClick={closeMenu}>
                 Masuk
               </Link>
-              <Link className="public-nav__btn-register" href="/register" onClick={closeMenu} style={{ textAlign: "center", justifyContent: "center" }}>
-                Daftar Sekarang
+              <Link className="public-nav__cta public-nav__cta--mobile" href="/register" onClick={closeMenu}>
+                <span>Mulai Sekarang</span>
+                <ArrowRight aria-hidden="true" size={16} weight="bold" />
               </Link>
             </div>
           </motion.nav>

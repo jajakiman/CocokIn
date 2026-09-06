@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye, EyeSlash } from "@phosphor-icons/react";
-import { useId, useState } from "react";
+import { type ChangeEventHandler, useId, useState } from "react";
 
 type PasswordFieldProps = {
   id?: string;
@@ -11,6 +11,11 @@ type PasswordFieldProps = {
   helper?: string;
   error?: string;
   disabled?: boolean;
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+  statusId?: string;
+  invalid?: boolean;
+  required?: boolean;
 };
 
 export function PasswordField({
@@ -21,26 +26,36 @@ export function PasswordField({
   helper,
   error,
   disabled = false,
+  value,
+  onChange,
+  statusId,
+  invalid,
+  required = false,
 }: PasswordFieldProps) {
   const generatedId = useId();
   const [isVisible, setIsVisible] = useState(false);
   const inputId = id ?? `${name}-${generatedId}`;
   const helperId = helper ? `${inputId}-helper` : undefined;
   const errorId = error ? `${inputId}-error` : undefined;
-  const describedBy = [helperId, errorId].filter(Boolean).join(" ") || undefined;
+  const describedBy = [helperId, errorId, statusId].filter(Boolean).join(" ") || undefined;
 
   return (
     <div className="auth-field">
-      <label htmlFor={inputId}>{label}</label>
+      <label htmlFor={inputId}>
+        {label}{required ? <> <span className="text-[#E11D48]" aria-hidden="true">*</span></> : null}
+      </label>
       <div className="auth-password">
         <input
           aria-describedby={describedBy}
-          aria-invalid={error ? true : undefined}
+          aria-invalid={error || invalid ? true : undefined}
           autoComplete={autoComplete}
           disabled={disabled}
           id={inputId}
           name={name}
+          required={required}
+          onChange={onChange}
           type={isVisible ? "text" : "password"}
+          value={value}
         />
         <button
           aria-label={isVisible ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}

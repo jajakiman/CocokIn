@@ -25,9 +25,6 @@ export const registrationSchema = z
     termsAccepted: z.literal(true, {
       message: "Anda harus menyetujui Syarat dan Ketentuan.",
     }),
-    privacyAccepted: z.literal(true, {
-      message: "Anda harus menyetujui pemrosesan data pribadi.",
-    }),
   })
   .refine(({ password, confirmPassword }) => password === confirmPassword, {
     message: "Konfirmasi kata sandi tidak cocok.",
@@ -51,7 +48,6 @@ export function toRegistrationRequest(
     email,
     password,
     termsAccepted,
-    privacyAccepted,
   } = input;
 
   return {
@@ -60,6 +56,5 @@ export function toRegistrationRequest(
     email,
     password,
     termsAccepted,
-    privacyAccepted,
   };
 }

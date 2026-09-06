@@ -1,6 +1,6 @@
-# CocokIn Design System
+# CocokIn Product Experience Guide
 
-> **Direction:** Arctic Depths, trust + youthful
+> **Direction:** Official CocokIn identity, trustworthy + energetic
 > **Theme:** Light-first
 > **Applies to:** Talent, UMKM, Admin, and public pages
 
@@ -14,34 +14,35 @@
 
 ## Color Palette
 
-### Arctic Depths Brand
+### Official CocokIn Brand
 
 | Token | Value | Use | Safe foreground |
 |---|---:|---|---:|
-| `brand-cyan` | `#0DB8D3` | Growth accent, highlight, decorative brand element | `#193546` |
-| `brand-blue` | `#1B7FDC` | Brand, active indicator, focus, charts | `#193546` for normal text contexts |
-| `brand-deep` | `#065B98` | Primary actions and strong interactive states | `#FFFFFF` |
-| `brand-navy` | `#193546` | Headings, structural dark surfaces | `#FFFFFF` |
+| `brand-navy` | `#001040` | Primary actions, headings, structural dark surfaces | `#FFFFFF` |
+| `brand-blue` | `#0080FF` | Logo gradient source and decorative blue | `#001040` |
+| `interactive` | `#006FE6` | Links, focus, active controls, charts | `#FFFFFF` for large/bold text only |
+| `brand-orange` | `#FF8010` | Opportunity, UMKM accent, selected brand detail | `#001040` |
+| `brand-gold` | `#FFA020` | Hover/highlight accent | `#001040` |
 
 Contrast decisions:
 
-- Cyan/white is about 2.38:1 and is forbidden for normal text.
-- Cyan/navy is about 5.38:1 and is valid for normal text.
-- Brand blue/white is about 4.10:1 and is not used for normal white button text.
-- Deep blue/white is about 7.10:1 and is the primary CTA pair.
-- Navy/white is about 12.81:1.
+- Navy/white is about 18.29:1 and is the primary CTA pair.
+- Logo blue/white is about 3.80:1 and is not used for normal white text.
+- Orange/white is about 2.52:1 and is forbidden for white button text.
+- Navy/logo blue is about 4.82:1.
+- Navy/orange is about 7.27:1 and is the approved orange text pairing.
 
 ### Surface and Text
 
 ```text
-background          #F5FAFC
+background          #F7F9FC
 surface             #FFFFFF
-surface-subtle      #EAF5F8
-surface-selected    #EFF8FF
-border              #C9E0E8
-border-strong       #94B9C7
-foreground          #193546
-muted-foreground    #526B79
+surface-subtle      #F1F5FB
+surface-selected    #EAF3FF
+border              #D8E1EE
+border-strong       #9AABC2
+foreground          #001040
+muted-foreground    #53647A
 ```
 
 ### Semantic Status
@@ -51,7 +52,7 @@ muted-foreground    #526B79
 | Success / verified | `#047857` | `#ECFDF5` | `#047857` |
 | Warning / revision | `#B45309` | `#FFFBEB` | `#92400E` |
 | Destructive / error | `#BE123C` | `#FFF1F2` | `#9F1239` |
-| Information | `#065B98` | `#EFF8FF` | `#065B98` |
+| Information | `#006FE6` | `#EAF3FF` | `#005DCC` |
 | Neutral | `#64748B` | `#F1F5F9` | `#475569` |
 
 Every status includes text plus an icon/shape. Color is never the only carrier.
@@ -97,6 +98,22 @@ emphasis   240ms
 ## Iconography
 
 Phosphor Icons is the only structural icon family. Use 16px inline, 20px controls, and 24px navigation. Decorative icons beside visible labels use `aria-hidden`.
+
+## Official Logo Assets
+
+```text
+public/brand/cocokin/logo-mark.webp
+public/brand/cocokin/logo-wordmark.webp
+public/brand/cocokin/logo-full.webp
+public/brand/cocokin/logo-tagline.webp
+```
+
+- Use the wordmark in public navigation, authentication, footer, and any wide brand slot.
+- Use the mark in tablet rails, mobile app shells, passport badges, favicons, and compact metadata.
+- Use the full lockup only for large social/presentation surfaces.
+- Render taglines as HTML text in product UI; keep `logo-tagline.webp` as a source brand asset.
+- Preserve intrinsic aspect ratio. Never stretch, crop, recolor, add a glow, or place the wordmark directly on navy without a light backing.
+- Target rendered heights: wordmark 24-32px; mark 30-40px. The detailed mark is not approved below 30px.
 
 ## Shared Responsive Shell
 
@@ -145,11 +162,11 @@ Domain patterns: `CocokScoreCard`, `ProjectCard`, `ProjectAgreementSummary`, `Mi
 
 ```text
 own message background       #DBEEFE
-own message foreground       #193546
+own message foreground       #001040
 other message background     #FFFFFF
-other message foreground     #193546
+other message foreground     #001040
 system message background    #EAF5F8
-unread divider               #1B7FDC on #EFF8FF
+unread divider               #006FE6 on #EAF3FF
 reconnecting                 warning tokens
 failed message               destructive tokens
 ```

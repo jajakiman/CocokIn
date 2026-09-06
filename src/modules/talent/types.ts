@@ -5,7 +5,7 @@ import type { EvidenceLevel } from "@/src/modules/matching/types";
 // --- Career Taxonomy ---
 
 export type CareerDomainId =
-  | "frontend-dev"
+  | "fullstack-dev"
   | "ui-ux-designer"
   | "data-analyst"
   | "digital-marketer";
@@ -28,6 +28,7 @@ export type CareerDomain = {
 export type AssessmentQuestionType = "TECHNICAL" | "SOFT_SKILL";
 
 export type AssessmentOption = {
+  id?: string;
   label: string;
   score: number; // 0-100
 };
@@ -36,6 +37,7 @@ export type AssessmentQuestion = {
   id: string;
   careerId: CareerDomainId;
   type: AssessmentQuestionType;
+  skillId?: string;
   text: string;
   options: AssessmentOption[];
 };
@@ -51,6 +53,7 @@ export type SkillAssessmentScore = {
   skillId: string;
   name: string;
   talentScore: number; // 0-100
+  benchmarkScore?: number;
 };
 
 export type CareerReadinessResult = {

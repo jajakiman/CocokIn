@@ -43,10 +43,13 @@ export type TalentProfileData = {
 const SEED_DRAFT_KEY = "cocokin_seeded_demo_talent_draft";
 
 function createInitialPassport(careerId: CareerDomainId): TalentSkillPassport {
-  if (careerId === "frontend-dev") {
+  if (careerId === "fullstack-dev") {
     return createSeededTalentPassport();
   }
   const career = CAREER_TAXONOMY[careerId];
+  if (!career) {
+    return createSeededTalentPassport();
+  }
   const allSkills = [...career.technicalSkills, ...career.softSkills].map((s) => ({
     skillId: s.skillId,
     name: s.name,
@@ -98,6 +101,7 @@ export function TalentProvider({ children }: { children: ReactNode }) {
       const next = { ...prev, ...updates };
       if (updates.targetCareerId && updates.targetCareerId !== prev.targetCareerId) {
         setPassport(createInitialPassport(updates.targetCareerId));
+        setLatestReadinessResult(null);
       }
       return next;
     });
@@ -121,7 +125,12 @@ export function TalentProvider({ children }: { children: ReactNode }) {
       assessedIds.push(item.skillId);
     }
 
-    setPassport((prev) => markAssessed(prev, assessedIds, scoreMap));
+    setPassport((prev) => {
+      const careerPassport = prev.careerId === result.careerId
+        ? prev
+        : createInitialPassport(result.careerId);
+      return markAssessed(careerPassport, assessedIds, scoreMap);
+    });
   };
 
   return (

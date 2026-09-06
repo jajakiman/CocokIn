@@ -20,3 +20,4 @@ Thumbs.db
 # Python artifacts from vendored skill runtime
 __pycache__/
 *.py[cod]
+package-lock.json

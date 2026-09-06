@@ -26,12 +26,11 @@ export const roleConfigs: Record<AppRole, RoleShellConfig> = {
     primaryAction: { label: "Cari proyek", href: "/talent/projects" },
     navigation: [
       { label: "Beranda", href: "/talent" },
-      { label: "Asesmen", href: "/talent/assessment" },
+      { label: "Cek Kesiapan", href: "/talent/assessment" },
       { label: "Cari Proyek", href: "/talent/projects" },
       { label: "Proyek Saya", href: "/talent/workspace" },
       { label: "Skill Passport", href: "/talent/passport" },
       { label: "Portofolio", href: "/talent/portfolio" },
-      { label: "Profil", href: "/talent/profile" },
     ],
   },
   business: {
@@ -46,7 +45,6 @@ export const roleConfigs: Record<AppRole, RoleShellConfig> = {
       { label: "Proyek", href: "/business/projects" },
       { label: "Pelamar", href: "/business/applicants" },
       { label: "Pertumbuhan", href: "/business/growth" },
-      { label: "Profil Usaha", href: "/business/profile" },
     ],
   },
   admin: {

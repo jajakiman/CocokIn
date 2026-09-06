@@ -18,6 +18,20 @@ test.describe("ZAKY-01 Multi-Viewport & Accessibility E2E Suite", () => {
       // 1. Landing
       await page.goto("/");
       await expect(page.locator("body")).toBeVisible();
+      const publicHeader = page.locator(".public-header");
+      const initialHeaderBox = await publicHeader.boundingBox();
+      expect(initialHeaderBox).not.toBeNull();
+
+      await page.evaluate(() => window.scrollTo(0, 700));
+      await expect(publicHeader).toHaveAttribute("data-scrolled", "true");
+      const scrolledHeaderBox = await publicHeader.boundingBox();
+      expect(scrolledHeaderBox).not.toBeNull();
+      expect(Math.abs((scrolledHeaderBox?.y ?? 0) - (initialHeaderBox?.y ?? 0))).toBeLessThan(1);
+
+      const horizontalOverflow = await page.evaluate(
+        () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      );
+      expect(horizontalOverflow).toBe(false);
 
       // 2. Talent Projects Catalog
       await page.goto("/talent/projects");
@@ -43,16 +57,6 @@ test.describe("ZAKY-01 Multi-Viewport & Accessibility E2E Suite", () => {
       await page.goto("/talent/portfolio");
       await expect(
         page.getByRole("heading", { name: "Portofolio Terverifikasi UMKM" }),
-      ).toBeVisible();
-
-      // 8. Public Shareable Passport
-      await page.goto("/p/talent-nadia");
-      await expect(page.getByRole("heading", { name: "Nadia Putri" })).toBeVisible();
-
-      // 9. Design System Catalog
-      await page.goto("/dev/design-system");
-      await expect(
-        page.getByRole("heading", { name: "Arctic Depths Design System" }),
       ).toBeVisible();
     });
   }

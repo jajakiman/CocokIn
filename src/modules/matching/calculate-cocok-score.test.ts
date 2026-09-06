@@ -10,7 +10,7 @@ describe("calculateCocokScore", () => {
         { skillId: "react", name: "React", level: "PROJECT_VERIFIED" },
         { skillId: "tailwind", name: "Tailwind CSS", level: "PROJECT_VERIFIED" },
       ],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       majorSkillGapIds: [],
       availability: "FULL_TIME",
       completedProjectsCount: 1,
@@ -23,7 +23,7 @@ describe("calculateCocokScore", () => {
         { skillId: "react", name: "React" },
         { skillId: "tailwind", name: "Tailwind CSS" },
       ],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       difficulty: "BEGINNER",
       durationDays: 7,
       workMode: "REMOTE",
@@ -44,7 +44,7 @@ describe("calculateCocokScore", () => {
   it("yields higher skill factor for verified skills compared to self-declared skills", () => {
     const verifiedTalent: TalentMatchProfile = {
       skills: [{ skillId: "nextjs", name: "Next.js", level: "PROJECT_VERIFIED" }],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       availability: "FULL_TIME",
       completedProjectsCount: 1,
       workModePreference: "REMOTE",
@@ -52,7 +52,7 @@ describe("calculateCocokScore", () => {
 
     const selfDeclaredTalent: TalentMatchProfile = {
       skills: [{ skillId: "nextjs", name: "Next.js", level: "SELF_DECLARED" }],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       availability: "FULL_TIME",
       completedProjectsCount: 1,
       workModePreference: "REMOTE",
@@ -60,7 +60,7 @@ describe("calculateCocokScore", () => {
 
     const project: ProjectMatchRequirement = {
       requiredSkills: [{ skillId: "nextjs", name: "Next.js" }],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       difficulty: "BEGINNER",
       durationDays: 5,
       workMode: "REMOTE",
@@ -77,7 +77,7 @@ describe("calculateCocokScore", () => {
   it("gives bonus career alignment score when project covers talent major skill gaps", () => {
     const talentWithGap: TalentMatchProfile = {
       skills: [],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       majorSkillGapIds: ["typescript"],
       availability: "PART_TIME",
       completedProjectsCount: 0,
@@ -86,7 +86,7 @@ describe("calculateCocokScore", () => {
 
     const talentWithoutGap: TalentMatchProfile = {
       skills: [],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       majorSkillGapIds: ["figma"],
       availability: "PART_TIME",
       completedProjectsCount: 0,
@@ -95,7 +95,7 @@ describe("calculateCocokScore", () => {
 
     const project: ProjectMatchRequirement = {
       requiredSkills: [{ skillId: "typescript", name: "TypeScript" }],
-      targetCareerId: "frontend-dev",
+      targetCareerId: "fullstack-dev",
       difficulty: "BEGINNER",
       durationDays: 7,
       workMode: "REMOTE",

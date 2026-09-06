@@ -22,7 +22,6 @@ const validRegistration = {
   password: "amansekali",
   confirmPassword: "amansekali",
   termsAccepted: true,
-  privacyAccepted: true,
 };
 
 describe("auth presentation types", () => {
@@ -43,6 +42,7 @@ describe("auth presentation types", () => {
       | "ROLE_REVOKED"
       | "AUTH_NOT_CONFIGURED"
       | "PROVIDER_UNAVAILABLE"
+      | "EMAIL_NOT_VERIFIED"
     >();
   });
 
@@ -51,7 +51,7 @@ describe("auth presentation types", () => {
       (input: { email: string; password: string }) => Promise<AuthResult>
     >();
     expectTypeOf<AuthUiAdapter["loginWithGoogle"]>().toEqualTypeOf<
-      () => Promise<AuthResult>
+      (role?: PublicRegistrationRole) => Promise<AuthResult>
     >();
     expectTypeOf<AuthUiAdapter["register"]>().toEqualTypeOf<
       (input: RegistrationRequest) => Promise<AuthResult>
@@ -80,7 +80,6 @@ describe("registrationSchema", () => {
 
   it.each([
     ["termsAccepted", "Anda harus menyetujui Syarat dan Ketentuan."],
-    ["privacyAccepted", "Anda harus menyetujui pemrosesan data pribadi."],
   ] as const)("requires %s consent", (field, message) => {
     const result = registrationSchema.safeParse({
       ...validRegistration,
@@ -127,7 +126,6 @@ describe("registrationSchema", () => {
       email: "nadia@example.com",
       password: "amansekali",
       termsAccepted: true,
-      privacyAccepted: true,
     });
     expect(toRegistrationRequest(parsed)).not.toHaveProperty("confirmPassword");
   });
@@ -191,7 +189,7 @@ describe("unavailableAuthAdapter", () => {
   it.each([
     ["loginWithCredentials", () => unavailableAuthAdapter.loginWithCredentials({ email: "nadia@example.com", password: "amansekali" })],
     ["loginWithGoogle", () => unavailableAuthAdapter.loginWithGoogle()],
-    ["register", () => unavailableAuthAdapter.register({ role: "TALENT", fullName: "Nadia Pratama", email: "nadia@example.com", password: "amansekali", termsAccepted: true, privacyAccepted: true })],
+    ["register", () => unavailableAuthAdapter.register({ role: "TALENT", fullName: "Nadia Pratama", email: "nadia@example.com", password: "amansekali", termsAccepted: true })],
   ] as const)("fails %s honestly without returning a user", async (_, invoke) => {
     await expect(invoke()).resolves.toEqual({
       ok: false,
@@ -237,7 +235,6 @@ describe("unavailableAuthAdapter", () => {
         email: "nadia@example.com",
         password: "amansekali",
         termsAccepted: true,
-        privacyAccepted: true,
       });
       await unavailableAuthAdapter.requestPasswordReset("nadia@example.com");
       await unavailableAuthAdapter.logout();

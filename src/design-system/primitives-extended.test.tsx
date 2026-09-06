@@ -65,12 +65,12 @@ describe("Extended Design System Primitives (MoneyBreakdown, AuditTimeline, Coco
       <CocokScoreCard
         result={mockResult}
         talentName="Nadia Putri"
-        candidateRole="Frontend Developer"
+        candidateRole="Fullstack Developer"
       />,
     );
 
     expect(screen.getByText("Nadia Putri")).toBeInTheDocument();
-    expect(screen.getByText("Frontend Developer")).toBeInTheDocument();
+    expect(screen.getByText("Fullstack Developer")).toBeInTheDocument();
     expect(screen.getByText("88")).toBeInTheDocument();
     expect(screen.getByText("Sangat Cocok")).toBeInTheDocument();
     expect(screen.getByText("Skill React terverifikasi dari proyek sebelumnya.")).toBeInTheDocument();

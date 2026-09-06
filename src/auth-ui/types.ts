@@ -18,8 +18,10 @@ export type AuthResult =
         | "ACCOUNT_SUSPENDED"
         | "ROLE_REVOKED"
         | "AUTH_NOT_CONFIGURED"
-        | "PROVIDER_UNAVAILABLE";
+        | "PROVIDER_UNAVAILABLE"
+        | "EMAIL_NOT_VERIFIED";
       message: string;
+      requiresVerification?: boolean;
     };
 
 export type RegistrationRequest = {
@@ -28,7 +30,6 @@ export type RegistrationRequest = {
   email: string;
   password: string;
   termsAccepted: boolean;
-  privacyAccepted: boolean;
 };
 
 export type AuthUiAdapter = {
@@ -36,7 +37,7 @@ export type AuthUiAdapter = {
     email: string;
     password: string;
   }): Promise<AuthResult>;
-  loginWithGoogle(): Promise<AuthResult>;
+  loginWithGoogle(role?: PublicRegistrationRole): Promise<AuthResult>;
   register(input: RegistrationRequest): Promise<AuthResult>;
   requestPasswordReset(
     email: string,

@@ -9,7 +9,7 @@ type CareerPickerProps = {
 
 function renderCareerIcon(id: CareerDomainId) {
   switch (id) {
-    case "frontend-dev":
+    case "fullstack-dev":
       return <Code size={32} weight="duotone" className="text-primary" />;
     case "ui-ux-designer":
       return <Palette size={32} weight="duotone" className="text-primary" />;

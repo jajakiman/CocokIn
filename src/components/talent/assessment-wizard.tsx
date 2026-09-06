@@ -7,8 +7,7 @@ import type {
   CareerDomainId,
   CareerReadinessResult,
 } from "@/src/modules/talent/types";
-import { getQuestionsForCareer } from "@/src/modules/talent/assessment-bank";
-import { calculateCareerReadiness } from "@/src/modules/talent/career-readiness";
+import type { CatalogQuestion } from "@/src/modules/assessment/catalog";
 import { useTalent } from "@/src/context/talent-context";
 import { CareerPicker } from "./career-picker";
 import { ReadinessResult } from "./readiness-result";
@@ -16,39 +15,67 @@ import { Sparkle, ArrowLeft } from "@phosphor-icons/react";
 
 type Step = "career" | "quiz" | "result";
 
-export function AssessmentWizard() {
+export function AssessmentWizard({
+  initialCareerId,
+  onComplete,
+  questionCatalog,
+}: {
+  initialCareerId?: CareerDomainId;
+  onComplete?: () => void;
+  questionCatalog: Record<CareerDomainId, CatalogQuestion[]>;
+}) {
   const { applyAssessmentResult } = useTalent();
-  const [step, setStep] = useState<Step>("career");
-  const [careerId, setCareerId] = useState<CareerDomainId | null>(null);
-  const [questions, setQuestions] = useState<AssessmentQuestion[]>([]);
+  const [step, setStep] = useState<Step>(initialCareerId ? "quiz" : "career");
+  const [careerId, setCareerId] = useState<CareerDomainId | null>(initialCareerId ?? null);
+  const [questions, setQuestions] = useState<AssessmentQuestion[]>(
+    initialCareerId ? questionCatalog[initialCareerId] : []
+  );
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<AssessmentAnswer[]>([]);
+  const [submittedAnswers, setSubmittedAnswers] = useState<Array<{ questionId: string; optionId: string }>>([]);
   const [result, setResult] = useState<CareerReadinessResult | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const handleCareerSelect = (selectedCareerId: CareerDomainId) => {
     setCareerId(selectedCareerId);
-    const careerQuestions = getQuestionsForCareer(selectedCareerId);
+    const careerQuestions = questionCatalog[selectedCareerId];
     setQuestions(careerQuestions);
     setStep("quiz");
   };
 
-  const handleAnswer = (score: number) => {
+  const handleAnswer = async (optionId: string, score: number) => {
     const currentQuestion = questions[currentQuestionIndex];
     const newAnswers = [
       ...answers,
       { questionId: currentQuestion.id, selectedScore: score },
     ];
     setAnswers(newAnswers);
+    const newSubmittedAnswers = [...submittedAnswers, { questionId: currentQuestion.id, optionId }];
+    setSubmittedAnswers(newSubmittedAnswers);
 
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Quiz selesai, hitung hasil
+      // Quiz selesai, hitung hasil & simpan ke DB
       if (careerId) {
-        const calculatedResult = calculateCareerReadiness(careerId, newAnswers);
-        setResult(calculatedResult);
-        applyAssessmentResult(calculatedResult);
-        setStep("result");
+        setSaving(true);
+        try {
+          const response = await fetch("/api/talent/assessment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ careerId, answers: newSubmittedAnswers }),
+          });
+          if (!response.ok) throw new Error("Gagal menyimpan hasil asesmen.");
+          const payload = await response.json();
+          setResult(payload.result);
+          applyAssessmentResult(payload.result);
+          onComplete?.();
+        } catch (e) {
+          console.error("Failed to save assessment to backend", e);
+        } finally {
+          setSaving(false);
+          setStep("result");
+        }
       }
     }
   };
@@ -59,6 +86,7 @@ export function AssessmentWizard() {
     setQuestions([]);
     setCurrentQuestionIndex(0);
     setAnswers([]);
+    setSubmittedAnswers([]);
     setResult(null);
   };
 
@@ -80,6 +108,12 @@ export function AssessmentWizard() {
             Pertanyaan {currentQuestionIndex + 1} dari {questions.length} ({Math.round(progress)}%)
           </p>
         </div>
+
+        {saving && (
+          <div className="mb-4 p-3 bg-[#EAF3FF] border border-[#BAE6FD] text-[#006FE6] text-xs font-bold rounded-xl text-center animate-pulse">
+            Menyimpan hasil Cek Kesiapan ke akun Anda...
+          </div>
+        )}
 
         <div className="quiz-question">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -105,7 +139,7 @@ export function AssessmentWizard() {
                 key={idx}
                 type="button"
                 className="quiz-option"
-                onClick={() => handleAnswer(option.score)}
+                onClick={() => handleAnswer(option.id ?? `${currentQuestion.id}-${idx}`, option.score)}
               >
                 {option.label}
               </button>

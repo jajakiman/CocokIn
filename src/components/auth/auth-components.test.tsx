@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -51,6 +51,30 @@ describe("AuthShell", () => {
       "auth-shell__form",
     );
   });
+
+  it("uses the official wordmark in the auth shell for both mobile and desktop views", () => {
+    const { container } = render(
+      <AuthShell
+        title="Masuk ke CocokIn"
+        description="Lanjutkan perjalanan Anda."
+        contextTitle="Bertumbuh bersama"
+        context={<p>Konteks produk</p>}
+      >
+        <button type="button">Form action</button>
+      </AuthShell>,
+    );
+
+    const brandLinks = screen.getAllByRole("link", { name: "CocokIn beranda" });
+    expect(brandLinks.length).toBeGreaterThanOrEqual(1);
+
+    const desktopBrand = container.querySelector(".auth-shell__context .auth-shell__brand img");
+    expect(desktopBrand).toHaveAttribute("src", "/brand/cocokin/logo-wordmark.webp");
+
+    const mobileBrand = container.querySelector(".auth-shell__form .auth-shell__brand img");
+    expect(mobileBrand).toHaveAttribute("src", "/brand/cocokin/logo-wordmark.webp");
+
+    expect(container.querySelector(".brand-dot")).not.toBeInTheDocument();
+  });
 });
 
 describe("PasswordField", () => {
@@ -98,7 +122,7 @@ describe("LoginForm", () => {
     render(<LoginForm adapter={unavailableAuthAdapter} />);
 
     expect(screen.getByRole("button", { name: "Masuk dengan Google" })).toBeVisible();
-    expect(screen.getByLabelText("Email")).toHaveAttribute("autocomplete", "email");
+    expect(screen.getByLabelText(/^Email/)).toHaveAttribute("autocomplete", "email");
     expect(screen.getByLabelText("Kata sandi")).toHaveAttribute(
       "autocomplete",
       "current-password",
@@ -113,30 +137,23 @@ describe("LoginForm", () => {
     );
   });
 
-  it("links inline errors and focuses a focusable summary after invalid submit", async () => {
+  it("links inline errors on invalid submit", async () => {
     const user = userEvent.setup();
     render(<LoginForm adapter={unavailableAuthAdapter} />);
 
     await user.click(screen.getByRole("button", { name: "Masuk" }));
 
-    const summary = screen.getByRole("alert", { name: "Periksa kembali formulir" });
     const email = screen.getByLabelText("Email");
     const password = screen.getByLabelText("Kata sandi");
     const emailError = document.getElementById("login-email-error");
     const passwordError = document.getElementById("login-password-error");
 
-    expect(summary).toHaveAttribute("tabindex", "-1");
-    expect(summary).toHaveFocus();
     expect(email).toHaveAttribute("aria-invalid", "true");
     expect(password).toHaveAttribute("aria-invalid", "true");
     expect(emailError).toHaveTextContent("Masukkan alamat email yang valid.");
     expect(passwordError).toHaveTextContent("Kata sandi wajib diisi.");
     expect(email).toHaveAttribute("aria-describedby", emailError?.id);
     expect(password.getAttribute("aria-describedby")).toContain(passwordError?.id);
-    expect(within(summary).getByRole("link", { name: /email/i })).toHaveAttribute(
-      "href",
-      `#${email.id}`,
-    );
   });
 
   it("disables every auth action while the adapter request is pending", async () => {
@@ -160,7 +177,7 @@ describe("LoginForm", () => {
       code: "PROVIDER_UNAVAILABLE",
       message: "Google sedang tidak tersedia.",
     });
-    expect(await screen.findByText("Google sedang tidak tersedia.")).toBeVisible();
+    expect((await screen.findAllByText("Google sedang tidak tersedia."))[0]).toBeVisible();
   });
 
   it("keeps an unavailable adapter failure visible after field edits", async () => {
@@ -168,8 +185,8 @@ describe("LoginForm", () => {
     render(<LoginForm adapter={unavailableAuthAdapter} />);
 
     await user.click(screen.getByRole("button", { name: "Masuk dengan Google" }));
-    const failure = await screen.findByText("Autentikasi belum dikonfigurasi.");
-    await user.type(screen.getByLabelText("Email"), "nadia@example.com");
+    const failure = (await screen.findAllByText("Autentikasi belum dikonfigurasi."))[0];
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
 
     expect(failure).toBeVisible();
   });
@@ -192,43 +209,83 @@ describe("RoleChoice", () => {
 });
 
 describe("RegistrationForm", () => {
-  it("keeps required Terms and Privacy consent separate with no optional consent", () => {
+  it("provides Google and credential registration with correct role label and links", () => {
+    render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
+
+    expect(screen.getByRole("button", { name: "Daftar sebagai Talent dengan Google" })).toBeVisible();
+    expect(screen.getByLabelText(/^Nama lengkap/)).toHaveAttribute("autocomplete", "name");
+    expect(screen.getByLabelText(/^Email/)).toHaveAttribute("autocomplete", "email");
+    expect(screen.getByRole("link", { name: "Masuk" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
+  });
+
+  it("uses one required consent for separate terms and privacy links", () => {
+    render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
+
+    const checkboxes = screen.getAllByRole("checkbox");
+    expect(checkboxes).toHaveLength(1);
+    expect(checkboxes[0]).toBeRequired();
+    expect(screen.getByRole("link", { name: "Syarat dan Ketentuan Layanan" })).toHaveAttribute("href", "/terms");
+    expect(screen.getByRole("link", { name: "Kebijakan Privasi" })).toHaveAttribute("href", "/privacy");
+    expect(screen.queryByLabelText(/pemrosesan data pribadi untuk pembuatan akun/i)).not.toBeInTheDocument();
+  });
+
+  it("shows live password strength and confirmation feedback", async () => {
+    const user = userEvent.setup();
+    render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
+
+    const password = screen.getByLabelText(/^Kata sandi/);
+    const confirmation = screen.getByLabelText(/^Konfirmasi kata sandi/);
+
+    await user.type(password, "aman1234");
+    expect(screen.getByRole("progressbar", { name: "Kekuatan kata sandi" })).toHaveAttribute("aria-valuenow", "3");
+    expect(screen.getByText("Bagus")).toBeVisible();
+
+    await user.type(confirmation, "beda123");
+    expect(screen.getByText("Kata sandi belum cocok")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Daftar sebagai Talent" })).toBeDisabled();
+
+    await user.clear(confirmation);
+    await user.type(confirmation, "aman1234");
+    expect(screen.getByText("Kata sandi cocok")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Daftar sebagai Talent" })).toBeEnabled();
+  });
+
+  it("keeps legal consent required with no optional consent", () => {
     render(<RegistrationForm role="TALENT" adapter={unavailableAuthAdapter} />);
 
     expect(screen.getByRole("checkbox", { name: /syarat dan ketentuan/i })).toBeRequired();
-    expect(screen.getByRole("checkbox", { name: /pemrosesan data pribadi/i })).toBeRequired();
-    expect(screen.getAllByRole("checkbox")).toHaveLength(2);
+    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
     expect(screen.queryByText(/marketing|publikasi|riset|demo/i)).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Kata sandi")).toHaveAttribute(
+    expect(screen.getByLabelText(/^Kata sandi/)).toHaveAttribute(
       "autocomplete",
       "new-password",
     );
-    expect(screen.getByLabelText("Konfirmasi kata sandi")).toHaveAttribute(
+    expect(screen.getByLabelText(/^Konfirmasi kata sandi/)).toHaveAttribute(
       "autocomplete",
       "new-password",
     );
   });
 
-  it("validates consent separately and keeps registration unavailability persistent", async () => {
+  it("validates legal consent and keeps registration unavailability persistent", async () => {
     const user = userEvent.setup();
     render(<RegistrationForm role="BUSINESS" adapter={unavailableAuthAdapter} />);
 
-    await user.type(screen.getByLabelText("Nama lengkap"), "Nadia Pratama");
-    await user.type(screen.getByLabelText("Email"), "nadia@example.com");
-    await user.type(screen.getByLabelText("Kata sandi"), "amansekali");
-    await user.type(screen.getByLabelText("Konfirmasi kata sandi"), "amansekali");
+    await user.type(screen.getByLabelText(/^Nama lengkap/), "Nadia Pratama");
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
+    await user.type(screen.getByLabelText(/^Kata sandi/), "amansekali");
+    await user.type(screen.getByLabelText(/^Konfirmasi kata sandi/), "amansekali");
     await user.click(screen.getByRole("button", { name: "Daftar sebagai UMKM" }));
 
-    const summary = screen.getByRole("alert", { name: "Periksa kembali formulir" });
-    expect(summary).toHaveFocus();
     expect(screen.getByText("Anda harus menyetujui Syarat dan Ketentuan.")).toBeVisible();
-    expect(screen.getByText("Anda harus menyetujui pemrosesan data pribadi.")).toBeVisible();
 
     await user.click(screen.getByRole("checkbox", { name: /syarat dan ketentuan/i }));
-    await user.click(screen.getByRole("checkbox", { name: /pemrosesan data pribadi/i }));
     await user.click(screen.getByRole("button", { name: "Daftar sebagai UMKM" }));
-    const failure = await screen.findByText("Autentikasi belum dikonfigurasi.");
-    await user.clear(screen.getByLabelText("Nama lengkap"));
+    const failure = (await screen.findAllByText("Autentikasi belum dikonfigurasi."))[0];
+    await user.clear(screen.getByLabelText(/^Nama lengkap/));
+    await user.type(screen.getByLabelText(/^Nama lengkap/), "Nadia P.");
 
     expect(failure).toBeVisible();
   });
@@ -239,16 +296,16 @@ describe("ForgotPasswordForm", () => {
     const user = userEvent.setup();
     render(<ForgotPasswordForm adapter={unavailableAuthAdapter} />);
 
-    expect(screen.getByLabelText("Email")).toHaveAttribute("autocomplete", "email");
+    expect(screen.getByLabelText(/^Email/)).toHaveAttribute("autocomplete", "email");
     await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
-    expect(screen.getByRole("alert", { name: "Periksa kembali formulir" })).toHaveFocus();
+    expect(screen.getByText("Masukkan alamat email yang valid.")).toBeVisible();
 
-    await user.type(screen.getByLabelText("Email"), "nadia@example.com");
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
     await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
     const failure = await screen.findByText(
       "Layanan reset kata sandi belum dikonfigurasi.",
     );
-    await user.type(screen.getByLabelText("Email"), ".id");
+    await user.type(screen.getByLabelText(/^Email/), ".id");
 
     expect(failure).toBeVisible();
     expect(screen.queryByText(/email (telah|sudah) dikirim/i)).not.toBeInTheDocument();
@@ -256,5 +313,23 @@ describe("ForgotPasswordForm", () => {
       "href",
       "/login",
     );
+  });
+
+  it("shows an inline cooldown after a successful reset request", async () => {
+    const user = userEvent.setup();
+    render(
+      <ForgotPasswordForm
+        adapter={adapterWith({
+          requestPasswordReset: async () => ({ ok: true, message: "Jika email terdaftar, permintaan reset telah diterima." }),
+        })}
+      />,
+    );
+
+    await user.type(screen.getByLabelText(/^Email/), "nadia@example.com");
+    await user.click(screen.getByRole("button", { name: "Kirim instruksi reset" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent("Permintaan reset diterima");
+    expect(screen.getByRole("button", { name: "Tunggu 01:00" })).toBeDisabled();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });

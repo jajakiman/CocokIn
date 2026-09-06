@@ -42,7 +42,7 @@ export const SEEDED_DASHBOARD_FIXTURES: Record<AppRole, DashboardFixture> = {
   talent: {
     eyebrow: "Ruang berkembang",
     title: "Selamat datang, Nadia",
-    description: "Lanjutkan proyek aktif dan tutup skill gap menuju Frontend Developer.",
+    description: "Lanjutkan proyek aktif dan tutup skill gap menuju Fullstack Developer.",
     sectionTitle: "Rekomendasi untukmu",
     metrics: [
       { label: "Proyek aktif", value: "1", detail: "Milestone 2 dari 3" },

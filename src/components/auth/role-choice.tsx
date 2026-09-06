@@ -6,38 +6,28 @@ export function RoleChoice() {
     <div className="auth-role-choice">
       <Link href="/register/talent" className="auth-role-card">
         <div className="auth-role-card__icon">
-          <User size={32} weight="duotone" />
+          <User size={24} weight="duotone" />
         </div>
-        <div>
-          <strong style={{ fontSize: "1.1rem" }}>Daftar sebagai Talent</strong>
-          <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-            Mahasiswa, fresh graduate, atau talenta muda yang ingin menguji skill dan meraih portofolio nyata.
+        <div className="flex-1 min-w-0">
+          <strong className="block text-[#001040] text-base font-bold">Daftar sebagai Talent</strong>
+          <span className="block text-xs text-[#53647A] mt-1 leading-relaxed">
+            Mahasiswa atau talenta muda yang ingin menguji skill dan meraih portofolio proyek nyata.
           </span>
-          <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--primary)" }}>
-            <span>✓ Asesmen Karier</span>
-            <span>✓ Cocok Score Matching</span>
-            <span>✓ Verified Passport</span>
-          </div>
         </div>
-        <ArrowRight size={20} weight="bold" />
+        <ArrowRight size={18} weight="bold" className="text-[#9AABC2] shrink-0" />
       </Link>
 
       <Link href="/register/business" className="auth-role-card">
-        <div className="auth-role-card__icon" style={{ color: "var(--success)" }}>
-          <Storefront size={32} weight="duotone" />
+        <div className="auth-role-card__icon" style={{ color: "var(--brand-orange)" }}>
+          <Storefront size={24} weight="duotone" />
         </div>
-        <div>
-          <strong style={{ fontSize: "1.1rem" }}>Daftar sebagai UMKM</strong>
-          <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-            Pemilik bisnis yang ingin menuntaskan solusi digital praktis dengan talenta terverifikasi.
+        <div className="flex-1 min-w-0">
+          <strong className="block text-[#001040] text-base font-bold">Daftar sebagai UMKM</strong>
+          <span className="block text-xs text-[#53647A] mt-1 leading-relaxed">
+            Pemilik bisnis yang ingin menuntaskan transformasi digital praktis dengan talenta terverifikasi.
           </span>
-          <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem", fontSize: "0.75rem", color: "var(--success)" }}>
-            <span>✓ Diagnosis Kebutuhan</span>
-            <span>✓ Milestone Terstruktur</span>
-            <span>✓ Garansi 30 Hari</span>
-          </div>
         </div>
-        <ArrowRight size={20} weight="bold" />
+        <ArrowRight size={18} weight="bold" className="text-[#9AABC2] shrink-0" />
       </Link>
     </div>
   );

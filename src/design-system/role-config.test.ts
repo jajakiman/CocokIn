@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getRoleConfig, roleConfigs } from "./role-config";
 
 describe("roleConfigs", () => {
-  it("uses one shared Arctic Depths theme for every role", () => {
+  it("uses one shared CocokIn theme for every role", () => {
     expect(Object.values(roleConfigs).map((config) => config.theme)).toEqual([
       "arctic-depths",
       "arctic-depths",
@@ -13,6 +13,14 @@ describe("roleConfigs", () => {
 
   it("gives each role a distinct primary task without changing the shell", () => {
     expect(getRoleConfig("talent").primaryAction.label).toBe("Cari proyek");
+    expect(getRoleConfig("talent").navigation.map((n) => n.label)).toEqual([
+      "Beranda",
+      "Cek Kesiapan",
+      "Cari Proyek",
+      "Proyek Saya",
+      "Skill Passport",
+      "Portofolio",
+    ]);
     expect(getRoleConfig("business").primaryAction.label).toBe("Buat proyek");
     expect(getRoleConfig("admin").primaryAction.label).toBe("Tangani antrean");
     expect(new Set(Object.values(roleConfigs).map((config) => config.shell))).toEqual(
