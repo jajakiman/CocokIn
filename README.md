@@ -55,11 +55,11 @@
 
 Platform **CocokIn** dikembangkan oleh tim **Acim Bilek** dengan prinsip *vertical slice ownership*:
 
-| Nama | Peran & Tanggung Jawab | GitHub |
+| Nama | Peran | GitHub |
 |---|---|---|
-| **Muhammad Zaky Ryan Ardhiansyah** | **Project Lead & Talent Experience Owner**<br>Design System ([MASTER.md](design-system/cocokin/MASTER.md)), *Career Readiness Assessment*, Taksonomi Skill & *Skill Gap Analyzer*, *Smart Matching Engine* (Cocok Score), *Skill Passport*, Portofolio Terverifikasi, dan UI Accessibility. | [@jajakiman](https://github.com/jajakiman) |
-| **Hajjid Rafi Mumtaz** | **UMKM Marketplace & Delivery Owner**<br>*Digital Readiness Assessment* (5 pilar UMKM), *Problem-to-Project Formulator*, Marketplace Proyek, Seleksi Pelamar & Kontrak Kerja, *Milestone Workspace*, Staging Review, *Real-time Pusher Chat*, dan *Production Handover*. | [@rafimumtaz](https://github.com/rafimumtaz) |
-| **Farid Munadhil** | **Platform Trust & Financial Operations Owner**<br>Database & Prisma Architecture, Session Auth & Security, *Double-Entry Balanced Ledger*, *Escrow 100% Liability Reserve*, Rekonsiliasi VA/QRIS, Payout 90%, Retensi Garansi 30 Hari (10%), Dispute Desk, dan *Operational Automation Cron*. | [@FrdMnhdl](https://github.com/FrdMnhdl) |
+| **Muhammad Zaky Ryan Ardhiansyah** | Project Lead & Full Stack Developer | [@jajakiman](https://github.com/jajakiman) |
+| **Hajjid Rafi Mumtaz** | Full Stack Developer | [@rafimumtaz](https://github.com/rafimumtaz) |
+| **Farid Munadhil** | Full Stack Developer | [@FrdMnhdl](https://github.com/FrdMnhdl) |
 
 ---
 
