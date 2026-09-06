@@ -27,7 +27,12 @@ export async function reportMessageAction(
 
   try {
     const message = await prisma.chatMessage.findUnique({
-      where: { id: messageId }
+      where: { id: messageId },
+      include: {
+        conversation: {
+          include: { participants: { where: { userId: session.id }, select: { id: true } } },
+        },
+      },
     });
 
     if (!message) {
@@ -37,12 +42,19 @@ export async function reportMessageAction(
     if (message.senderId === session.id) {
       return { ok: false, message: "Anda tidak dapat melaporkan pesan Anda sendiri." };
     }
+    if (message.conversation.participants.length === 0) {
+      return { ok: false, message: "Anda bukan peserta percakapan proyek ini." };
+    }
 
     await prisma.messageReport.create({
       data: {
         messageId,
         reporterId: session.id,
-        reason: reason.trim()
+        reason: reason.trim(),
+        messageContent: message.content ?? "[Lampiran tanpa teks]",
+        messageSenderId: message.senderId,
+        messageCreatedAt: message.createdAt,
+        reporterName: session.displayName || session.email,
       }
     });
 

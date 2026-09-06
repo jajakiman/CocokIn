@@ -116,6 +116,21 @@ enum ConversationStatus {
   REOPEN_REQUESTED
 }
 
+enum MessageReportStatus {
+  PENDING
+  DISMISSED
+  ACTIONED
+}
+
+enum SolutionCategory {
+  WEBSITE_BRANDING
+  CATALOG_COMMERCE
+  OPERATIONS_POS
+  DIGITAL_MARKETING
+  DATA_ANALYTICS
+  OTHER
+}
+
 enum WarrantyStatus {
   NOT_STARTED
   ACTIVE
@@ -162,8 +177,9 @@ model User {
   talentProfile   TalentProfile?
   businessProfile BusinessProfile?
 
-  notifications Notification[]
-  reports       MessageReport[]
+  notifications   Notification[]
+  reports         MessageReport[] @relation("MessageReportReporter")
+  resolvedReports MessageReport[] @relation("MessageReportResolver")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -383,7 +399,8 @@ model Project {
   deadline      DateTime
   serviceValue  BigInt // IDR stored as BigInt
 
-  status ProjectStatus @default(DRAFT)
+  status           ProjectStatus    @default(DRAFT)
+  solutionCategory SolutionCategory @default(OTHER)
 
   skills         ProjectSkill[]
   applications   ProjectApplication[]
@@ -490,7 +507,7 @@ model MilestoneAcceptanceCriterion {
 }
 
 model MilestoneSubmission {
-  id                 String  @id @default(cuid())
+  id                 String    @id @default(cuid())
   projectMilestoneId String
   version            Int
   stagingUrl         String
@@ -788,13 +805,24 @@ model MessageReceipt {
 }
 
 model MessageReport {
-  id         String @id @default(cuid())
-  messageId  String
-  reporterId String
-  reason     String
+  id               String              @id @default(cuid())
+  messageId        String
+  reporterId       String?
+  reason           String
+  messageContent   String              @default("[Pesan tidak tersedia]")
+  messageSenderId  String              @default("UNKNOWN")
+  messageCreatedAt DateTime            @default(now())
+  reporterName     String              @default("Pengguna")
+  status           MessageReportStatus @default(PENDING)
+  resolutionNotes  String?
+  resolvedAt       DateTime?
+  resolvedById     String?
 
-  reporter  User     @relation(fields: [reporterId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  reporter   User?    @relation("MessageReportReporter", fields: [reporterId], references: [id], onDelete: SetNull)
+  resolvedBy User?    @relation("MessageReportResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([status, createdAt])
 }
 
 model ConversationReopenRequest {

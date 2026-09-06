@@ -55,14 +55,75 @@ export default async function AdminDashboardPage() {
     take: 10,
   });
 
-  // 5. Fetch support tickets
-  const supportTickets = await prisma.supportTicket.findMany({
-    include: {
-      project: true,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 10,
-  });
+  // 5. Fetch support, moderation, and impact data in parallel.
+  const [supportTickets, users, messageReports, empoweredTalentRows, digitalizedBusinessRows, impactProjects, paidPayouts, completedProjectsCount, readinessRows] = await Promise.all([
+    prisma.supportTicket.findMany({
+      include: { project: true },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+    prisma.user.findMany({
+      where: { role: { in: ["TALENT", "BUSINESS"] } },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        identityStatus: true,
+        isSuspended: true,
+        suspendedAt: true,
+        suspensionReason: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    }),
+    prisma.messageReport.findMany({
+      select: {
+        id: true,
+        reason: true,
+        status: true,
+        resolutionNotes: true,
+        resolvedAt: true,
+        resolvedBy: { select: { name: true } },
+        reporterName: true,
+        messageSenderId: true,
+        messageCreatedAt: true,
+        createdAt: true,
+      },
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      take: 50,
+    }),
+    prisma.projectApplication.findMany({
+      where: { status: "ACCEPTED", project: { status: "COMPLETED" } },
+      distinct: ["talentProfileId"],
+      select: { talentProfileId: true },
+    }),
+    prisma.project.findMany({
+      where: { status: "COMPLETED" },
+      distinct: ["businessProfileId"],
+      select: { businessProfileId: true },
+    }),
+    prisma.project.groupBy({
+      by: ["solutionCategory"],
+      where: { status: "COMPLETED" },
+      _count: { _all: true },
+    }),
+    prisma.payoutInstruction.aggregate({ where: { status: "PAID" }, _sum: { amount: true } }),
+    prisma.project.count({ where: { status: "COMPLETED" } }),
+    prisma.businessAssessmentResult.findMany({
+      select: { businessProfileId: true, readinessScore: true, createdAt: true },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+
+  const readinessByBusiness = readinessRows.reduce<Record<string, number[]>>((groups, row) => {
+    (groups[row.businessProfileId] ??= []).push(row.readinessScore);
+    return groups;
+  }, {});
+  const readinessGrowth = Object.values(readinessByBusiness)
+    .filter((scores) => scores.length >= 2)
+    .map((scores) => scores[scores.length - 1] - scores[0]);
 
   const dashboardData: AdminDashboardData = {
     balanceSheet: {
@@ -128,6 +189,36 @@ export default async function AdminDashboardPage() {
       description: t.description,
       createdAt: t.createdAt.toISOString(),
     })),
+    users: users.map((user) => ({
+      ...user,
+      createdAt: user.createdAt.toISOString(),
+      suspendedAt: user.suspendedAt?.toISOString() ?? null,
+    })),
+    messageReports: messageReports.map((report) => ({
+      id: report.id,
+      reason: report.reason,
+      status: report.status,
+      resolutionNotes: report.resolutionNotes,
+      resolvedAt: report.resolvedAt?.toISOString() ?? null,
+      resolvedByName: report.resolvedBy?.name ?? null,
+      reporterName: report.reporterName,
+      messageSenderId: report.messageSenderId,
+      messageCreatedAt: report.messageCreatedAt.toISOString(),
+      createdAt: report.createdAt.toISOString(),
+    })),
+    impactMetrics: {
+      empoweredTalentsCount: empoweredTalentRows.length,
+      digitalizedBusinessesCount: digitalizedBusinessRows.length,
+      completedProjectsCount,
+      totalTalentIncome: (paidPayouts._sum.amount ?? 0n).toString(),
+      averageReadinessGrowth: readinessGrowth.length > 0
+        ? Math.round(readinessGrowth.reduce((sum, growth) => sum + growth, 0) / readinessGrowth.length)
+        : 0,
+      solutionCategories: impactProjects.map((category) => ({
+        name: category.solutionCategory,
+        count: category._count._all,
+      })),
+    },
   };
 
   return <AdminDashboardView data={dashboardData} />;

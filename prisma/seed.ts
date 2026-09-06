@@ -279,7 +279,7 @@ async function main() {
 
   const recruitmentProject = await prisma.project.upsert({
     where: { id: "seed-project-recruitment" },
-    update: { status: "PUBLISHED" },
+    update: { status: "PUBLISHED", solutionCategory: "WEBSITE_BRANDING" },
     create: {
       id: "seed-project-recruitment",
       businessProfileId: businessProfile.id,
@@ -290,6 +290,7 @@ async function main() {
       deadline: new Date("2026-10-20T00:00:00.000Z"),
       serviceValue: 3_000_000n,
       status: "PUBLISHED",
+      solutionCategory: "WEBSITE_BRANDING",
     },
   });
 
@@ -337,7 +338,7 @@ async function main() {
 
   const activeProject = await prisma.project.upsert({
     where: { id: "seed-project-active" },
-    update: { status: "STAGING_REVIEW" },
+    update: { status: "STAGING_REVIEW", solutionCategory: "OPERATIONS_POS" },
     create: {
       id: "seed-project-active",
       businessProfileId: businessProfile.id,
@@ -348,6 +349,7 @@ async function main() {
       deadline: new Date("2026-10-10T00:00:00.000Z"),
       serviceValue: 7_500_000n,
       status: "STAGING_REVIEW",
+      solutionCategory: "OPERATIONS_POS",
     },
   });
 
@@ -485,7 +487,7 @@ async function main() {
 
   const deliveredProject = await prisma.project.upsert({
     where: { id: "seed-project-delivered" },
-    update: { status: "DELIVERED" },
+    update: { status: "DELIVERED", solutionCategory: "WEBSITE_BRANDING" },
     create: {
       id: "seed-project-delivered",
       businessProfileId: businessProfile.id,
@@ -496,6 +498,7 @@ async function main() {
       deadline: new Date("2026-08-25T00:00:00.000Z"),
       serviceValue: 2_500_000n,
       status: "DELIVERED",
+      solutionCategory: "WEBSITE_BRANDING",
     },
   });
 
@@ -535,6 +538,63 @@ async function main() {
         severity: "MINOR",
         status: "RESOLVED",
         description: "Tombol cetak struk kadang timeout.",
+      },
+    });
+  }
+
+  const moderationConversation = await prisma.projectConversation.upsert({
+    where: { projectId: activeProject.id },
+    update: { status: "ACTIVE" },
+    create: { projectId: activeProject.id, status: "ACTIVE" },
+  });
+  await prisma.conversationParticipant.upsert({
+    where: {
+      projectConversationId_userId: {
+        projectConversationId: moderationConversation.id,
+        userId: umkmUser.id,
+      },
+    },
+    update: {},
+    create: { projectConversationId: moderationConversation.id, userId: umkmUser.id },
+  });
+  const reportedMessage = await prisma.chatMessage.upsert({
+    where: {
+      projectConversationId_sequenceNumber: {
+        projectConversationId: moderationConversation.id,
+        sequenceNumber: 99,
+      },
+    },
+    update: {},
+    create: {
+      projectConversationId: moderationConversation.id,
+      senderId: talentProfile.userId,
+      sequenceNumber: 99,
+      content: "Silakan transfer biaya tambahan ke rekening pribadi agar fitur segera dikerjakan.",
+    },
+  });
+  const existingReport = await prisma.messageReport.findFirst({
+    where: { messageId: reportedMessage.id, reporterId: umkmUser.id },
+  });
+  if (existingReport) {
+    await prisma.messageReport.update({
+      where: { id: existingReport.id },
+      data: {
+        messageContent: reportedMessage.content ?? "[Lampiran tanpa teks]",
+        messageSenderId: reportedMessage.senderId,
+        messageCreatedAt: reportedMessage.createdAt,
+        reporterName: umkmUser.name ?? umkmUser.email ?? "UMKM",
+      },
+    });
+  } else {
+    await prisma.messageReport.create({
+      data: {
+        messageId: reportedMessage.id,
+        reporterId: umkmUser.id,
+        reason: "Permintaan pembayaran di luar alur resmi CocokIn.",
+        messageContent: reportedMessage.content ?? "[Lampiran tanpa teks]",
+        messageSenderId: reportedMessage.senderId,
+        messageCreatedAt: reportedMessage.createdAt,
+        reporterName: umkmUser.name ?? umkmUser.email ?? "UMKM",
       },
     });
   }

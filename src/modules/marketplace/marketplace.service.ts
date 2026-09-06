@@ -1,5 +1,6 @@
 import { prisma } from "@/src/adapters/database/prisma";
 import { type CreateProjectInput } from "@/src/domain/projects/schemas";
+import { classifySolutionCategory } from "./solution-category";
 
 export async function createProjectDraft(businessUserId: string, data: Partial<CreateProjectInput>, projectId?: string) {
   const profile = await prisma.businessProfile.findUnique({
@@ -28,6 +29,7 @@ export async function createProjectDraft(businessUserId: string, data: Partial<C
         estimatedDays: data.estimatedDays || existing.estimatedDays,
         deadline: data.deadline || existing.deadline,
         serviceValue: data.serviceValue || existing.serviceValue,
+        solutionCategory: classifySolutionCategory(data.title || existing.title, data.scope || existing.scope),
       }
     });
   }
@@ -43,6 +45,7 @@ export async function createProjectDraft(businessUserId: string, data: Partial<C
       deadline: data.deadline || new Date(),
       serviceValue: data.serviceValue || 0,
       status: "DRAFT",
+      solutionCategory: classifySolutionCategory(data.title || "Untitled Draft", data.scope || ""),
     }
   });
 }
@@ -102,6 +105,7 @@ export async function createProject(businessUserId: string, data: CreateProjectI
         deadline: data.deadline,
         serviceValue: data.serviceValue,
         status, // DRAFT or PUBLISHED
+        solutionCategory: classifySolutionCategory(data.title, data.scope),
         
         infrastructurePlan: {
           create: {

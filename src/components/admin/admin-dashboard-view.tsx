@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { formatIdr } from "@/src/lib/money";
 import {
   reconcilePaymentAction,
@@ -20,7 +21,20 @@ import {
   Receipt,
   Ticket,
   QrCode,
+  Users,
+  Flag,
+  ChartBar,
 } from "@phosphor-icons/react";
+import { ReportResolutionControl, UserModerationControl } from "./moderation-controls";
+
+const SOLUTION_CATEGORY_LABELS: Record<string, string> = {
+  WEBSITE_BRANDING: "Website & Branding",
+  CATALOG_COMMERCE: "Katalog & Penjualan",
+  OPERATIONS_POS: "Operasional & POS",
+  DIGITAL_MARKETING: "Digital Marketing",
+  DATA_ANALYTICS: "Data & Analitik",
+  OTHER: "Solusi Digital Lainnya",
+};
 
 export type AdminDashboardBalanceSheet = {
   cashAtBank: string;
@@ -83,10 +97,41 @@ export type AdminDashboardData = {
     description: string;
     createdAt: string;
   }>;
+  users: Array<{
+    id: string;
+    name: string | null;
+    email: string | null;
+    role: string;
+    identityStatus: string;
+    isSuspended: boolean;
+    suspendedAt: string | null;
+    suspensionReason: string | null;
+    createdAt: string;
+  }>;
+  messageReports: Array<{
+    id: string;
+    reason: string;
+    status: "PENDING" | "DISMISSED" | "ACTIONED";
+    resolutionNotes: string | null;
+    resolvedAt: string | null;
+    resolvedByName: string | null;
+    reporterName: string;
+    messageSenderId: string;
+    messageCreatedAt: string;
+    createdAt: string;
+  }>;
+  impactMetrics: {
+    empoweredTalentsCount: number;
+    digitalizedBusinessesCount: number;
+    completedProjectsCount: number;
+    totalTalentIncome: string;
+    averageReadinessGrowth: number;
+    solutionCategories: Array<{ name: string; count: number }>;
+  };
 };
 
 export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
-  const [activeTab, setActiveTab] = useState<"funding" | "payout" | "disputes" | "tickets">("funding");
+  const [activeTab, setActiveTab] = useState<"impact" | "funding" | "payout" | "disputes" | "tickets" | "users" | "reports">("impact");
 
   const bs = data.balanceSheet;
 
@@ -183,6 +228,15 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
       <div className="flex border-b border-[#D8E1EE] gap-2 overflow-x-auto pb-1">
         <button
           type="button"
+          onClick={() => setActiveTab("impact")}
+          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "impact" ? "border-[#006FE6] text-[#006FE6]" : "border-transparent text-[#53647A] hover:text-[#001040]"
+          }`}
+        >
+          <ChartBar /> Dampak SDG 8 & 9
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab("funding")}
           className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === "funding"
@@ -243,7 +297,67 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
         >
           <Ticket /> Tiket Pemeliharaan
         </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("users")}
+          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "users" ? "border-[#006FE6] text-[#006FE6]" : "border-transparent text-[#53647A] hover:text-[#001040]"
+          }`}
+        >
+          <Users /> Moderasi Pengguna
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("reports")}
+          className={`px-5 py-3 text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "reports" ? "border-[#006FE6] text-[#006FE6]" : "border-transparent text-[#53647A] hover:text-[#001040]"
+          }`}
+        >
+          <Flag /> Laporan Pesan
+          {data.messageReports.filter((report) => report.status === "PENDING").length > 0 ? (
+            <span className="bg-[#FFF1F2] text-[#BE123C] text-xs px-2 py-0.5 rounded-full font-bold">
+              {data.messageReports.filter((report) => report.status === "PENDING").length}
+            </span>
+          ) : null}
+        </button>
       </div>
+
+      {activeTab === "impact" && (
+        <section className="space-y-6" aria-labelledby="impact-heading">
+          <div>
+            <h2 id="impact-heading" className="text-xl font-bold text-[#001040]">Dampak Platform SDG 8 & 9</h2>
+            <p className="text-sm text-[#53647A] mt-1">Agregasi dari proyek, payout, dan asesmen yang tersimpan di PostgreSQL.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+            {[
+              ["Talent berdaya", data.impactMetrics.empoweredTalentsCount.toString(), "SDG 8"],
+              ["Kompensasi tersalurkan", formatIdr(BigInt(data.impactMetrics.totalTalentIncome)), "SDG 8"],
+              ["Proyek terselesaikan", data.impactMetrics.completedProjectsCount.toString(), "SDG 8"],
+              ["UMKM terdigitalisasi", data.impactMetrics.digitalizedBusinessesCount.toString(), "SDG 9"],
+              ["Rata-rata kenaikan kesiapan", `${data.impactMetrics.averageReadinessGrowth >= 0 ? "+" : ""}${data.impactMetrics.averageReadinessGrowth} poin`, "SDG 9"],
+            ].map(([label, value, sdg]) => (
+              <div key={label} className="bg-white border border-[#D8E1EE] rounded-xl p-5 shadow-sm">
+                <span className="text-[11px] uppercase tracking-wider font-bold text-[#006FE6]">{sdg}</span>
+                <p className="text-2xl font-black text-[#001040] tabular-nums mt-2">{value}</p>
+                <p className="text-xs text-[#53647A] mt-1">{label}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-white border border-[#D8E1EE] rounded-xl p-6 shadow-sm">
+            <h3 className="font-bold text-[#001040]">Sebaran Solusi Digital</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+              {data.impactMetrics.solutionCategories.length > 0 ? data.impactMetrics.solutionCategories.map((category) => (
+                <div key={category.name} className="bg-[#F1F5FB] rounded-lg p-4 flex items-center justify-between gap-3">
+                  <span className="text-sm font-semibold text-[#001040]">{SOLUTION_CATEGORY_LABELS[category.name] ?? category.name}</span>
+                  <span className="text-sm font-black text-[#006FE6] tabular-nums">{category.count}</span>
+                </div>
+              )) : <p className="text-sm text-[#53647A]">Belum ada proyek aktif atau selesai.</p>}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Tab 1: Funding Reconciliation Desk */}
       {activeTab === "funding" && (
@@ -586,6 +700,59 @@ export function AdminDashboardView({ data }: { data: AdminDashboardData }) {
             </div>
           )}
         </div>
+      )}
+
+      {activeTab === "users" && (
+        <section className="bg-white border border-[#D8E1EE] rounded-xl overflow-hidden shadow-sm" aria-labelledby="users-heading">
+          <div className="p-6 border-b border-[#D8E1EE]">
+            <h2 id="users-heading" className="text-lg font-bold text-[#001040]">Moderasi Pengguna</h2>
+            <p className="text-xs text-[#53647A] mt-1">Penangguhan memutus akses sesi berikutnya dan tercatat di audit log.</p>
+          </div>
+          <div className="divide-y divide-[#D8E1EE]">
+            {data.users.length > 0 ? data.users.map((user) => (
+              <article key={user.id} className="p-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.8fr)] gap-4 items-start">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong className="text-[#001040]">{user.name ?? "Tanpa nama"}</strong>
+                    <span className="text-[11px] font-bold rounded-full px-2 py-0.5 bg-[#F1F5FB] text-[#53647A]">{user.role === "BUSINESS" ? "UMKM" : "Talent"}</span>
+                    <span className={`text-[11px] font-bold rounded-full px-2 py-0.5 ${user.isSuspended ? "bg-[#FFF1F2] text-[#BE123C]" : "bg-[#ECFDF5] text-[#047857]"}`}>
+                      {user.isSuspended ? "Ditangguhkan" : "Aktif"}
+                    </span>
+                  </div>
+                  <p className="text-sm text-[#53647A] mt-1">{user.email ?? "Email tidak tersedia"}</p>
+                  <p className="text-xs text-[#53647A] mt-2">Verifikasi: {user.identityStatus} · Bergabung {new Date(user.createdAt).toLocaleDateString("id-ID")}</p>
+                  {user.suspensionReason ? <p className="text-xs text-[#BE123C] mt-2">Alasan: {user.suspensionReason}</p> : null}
+                </div>
+                <UserModerationControl userId={user.id} isSuspended={user.isSuspended} />
+              </article>
+            )) : <p className="p-8 text-center text-sm text-[#53647A]">Belum ada pengguna untuk dimoderasi.</p>}
+          </div>
+        </section>
+      )}
+
+      {activeTab === "reports" && (
+        <section className="bg-white border border-[#D8E1EE] rounded-xl overflow-hidden shadow-sm" aria-labelledby="reports-heading">
+          <div className="p-6 border-b border-[#D8E1EE]">
+            <h2 id="reports-heading" className="text-lg font-bold text-[#001040]">Laporan Pesan · Trust & Safety</h2>
+            <p className="text-xs text-[#53647A] mt-1">Riwayat laporan disimpan; penyelesaian tidak menghapus pesan atau bukti.</p>
+          </div>
+          <div className="divide-y divide-[#D8E1EE]">
+            {data.messageReports.length > 0 ? data.messageReports.map((report) => (
+              <article key={report.id} className="p-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] gap-5">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`text-[11px] font-bold rounded-full px-2 py-0.5 ${report.status === "PENDING" ? "bg-[#FFFBEB] text-[#B45309]" : report.status === "ACTIONED" ? "bg-[#FFF1F2] text-[#BE123C]" : "bg-[#F1F5FB] text-[#53647A]"}`}>{report.status}</span>
+                    <span className="text-xs text-[#53647A]">Dilaporkan oleh {report.reporterName}</span>
+                  </div>
+                  <p className="text-sm text-[#BE123C] mt-3"><strong>Alasan:</strong> {report.reason}</p>
+                  <Link href={`/admin/reports/${report.id}`} className="inline-block mt-3 text-sm font-bold text-[#006FE6] underline underline-offset-2">Buka bukti pesan</Link>
+                  {report.resolutionNotes ? <p className="text-xs text-[#53647A] mt-2">Putusan {report.resolvedByName ?? "Admin"}: {report.resolutionNotes}</p> : null}
+                </div>
+                {report.status === "PENDING" ? <ReportResolutionControl reportId={report.id} /> : null}
+              </article>
+            )) : <p className="p-8 text-center text-sm text-[#53647A]">Belum ada laporan pesan.</p>}
+          </div>
+        </section>
       )}
     </div>
   );
